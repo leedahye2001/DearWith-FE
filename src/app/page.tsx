@@ -1,3 +1,11 @@
+import Page from "./main/page";
+
 export default function Home() {
-  return <main className="flex flex-col">메인화면</main>;
+  return (
+    <main className="flex flex-col">
+      <div>
+        <Page />
+      </div>
+    </main>
+  );
 }
