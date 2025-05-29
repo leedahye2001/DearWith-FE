@@ -1,15 +1,12 @@
 "use client";
-
-import { getData } from "@/apis/api";
-import { useQuery } from "@tanstack/react-query";
+import SignUp from "../signup/page";
 
 const Page = () => {
-  const { data } = useQuery({
-    queryKey: ["data"],
-    queryFn: getData,
-  });
-
-  return <div>{data}</div>;
+  return (
+    <div>
+      <SignUp />
+    </div>
+  );
 };
 
 export default Page;
