@@ -1,4 +1,6 @@
-import Page from "./main/page";
+"use client";
+
+import Page from "../app/(signup)/mail-send/page";
 
 export default function Home() {
   return (
