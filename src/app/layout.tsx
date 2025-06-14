@@ -1,19 +1,16 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/lib/QueryProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const mainFont = localFont({
+  src: "../../public/font/Pretendard-Medium.otf",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "디어위드(DearWith)",
   description:
     "함께 만드는 소중한 하루, 아이돌 생일카페 정보 공유 플랫폼 ‘디어위드’ 입니다.",
@@ -25,9 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-screen w-screen bg-white">
+    <html lang="ko" className="h-screen w-screen bg-bg-1 dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} relative h-full min-h-full`}
+        className={`${mainFont.className} ${inter.className} relative h-full min-h-full`}
       >
         <QueryProvider>{children}</QueryProvider>
       </body>

@@ -26,8 +26,10 @@ const Page = () => {
   };
 
   return (
-    <>
-      <h1>디어위드에서 사용할 이메일을 입력해 주세요</h1>
+    <div className="bg-success dark:bg-error">
+      <h1>
+        디어위드에서 사용할 이메일을 입력해 주세요
+      </h1>
       <p>이메일</p>
       <input
         className="w-full border border-2"
@@ -38,7 +40,7 @@ const Page = () => {
       <button className="hover:cursor-pointer" onClick={fetchMailData}>
         이메일 인증 요청하기
       </button>
-    </>
+    </div>
   );
 };
 
