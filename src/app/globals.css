@@ -1,1 +1,66 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  @variant dark {
+  --color-primary: #F54129;
+  --color-secondary-1: #FFDB92;
+  --color-secondary-2: #FFEECC;
+  --color-secondary-3: #FFF5D7;
+
+  --color-text-1: #FFFFFF;
+  --color-text-2: #474747;
+  --color-text-3: #757575;
+  --color-text-4: #BABABA;
+  --color-text-5: #FFFFFF;
+  --color-text-6: #F54129;
+
+  --color-icon-1: #FFFFFF;
+  --color-icon-2: #474747;
+  --color-icon-3: #FFFFFF;
+  --color-icon-4: #F54129;
+
+  --color-bg-1: #1A1A1A;
+
+  --color-divider-1: #474747;
+  --color-divider-2: #5E5E5E;
+  --color-divider-3: #FFFFFF;
+
+  --color-success: #30D158;
+  --color-warning: #FFD60A;
+  --color-error: #F54129;
+  --color-info: #0A84FF;
+  }
+}
+
+@theme {
+  --font-pretendard: Pretendard, sans-serif;
+
+  --color-primary: #F54129; 
+  --color-secondary-100: #FFDB92;
+  --color-secondary-200: #FFEECC;
+  --color-secondary-300: #FFF5D7;
+
+  --color-text-1: #FFFFFF;
+  --color-text-2: #BABABA;
+  --color-text-3: #757575;
+  --color-text-4: #474747;
+  --color-text-5: #000000;
+  --color-text-6: #F54129;
+
+  --color-icon-1: #FFFFFF;
+  --color-icon-2: #BABABA;
+  --color-icon-3: #000000;
+  --color-icon-4: #F54129;
+
+  --color-bg-1: #FFFFFF;
+
+  --color-divider-1: #D1D1D1;
+  --color-divider-2: #BABABA;
+  --color-divider-3: #303030;
+
+  --color-success: #34C759;
+  --color-warning: #FFCC00;
+  --color-error: #F54129;
+  --color-info: #007AFF;
+}
