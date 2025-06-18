@@ -18,7 +18,7 @@ const inputWrapperClasses = {
   "textbox-basic":
     "flex w-[312px] h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between",
   "textbox-underline":
-    "flex w-[312px] h-[44px] p-[10px] border-divider-2 border-b-[1px] justify-between",
+    "flex w-[312px] h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between",
 };
 
 const inputClasses = {
@@ -26,7 +26,7 @@ const inputClasses = {
     "flex items-center justify-center text-[14px] font-[400] text-text-3 min-w-[200px] outline-none h-[20px]",
 };
 
-const InputBasic = ({
+const Input = ({
   _wrapperProps,
   _inputProps,
   _state,
@@ -36,7 +36,7 @@ const InputBasic = ({
   _view,
   _title,
 }: BasicInputProps & { _value: string }) => {
-  const handleMailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     if (_onChange) {
@@ -46,7 +46,7 @@ const InputBasic = ({
 
   return (
     <div className="flex flex-col">
-      {_title && <h1 className="text-[14px] font-[600]">asdf</h1>}
+      {_title && <h1 className="text-[14px] font-[600]">{_title}</h1>}
       <div
         {..._wrapperProps}
         className={twMerge(
@@ -59,7 +59,7 @@ const InputBasic = ({
           className={twMerge(inputClasses?.common, _inputProps?.className)}
           type="text"
           value={_value}
-          onChange={handleMailChange}
+          onChange={handleInputChange}
         />
         {_view === true && (
           <div className="flex justify-between items-center w-[48px] h-[24px]">
@@ -76,4 +76,4 @@ const InputBasic = ({
     </div>
   );
 };
-export default InputBasic;
+export default Input;
