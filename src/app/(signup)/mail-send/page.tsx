@@ -34,6 +34,7 @@ const Page = () => {
         _title="제목"
         _view
         _onChange={handleTextChange}
+        _timer={10}
       />
       {/* <button className="hover:cursor-pointer" onClick={fetchMailData}>
         이메일 인증 요청하기
