@@ -1,5 +1,6 @@
 "use client";
 
+import Countdown from "@/utils/Countdown";
 import View from "@/svgs/view.svg";
 import { twMerge } from "tailwind-merge";
 
@@ -12,6 +13,7 @@ interface BasicInputProps {
   _value?: string;
   _view?: boolean;
   _title?: string;
+  _timer?: number;
 }
 
 const inputWrapperClasses = {
@@ -35,6 +37,7 @@ const Input = ({
   _value,
   _view,
   _title,
+  _timer,
 }: BasicInputProps & { _value: string }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -61,12 +64,17 @@ const Input = ({
           value={_value}
           onChange={handleInputChange}
         />
-        {_view === true && (
-          <div className="flex justify-between items-center w-[48px] h-[24px]">
-            <View />
-            <div className="rounded-xl w-[16px] h-[16px] border border-[1.3px] border-icon-2" />
-          </div>
-        )}
+        {_view === true &&
+          (_timer && _timer > 0 ? (
+            <div>
+              <Countdown minutes={10} />
+            </div>
+          ) : (
+            <div className="flex justify-between items-center w-[48px] h-[24px]">
+              <View />
+              <div className="rounded-xl w-[16px] h-[16px] border border-[1.3px] border-icon-2" />
+            </div>
+          ))}
       </div>
       {_bottomNode && (
         <p className="flex items-center font-[400] text-[12px] text-error">
