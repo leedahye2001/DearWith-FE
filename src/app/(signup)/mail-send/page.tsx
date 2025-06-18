@@ -1,7 +1,8 @@
 "use client";
 
 // import { getMailSend } from "@/apis/api";
-import InputBasic from "@/components/Input/Input";
+import Input from "@/components/Input/Input";
+import { useState } from "react";
 // import { useRouter } from "next/navigation";
 
 const Page = () => {
@@ -18,15 +19,21 @@ const Page = () => {
   //     console.error("Error fetching data:", error);
   //   }
   // };
+  const [text, setText] = useState<string>("");
+
+  const handleTextChange = (text: string) => {
+    setText(text);
+  };
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex justify-center">
       {/* <h1>디어위드에서 사용할 이메일을 입력해 주세요</h1> */}
-      <InputBasic
-        _value="ㅇㄹㅇ"
+      <Input
+        _value={text}
         _state="textbox-underline"
         _title="제목"
         _view
+        _onChange={handleTextChange}
       />
       {/* <button className="hover:cursor-pointer" onClick={fetchMailData}>
         이메일 인증 요청하기
