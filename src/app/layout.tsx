@@ -26,7 +26,7 @@ export default function RootLayout({
       <body
         className={`${mainFont.className} ${inter.className} relative m-auto min-h-[715px] h-full min-w-[360px] max-w-full bg-bg-1`}
       >
-        <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
