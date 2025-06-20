@@ -7,6 +7,7 @@ import Button from "@/components/Button/Button";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
+import Bottombar from "@/components/template/Bottombar";
 
 const Page = () => {
   const router = useRouter();
@@ -44,13 +45,17 @@ const Page = () => {
           _view
           _onChange={handleEmailSendChange}
         />
-        <Button
-          _state="main"
-          _node="이메일 인증 요청하기"
-          _buttonProps={{ className: "hover:cursor-pointer" }}
-          _onClick={fetchMailData}
-        />
       </div>
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node="이메일 인증 요청하기"
+            _buttonProps={{ className: "hover:cursor-pointer" }}
+            _onClick={fetchMailData}
+          />
+        }
+      />
     </div>
   );
 };
