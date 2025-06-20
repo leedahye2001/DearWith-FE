@@ -12,6 +12,18 @@ import Bottombar from "@/components/template/Bottombar";
 const Page = () => {
   const router = useRouter();
 
+  const [email, setEmail] = useState<string>("");
+
+  const handleEmailSendChange = (email: string) => {
+    setEmail(email);
+  };
+
+  // 이메일 유효성 검사
+  const emailErrorMessage =
+    email && !email.trim().toLowerCase().endsWith(".com")
+      ? "메일 형식이 올바르지 않습니다"
+      : "";
+
   const fetchMailData = async () => {
     try {
       await getMailSend(email);
@@ -22,11 +34,6 @@ const Page = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-  const [email, setEmail] = useState<string>("");
-
-  const handleEmailSendChange = (email: string) => {
-    setEmail(email);
   };
 
   return (
@@ -41,7 +48,7 @@ const Page = () => {
           _value={email}
           _state="textbox-underline"
           _title="이메일"
-          _bottomNode="메일 형식이 올바르지 않습니다"
+          _bottomNode={emailErrorMessage}
           _view
           _onChange={handleEmailSendChange}
         />
