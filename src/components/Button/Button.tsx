@@ -4,6 +4,7 @@ interface ButtonProps {
   _buttonProps?: React.ComponentProps<"button">;
   _node?: React.ReactNode;
   _state?: "main" | "sub" | "tag";
+  _onClick?: () => void;
 }
 
 const ButtonClasses = {
@@ -12,7 +13,7 @@ const ButtonClasses = {
   tag: "flex justify-center items-center w-[49px] h-[24px] border-[1px] border-primary rounded-[4px] font-[600] text-[12px] text-text-5 gap-1",
 };
 
-const Button = ({ _buttonProps, _node, _state }: ButtonProps) => {
+const Button = ({ _buttonProps, _node, _state, _onClick }: ButtonProps) => {
   return (
     <button
       {..._buttonProps}
@@ -20,6 +21,7 @@ const Button = ({ _buttonProps, _node, _state }: ButtonProps) => {
         _state ? ButtonClasses?.[_state] : "",
         _buttonProps?.className
       )}
+      onClick={_onClick}
     >
       {_node}
       {_state && _state == "tag" && (
