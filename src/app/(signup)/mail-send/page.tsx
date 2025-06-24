@@ -8,25 +8,27 @@ import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Bottombar from "@/components/template/Bottombar";
+import useUserStore from "@/app/stores/userStore";
 
 const Page = () => {
   const router = useRouter();
+  const { setEmail } = useUserStore();
+  const [inputEmail, setInputEmail] = useState<string>("");
 
-  const [email, setEmail] = useState<string>("");
-
-  const handleEmailSendChange = (email: string) => {
-    setEmail(email);
+  const handleEmailSendChange = (inputEmail: string) => {
+    setInputEmail(inputEmail);
   };
 
   // 이메일 유효성 검사
   const emailErrorMessage =
-    email && !email.trim().toLowerCase().endsWith(".com")
+    inputEmail && !inputEmail.trim().toLowerCase().endsWith(".com")
       ? "메일 형식이 올바르지 않습니다"
       : "";
 
   const fetchMailData = async () => {
     try {
-      await getMailSend(email);
+      await getMailSend(inputEmail);
+      setEmail(inputEmail);
       alert(
         "이메일로 코드가 전송되었습니다. 전송된 인증 코드를 아래에 입력해주세요."
       );
@@ -45,7 +47,7 @@ const Page = () => {
           이메일을 입력해 주세요
         </h1>
         <Input
-          _value={email}
+          _value={inputEmail}
           _state="textbox-underline"
           _title="이메일"
           _bottomNode={emailErrorMessage}
