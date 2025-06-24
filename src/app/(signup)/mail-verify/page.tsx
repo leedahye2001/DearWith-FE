@@ -1,17 +1,19 @@
 "use client";
 
 import { getMailVerify } from "@/apis/api";
+import useUserStore from "@/app/stores/userStore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
   const router = useRouter();
 
-  const [email, setEmail] = useState<string>("");
+  const { email } = useUserStore();
+  const [inputEmail, setInputEmail] = useState<string>("");
   const [code, setCode] = useState<string>("");
 
   const handleMailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+    setInputEmail(e.target.value);
   };
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +22,7 @@ const Page = () => {
 
   const fetchMailData = async () => {
     try {
-      await getMailVerify(email, code);
+      await getMailVerify(inputEmail, code);
       alert("인증되었습니다.");
       router.push("/mail-signup");
     } catch (error) {
@@ -32,10 +34,11 @@ const Page = () => {
     <>
       <h1>이메일 인증을 완료해 주세요</h1>
       <p>이메일</p>
+      {email}
       <input
         className="w-full border border-2"
         type="text"
-        value={email}
+        value={inputEmail}
         onChange={handleMailChange}
       />
       <p>인증코드</p>
