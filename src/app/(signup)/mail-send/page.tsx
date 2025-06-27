@@ -12,12 +12,15 @@ import useUserStore from "@/app/stores/userStore";
 
 const Page = () => {
   const router = useRouter();
+  const validateCode = localStorage.getItem("validateCode");
   const { setEmail } = useUserStore();
   const [inputEmail, setInputEmail] = useState<string>("");
 
   const handleEmailSendChange = (inputEmail: string) => {
     setInputEmail(inputEmail);
   };
+
+  console.log(validateCode);
 
   // 이메일 유효성 검사
   const emailErrorMessage =
