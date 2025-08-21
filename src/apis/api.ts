@@ -1,57 +1,36 @@
-import { BASE_URL } from "@/app/routePath";
-import axios from "axios";
+import api from "./instance";
 
 // email 인증 코드 발송
 export const getMailSend = async (email: string) => {
-  const res = await axios.post(
-    `http://${BASE_URL}/auth/signup/email/send`,
-    { email: email },
-    {
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        //   "Access-Control-Allow-Origin": "*",
-      },
-    }
-  );
-
-  console.log(res);
+  const res = await api.post("/auth/signup/email/send", { email });
   return res.data.data;
 };
 
-// email 인증코드 발송
+// email 인증코드 확인
 export const getMailVerify = async (email: string, code: string) => {
-  const res = await axios.post(
-    `http://${BASE_URL}/auth/signup/email/verify`,
-    { email: email, code: code },
-    {
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        //   "Access-Control-Allow-Origin": "*",
-      },
-    }
-  );
-
-  console.log(res);
+  const res = await api.post("/auth/signup/email/verify", { email, code });
   return res.data.data;
 };
 
-// email 최종 회원가입
+// 회원가입
 export const getMailSignUp = async (
   email: string,
   password: string,
   nickname: string
 ) => {
-  const res = await axios.post(
-    `http://${BASE_URL}/auth/signup`,
-    { email: email, password: password, nickname: nickname },
-    {
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        //   "Access-Control-Allow-Origin": "*",
-      },
-    }
-  );
-
-  console.log(res);
+  const res = await api.post("/auth/signup", { email, password, nickname });
   return res.data.data;
+};
+
+// 로그인
+export const getSignIn = async (email: string, password: string) => {
+  const res = await api.post("/auth/signin", { email, password });
+  return res.data;
+};
+
+// 메인 화면
+export const getMain = async () => {
+  const res = await api.get("/api/main", {}); // 헤더에 token 자동 추가
+  console.log(res.data);
+  return res.data;
 };

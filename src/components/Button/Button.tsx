@@ -13,7 +13,13 @@ const ButtonClasses = {
   tag: "flex justify-center items-center w-[49px] h-[24px] border-[1px] border-primary rounded-[4px] font-[600] text-[12px] text-text-5 gap-1",
 };
 
-const Button = ({ _buttonProps, _node, _state, _onClick }: ButtonProps) => {
+const Button = ({
+  _buttonProps,
+  _node,
+  _state,
+  _onClick,
+  ...rest
+}: ButtonProps) => {
   return (
     <button
       {..._buttonProps}
@@ -21,6 +27,7 @@ const Button = ({ _buttonProps, _node, _state, _onClick }: ButtonProps) => {
         _state ? ButtonClasses?.[_state] : "",
         _buttonProps?.className
       )}
+      {...rest}
       onClick={_onClick}
     >
       {_node}
