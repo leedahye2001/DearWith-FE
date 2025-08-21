@@ -5,6 +5,9 @@ import { getMain } from "@/apis/api";
 import useMainStore from "../stores/useMainStore";
 import BirthdayArtistsSection from "./components/BirthdayArtistSection";
 import EventSection from "./components/EventSection";
+import Topbar from "@/components/template/Topbar";
+import DearwithLogo from "@/svgs/DearwithLogo.svg";
+import BellDefault from "@/svgs/BellDefault.svg";
 
 export default function Home() {
   const currentMonth = new Date().toLocaleString("ko-KR", { month: "numeric" });
@@ -42,55 +45,54 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col">
-      <div className="font-pretendard">
-        <div className="w-[375px] h-[211px] bg-bg-1" />
+    <main className="flex flex-col w-full">
+      <Topbar _leftImage={<DearwithLogo />} _rightImage={<BellDefault />} />
+      {/* 배너 */}
+      <div className="w-[375px] h-[211px] bg-primary mb-[24px]" />
 
-        <div className="ml-[24px]">
-          {/* 당월 생일 아티스트 */}
-          <BirthdayArtistsSection
-            currentMonth={currentMonth}
-            birthdayArtists={birthdayArtists}
-          />
+      {/* 당월 생일 아티스트 */}
+      <BirthdayArtistsSection
+        currentMonth={currentMonth}
+        birthdayArtists={birthdayArtists}
+      />
 
-          <EventSection
-            title={
-              <>
-                <span className="text-primary">디어위드</span>
-                에서 추천하는 이벤트-!
-              </>
-            }
-            events={recommendedEvents}
-            likedIds={likedIds}
-            onToggleLike={toggleLike}
-          />
-          <EventSection
-            title={
-              <>
-                지금 가장 HOT한
-                <br /> 이벤트
-              </>
-            }
-            events={hotEvents}
-            likedIds={likedIds}
-            onToggleLike={toggleLike}
-          />
-          <EventSection
-            title={
-              <>
-                새로 등록된
-                <br />
-                이벤트
-              </>
-            }
-            events={newEvents}
-            likedIds={likedIds}
-            onToggleLike={toggleLike}
-          />
-        </div>
+      <EventSection
+        title={
+          <>
+            <span className="text-primary">디어위드</span>
+            에서 <br />
+            추천하는 이벤트-!
+          </>
+        }
+        events={recommendedEvents}
+        likedIds={likedIds}
+        onToggleLike={toggleLike}
+      />
+      <EventSection
+        title={
+          <>
+            지금 가장 HOT한
+            <br /> 이벤트
+          </>
+        }
+        events={hotEvents}
+        likedIds={likedIds}
+        onToggleLike={toggleLike}
+      />
+      <EventSection
+        title={
+          <>
+            새로 등록된
+            <br />
+            이벤트
+          </>
+        }
+        events={newEvents}
+        likedIds={likedIds}
+        onToggleLike={toggleLike}
+      />
 
-        {/* 리뷰 */}
-      </div>
+      {/* 리뷰 */}
     </main>
   );
 }

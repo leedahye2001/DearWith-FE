@@ -11,7 +11,7 @@ interface Event {
 }
 
 interface EventSectionProps {
-  title: ReactNode;  // title을 커스텀하기 위함
+  title: ReactNode; // title을 커스텀하기 위함
   events: Event[];
   likedIds: number[];
   onToggleLike: (id: number) => void;
@@ -25,8 +25,10 @@ export default function EventSection({
 }: EventSectionProps) {
   return (
     <div>
-      <h1 className="font-[700] text-text-5 text-[16px] pb-[12px]">{title}</h1>
-      <div className="flex gap-[12px]">
+      <h1 className="font-[700] text-text-5 text-[16px] pb-[12px] pl-[24px]">
+        {title}
+      </h1>
+      <div className="flex gap-[12px] overflow-x-auto scrollbar-hide touch-pan-x px-[24px]">
         {events.map((event) => (
           <EventCard
             key={event.id}

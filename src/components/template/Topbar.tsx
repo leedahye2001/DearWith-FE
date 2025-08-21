@@ -21,20 +21,21 @@ const Topbar = ({
     <div
       {..._divProps}
       className={twMerge(
-        "flex justify-between items-center px-[24px] w-[360px] h-[48px] bg-white text-text-5 font-[700]",
+        "flex justify-between items-center text-text-5 font-[700] px-[24px] h-[48px]",
         _divProps?.className
       )}
     >
-      {_leftImage && _leftImage ? (
+      {_leftImage ? (
         <div
           {..._leftDivProps}
-          className={twMerge("flex items-center w-[24px] h-[24px]")}
+          className={twMerge("flex items-center", _leftDivProps?.className)}
         >
           {_leftImage}
         </div>
       ) : (
         <div className="w-[24px] h-[24px]" />
       )}
+
       {_topNode}
       {_rightImage && _rightImage ? (
         <div

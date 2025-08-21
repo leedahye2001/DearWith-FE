@@ -24,9 +24,11 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-screen w-screen bg-white flex flex-col">
       <body
-        className={`${mainFont.className} ${inter.className} relative m-auto min-h-[715px] h-full min-w-[360px] max-w-full bg-bg-1`}
+        className={`${mainFont.className} ${inter.className} relative min-h-[812px] h-full min-w-[375px] bg-bg-1 flex justify-center`}
       >
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <div className="w-full max-w-[375px]">{children}</div>
+        </QueryProvider>
       </body>
     </html>
   );
