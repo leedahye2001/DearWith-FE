@@ -1,14 +1,51 @@
-// src/stores/authStore.ts
+// src/store/useUserStore.ts
+"use client";
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 type UserState = {
-  email: string;
-  setEmail: (email: string) => void;
+  message: string;
+  userId: string;
+  nickname: string;
+  role: string;
+  token: string;
+  refreshToken: string;
+
+  setUser: (user: Omit<UserState, "setUser" | "clearUser">) => void;
+  clearUser: () => void;
 };
 
-const useUserStore = create<UserState>((set) => ({
-  email: "",
-  setEmail: (email) => set({ email }),
-}));
+const useUserStore = create<UserState>()(
+  persist(
+    (set) => ({
+      message: "",
+      userId: "",
+      nickname: "",
+      role: "",
+      token: "",
+      refreshToken: "",
+
+      setUser: (user) => set(() => ({ ...user })),
+      // 로그아웃
+      clearUser: () =>
+        set(() => ({
+          message: "",
+          userId: "",
+          nickname: "",
+          role: "",
+          token: "",
+          refreshToken: "",
+        })),
+    }),
+    {
+      name: "auth",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        token: state.token,
+        refreshToken: state.refreshToken,
+      }),
+    }
+  )
+);
 
 export default useUserStore;
