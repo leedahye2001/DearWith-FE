@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Bottombar from "@/components/template/Bottombar";
-import useUserStore from "@/app/stores/userStore";
+// import useUserStore from "@/app/stores/userStore";
 
 const Page = () => {
   const router = useRouter();
   const validateCode = localStorage.getItem("validateCode");
-  const { setEmail } = useUserStore();
+  // const { setEmail } = useUserStore();
   const [inputEmail, setInputEmail] = useState<string>("");
 
   const handleEmailSendChange = (inputEmail: string) => {
@@ -31,7 +31,7 @@ const Page = () => {
   const fetchMailData = async () => {
     try {
       await getMailSend(inputEmail);
-      setEmail(inputEmail);
+      // setEmail(inputEmail);
       alert(
         "이메일로 코드가 전송되었습니다. 전송된 인증 코드를 아래에 입력해주세요."
       );

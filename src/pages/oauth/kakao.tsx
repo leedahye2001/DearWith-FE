@@ -6,29 +6,29 @@ import { useEffect } from "react";
 
 const Kakao = () => {
   const router = useRouter();
-  const validateCode = router.query.code as string;
+  const kakaoAccessToken = router.query.code as string;
 
   const getToken = async () => {
-    if (!validateCode) {
+    if (!kakaoAccessToken) {
       return;
     }
 
     try {
       await axios.get(
-        `http://localhost:3000/oauth/kakao?code=${validateCode}`,
+        `http://localhost:3000/oauth/kakao?code=${kakaoAccessToken}`,
         {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },
         }
       );
-      console.log(validateCode);
+      console.log(kakaoAccessToken);
       console.log("1차 카카오 응답 완료");
-      LocalStorage.setItem("validateCode", validateCode);
+      LocalStorage.setItem("kakaoAccessToken", kakaoAccessToken);
 
       const finalResponse = await axios.post(
         `http://${BASE_URL}/auth/oauth/kakao`,
-        { code: validateCode },
+        { code: kakaoAccessToken },
         {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
@@ -49,7 +49,7 @@ const Kakao = () => {
 
   useEffect(() => {
     getToken();
-  }, [validateCode]);
+  }, [kakaoAccessToken]);
 
   return (
     <>
