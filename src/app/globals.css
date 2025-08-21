@@ -3,64 +3,73 @@
 
 @layer base {
   @variant dark {
-  --color-primary: #F54129;
-  --color-secondary-1: #FFDB92;
-  --color-secondary-2: #FFEECC;
-  --color-secondary-3: #FFF5D7;
+    --color-primary: #f54129;
+    --color-secondary-1: #ffdb92;
+    --color-secondary-2: #ffeecc;
+    --color-secondary-3: #fff5d7;
 
-  --color-text-1: #FFFFFF;
-  --color-text-2: #474747;
-  --color-text-3: #757575;
-  --color-text-4: #BABABA;
-  --color-text-5: #FFFFFF;
-  --color-text-6: #F54129;
+    --color-text-1: #ffffff;
+    --color-text-2: #474747;
+    --color-text-3: #757575;
+    --color-text-4: #bababa;
+    --color-text-5: #ffffff;
+    --color-text-6: #f54129;
 
-  --color-icon-1: #FFFFFF;
-  --color-icon-2: #474747;
-  --color-icon-3: #FFFFFF;
-  --color-icon-4: #F54129;
+    --color-icon-1: #ffffff;
+    --color-icon-2: #474747;
+    --color-icon-3: #ffffff;
+    --color-icon-4: #f54129;
 
-  --color-bg-1: #1A1A1A;
+    --color-bg-1: #1a1a1a;
 
-  --color-divider-1: #474747;
-  --color-divider-2: #5E5E5E;
-  --color-divider-3: #FFFFFF;
+    --color-divider-1: #474747;
+    --color-divider-2: #5e5e5e;
+    --color-divider-3: #ffffff;
 
-  --color-success: #30D158;
-  --color-warning: #FFD60A;
-  --color-error: #F54129;
-  --color-info: #0A84FF;
+    --color-success: #30d158;
+    --color-warning: #ffd60a;
+    --color-error: #f54129;
+    --color-info: #0a84ff;
   }
 }
 
 @theme {
   --font-pretendard: Pretendard, sans-serif;
 
-  --color-primary: #F54129; 
-  --color-secondary-100: #FFDB92;
-  --color-secondary-200: #FFEECC;
-  --color-secondary-300: #FFF5D7;
+  --color-primary: #f54129;
+  --color-secondary-100: #ffdb92;
+  --color-secondary-200: #ffeecc;
+  --color-secondary-300: #fff5d7;
 
-  --color-text-1: #FFFFFF;
-  --color-text-2: #BABABA;
+  --color-text-1: #ffffff;
+  --color-text-2: #bababa;
   --color-text-3: #757575;
   --color-text-4: #474747;
   --color-text-5: #000000;
-  --color-text-6: #F54129;
+  --color-text-6: #f54129;
 
-  --color-icon-1: #FFFFFF;
-  --color-icon-2: #BABABA;
+  --color-icon-1: #ffffff;
+  --color-icon-2: #bababa;
   --color-icon-3: #000000;
-  --color-icon-4: #F54129;
+  --color-icon-4: #f54129;
 
-  --color-bg-1: #FFFFFF;
+  --color-bg-1: #ffffff;
 
-  --color-divider-1: #D1D1D1;
-  --color-divider-2: #BABABA;
+  --color-divider-1: #d1d1d1;
+  --color-divider-2: #bababa;
   --color-divider-3: #303030;
 
-  --color-success: #34C759;
-  --color-warning: #FFCC00;
-  --color-error: #F54129;
-  --color-info: #007AFF;
+  --color-success: #34c759;
+  --color-warning: #ffcc00;
+  --color-error: #f54129;
+  --color-info: #007aff;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
 }
