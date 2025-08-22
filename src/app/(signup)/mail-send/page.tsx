@@ -54,7 +54,6 @@ const Page = () => {
           _state="textbox-underline"
           _title="이메일"
           _bottomNode={emailErrorMessage}
-          _view
           _onChange={handleEmailSendChange}
         />
       </div>
