@@ -6,7 +6,8 @@ import Button from "@/components/Button/Button";
 import { useRouter } from "next/navigation";
 import Check from "@/svgs/Check.svg";
 import Bottombar from "@/components/template/Bottombar";
-import { getNicknameCheck } from "@/apis/api";
+import { getNicknameCheck, updateNickname } from "@/apis/api";
+import useUserStore from "@/app/stores/userStore";
 
 const Page = () => {
   const router = useRouter();
@@ -24,9 +25,25 @@ const Page = () => {
     ? "영문, 한글, 숫자 중 2-8자리"
     : "";
 
-  const fetchNicknameCkeckData = async () => {
+  const fetchNicknameCheckData = async () => {
     try {
-      await getNicknameCheck(inputNickname);
+      // 닉네임 중복 확인
+      const checkData = await getNicknameCheck(inputNickname);
+      if (checkData.isAvailable === false) {
+        alert("이미 사용 중인 닉네임입니다.");
+        return;
+      }
+
+      // 닉네임 업데이트
+      await updateNickname(inputNickname);
+      // console.log("닉네임 업데이트 response", updateData);
+
+      const user = useUserStore.getState();
+      useUserStore.getState().setUser({
+        ...user,
+        nickname: inputNickname,
+      });
+
       router.push("/main");
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -57,7 +74,7 @@ const Page = () => {
             _state="main"
             _node="닉네임 등록하기"
             _buttonProps={{ className: "hover:cursor-pointer" }}
-            _onClick={fetchNicknameCkeckData}
+            _onClick={fetchNicknameCheckData}
           />
         }
       />
