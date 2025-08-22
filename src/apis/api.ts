@@ -22,6 +22,20 @@ export const getMailSignUp = async (
   return res.data.data;
 };
 
+// 닉네임 중복확인
+export const getNicknameCheck = async (nickname: string) => {
+  const res = await api.get("/users/check/nickname", { params: { nickname } });
+  console.log(res.data);
+  return res.data;
+};
+
+// 닉네임 업데이트
+export const updateNickname = async (nickname: string) => {
+  const res = await api.patch("/users/me/nickname", { nickname });
+  console.log(res.data);
+  return res.data;
+};
+
 // 로그인
 export const getSignIn = async (email: string, password: string) => {
   const res = await api.post("/auth/signin", { email, password });

@@ -5,5 +5,9 @@
 import Page from "./main/page";
 
 export default function Home() {
-  return <Page />;
+  return (
+    <main>
+      <Page />
+    </main>
+  );
 }

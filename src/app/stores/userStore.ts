@@ -1,4 +1,3 @@
-// src/store/useUserStore.ts
 "use client";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -25,8 +24,11 @@ const useUserStore = create<UserState>()(
       token: "",
       refreshToken: "",
 
-      setUser: (user) => set(() => ({ ...user })),
-      // 로그아웃
+      setUser: (user) =>
+        set((state) => ({
+          ...state,
+          ...user,
+        })),
       clearUser: () =>
         set(() => ({
           message: "",
@@ -40,10 +42,6 @@ const useUserStore = create<UserState>()(
     {
       name: "auth",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        token: state.token,
-        refreshToken: state.refreshToken,
-      }),
     }
   )
 );

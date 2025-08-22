@@ -8,10 +8,12 @@ import EventSection from "./components/EventSection";
 import Topbar from "@/components/template/Topbar";
 import DearwithLogo from "@/svgs/DearwithLogo.svg";
 import BellDefault from "@/svgs/BellDefault.svg";
+// import useUserStore from "@/app/stores/userStore";
 
 export default function Home() {
   const currentMonth = new Date().toLocaleString("ko-KR", { month: "numeric" });
 
+  // const nickname = useUserStore((state) => state.nickname);
   const setMainData = useMainStore((state) => state.setMainData);
   const birthdayArtists = useMainStore((state) => state.birthdayArtists);
   const recommendedEvents = useMainStore((state) => state.recommendedEvents);
@@ -45,10 +47,15 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col w-full">
+    <div className="flex flex-col w-full justify-center">
       <Topbar _leftImage={<DearwithLogo />} _rightImage={<BellDefault />} />
       {/* 배너 */}
-      <div className="w-[375px] h-[211px] bg-primary mb-[24px]" />
+      <div className="w-full h-[211px] bg-primary mb-[24px]" />
+
+      {/* 닉네임 테스트 용 */}
+      {/* <div className="px-6 py-4 text-lg font-bold text-text-5">
+        안녕하세요, {nickname ? nickname : "???"} 님 👋
+      </div> */}
 
       {/* 당월 생일 아티스트 */}
       <BirthdayArtistsSection
@@ -93,6 +100,6 @@ export default function Home() {
       />
 
       {/* 리뷰 */}
-    </main>
+    </div>
   );
 }
