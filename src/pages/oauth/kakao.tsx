@@ -7,7 +7,6 @@ import useUserStore from "@/app/stores/userStore";
 const Kakao = () => {
   const router = useRouter();
   const kakaoCode = router.query.code as string;
-  const setToken = useUserStore((state) => state.setToken);
 
   const getToken = async () => {
     if (!kakaoCode) return;
@@ -23,10 +22,20 @@ const Kakao = () => {
         { headers: { "Content-Type": "application/json;charset=utf-8" } }
       );
       console.log("카카오 로그인 서버 응답:", finalResponse.data);
-      const { token, userId, nickname } = finalResponse.data;
+      const { message, userId, nickname, role, token, refreshToken } =
+        finalResponse.data;
 
+      const userStore = useUserStore.getState();
       if (token) {
-        setToken(token);
+        useUserStore.getState().setUser({
+          ...userStore,
+          message,
+          userId,
+          nickname,
+          role,
+          token,
+          refreshToken,
+        });
       }
 
       if (userId) {
