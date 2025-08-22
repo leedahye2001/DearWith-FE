@@ -6,7 +6,7 @@ import Input from "@/components/Input/Input";
 import KakaoLogo from "@/svgs/KakaoLogo.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import useUserStore from "../stores/userStore";
+import useUserStore from "../../stores/userStore";
 import ViewDefault from "@/svgs/ViewDefault.svg";
 import ViewOn from "@/svgs/ViewOn.svg";
 

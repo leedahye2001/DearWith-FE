@@ -10,7 +10,7 @@ const Bottombar = ({ _divProps, _bottomNode }: BottombarProps) => {
     <div
       {..._divProps}
       className={twMerge(
-        "fixed bottom-0 left-0 right-0 z-20 mx-[24px] mb-[52px]",
+        "fixed bottom-0 z-20 px-[24px] pb-[80px]",
         _divProps?.className
       )}
     >
