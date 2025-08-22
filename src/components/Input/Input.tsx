@@ -50,7 +50,7 @@ const Input = ({
       {..._containerProps}
       className={twMerge("flex flex-col", _containerProps?.className)}
     >
-      {_title && <h1 className="text-[14px] font-[600]">{_title}</h1>}
+      {_title && <h1 className="text-[14px] font-[600] pb-[6px]">{_title}</h1>}
       <div
         {..._wrapperProps}
         className={twMerge(
