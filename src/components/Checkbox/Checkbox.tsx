@@ -12,29 +12,34 @@ interface CheckboxProps {
   _value?: React.ReactNode;
   _checked?: boolean;
   _type?: "neutral1100" | "icon2";
-  _onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  _onChange?: (checked: boolean) => void;
 }
 
 const Checkbox = ({
   _inputWrapperProps,
   _inputProps,
   _value,
-  _checked,
   _id,
   _type,
+  _checked = false,
   _onChange,
 }: CheckboxProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    _onChange?.(e.target.checked);
+  };
+
   const renderUncheckedIcon = () => {
     if (_type === "neutral1100") return <CheckboxDefaultNeutral1100 />;
     if (_type === "icon2") return <CheckboxDefaultIcon2 />;
     return null;
   };
+
   return (
     <label
       {..._inputWrapperProps}
       htmlFor={_id}
       className={twMerge(
-        "flex justify-center items-end text-text-3 font-[400] text-[14px]",
+        "flex items-center gap-[11px] text-text-3 text-[14px] cursor-pointer pb-1",
         _inputWrapperProps?.className
       )}
     >
@@ -45,10 +50,11 @@ const Checkbox = ({
         type="checkbox"
         id={_id}
         checked={_checked}
-        onChange={_onChange}
+        onChange={handleChange}
       />
       {_value}
     </label>
   );
 };
+
 export default Checkbox;
