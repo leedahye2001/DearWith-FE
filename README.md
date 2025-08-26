@@ -36,5 +36,5 @@
 - **Zustand + Persisted Storage** (토큰 및 유저 정보 저장)
 
 ### 기타
-- **SVG 아이콘**: 직접 제작 SVG  
+- **SVG 아이콘**: 직접 제작 SVG
 - **버전 관리**: Git / GitHub

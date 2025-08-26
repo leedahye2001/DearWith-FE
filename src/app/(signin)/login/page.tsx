@@ -43,6 +43,10 @@ const Page = () => {
     }
   };
 
+  const handleSignup = () => {
+    router.push("/agreement");
+  };
+
   const handleKakaoLogin = () => {
     router.push(
       "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=a1c8f8ab77b2ad88da439427df5c5226&redirect_uri=http://localhost:3000/oauth/kakao"
@@ -94,7 +98,7 @@ const Page = () => {
         <p>|</p>
         <p>비밀번호 찾기</p>
         <p>|</p>
-        <p>회원가입</p>
+        <p onClick={handleSignup}>회원가입</p>
       </div>
 
       <div className="flex items-center pt-[40px] pb-[12px] w-full">

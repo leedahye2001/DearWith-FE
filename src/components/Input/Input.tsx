@@ -16,7 +16,7 @@ interface BasicInputProps {
 
 const inputWrapperClasses = {
   "textbox-basic":
-    "flex w-[327px] h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between",
+    "flex w-[327px] h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center",
   "textbox-underline":
     "flex w-[327px] h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between",
 };
@@ -67,17 +67,6 @@ const Input = ({
         />
 
         {_rightNode && <div>{_rightNode}</div>}
-        {/* {_view === true &&
-          (_timer && _timer > 0 ? (
-            <div>
-              <Countdown minutes={10} />
-            </div>
-          ) : (
-            <div className="flex justify-between items-center w-[48px] h-[24px]">
-              <ViewDefault />
-              <div className="rounded-xl w-[16px] h-[16px] border border-[1.3px] border-icon-2" />
-            </div>
-          ))} */}
       </div>
       {_bottomNode && (
         <p className="flex items-center font-[400] text-[12px] text-error pt-[4px]">

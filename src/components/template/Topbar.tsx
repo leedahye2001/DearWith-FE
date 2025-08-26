@@ -21,7 +21,7 @@ const Topbar = ({
     <div
       {..._divProps}
       className={twMerge(
-        "flex justify-between items-center text-text-5 font-[700] px-[24px] h-[48px]",
+        "flex justify-between items-center text-text-5 font-[700] px-[24px] h-[48px] pt-[54px]",
         _divProps?.className
       )}
     >

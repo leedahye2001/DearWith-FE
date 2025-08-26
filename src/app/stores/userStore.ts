@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+// 로그인 정보 저장
 type UserState = {
   message: string;
   userId: string;
@@ -45,5 +46,16 @@ const useUserStore = create<UserState>()(
     }
   )
 );
+
+// 이메일만 client 저장
+interface EmailState {
+  inputEmail: string;
+  setInputEmail: (email: string) => void;
+}
+
+export const useEmailStore = create<EmailState>((set) => ({
+  inputEmail: "",
+  setInputEmail: (email) => set({ inputEmail: email }),
+}));
 
 export default useUserStore;
