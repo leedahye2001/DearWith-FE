@@ -1,26 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEmailStore } from "@/app/stores/userStore";
 import { getMailSend } from "@/apis/api";
 import Input from "@/components/Input/Input";
 import Button from "@/components/Button/Button";
-import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Bottombar from "@/components/template/Bottombar";
-// import useUserStore from "@/app/stores/userStore";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 
 const Page = () => {
   const router = useRouter();
-  const validateCode = localStorage.getItem("validateCode");
-  // const { setEmail } = useUserStore();
-  const [inputEmail, setInputEmail] = useState<string>("");
+  const totalSteps = 6;
+  const [currentStep, setCurrentStep] = useState(2);
+
+  const inputEmail = useEmailStore((state) => state.inputEmail);
+  const setInputEmail = useEmailStore((state) => state.setInputEmail);
 
   const handleEmailSendChange = (inputEmail: string) => {
     setInputEmail(inputEmail);
   };
-
-  console.log(validateCode);
 
   // 이메일 유효성 검사
   const emailErrorMessage =
@@ -31,11 +32,8 @@ const Page = () => {
   const fetchMailData = async () => {
     try {
       await getMailSend(inputEmail);
-      // setEmail(inputEmail);
-      alert(
-        "이메일로 코드가 전송되었습니다. 전송된 인증 코드를 아래에 입력해주세요."
-      );
       router.push("/mail-verify");
+      setCurrentStep((prev) => Math.min(prev + 1, 6));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -44,11 +42,13 @@ const Page = () => {
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       <Topbar _leftImage={<Backward />} _topNode="제목" />
-      <div className="px-[24px] pt-[34px]">
-        <h1 className="font-[700] text-text-5 text-[20px] pb-[40px]">
+      <div className="px-[24px] pt-[30px]">
+        <h1 className="font-[700] text-text-5 text-[20px] pb-[20px]">
           디어위드에서 사용할 <br />
           이메일을 입력해 주세요
         </h1>
+        <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+
         <Input
           _value={inputEmail}
           _state="textbox-underline"

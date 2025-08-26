@@ -6,7 +6,7 @@ import Backward from "@/svgs/Backward.svg";
 import Button from "@/components/Button/Button";
 import Checkbox from "@/components/Checkbox/Checkbox";
 import Bottombar from "@/components/template/Bottombar";
-import ProgressBar from "@/components/ProgressBar.tsx/ProgressBar";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Topbar from "@/components/template/Topbar";
 
 const Page = () => {
