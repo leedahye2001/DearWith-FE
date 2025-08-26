@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { getMailVerify, getMailSend } from "@/apis/api"; // ✅ getMailSend import
+import { getMailVerify, getMailSend } from "@/apis/api";
 import { useEmailStore } from "@/app/stores/userStore";
 import Button from "@/components/Button/Button";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
