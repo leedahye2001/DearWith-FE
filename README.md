@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎉 Dearwith
 
-## Getting Started
 
-First, run the development server:
+**“함께 만드는 소중한 하루”**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+아이돌 생일 카페 정보 공유 플랫폼 **디어위드(Dearwith)** 클라이언트 레포지토리입니다.  
+팬들이 아이돌 생일 관련 이벤트와 카페 정보를 공유하고 소통할 수 있는 **웹 애플리케이션**입니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
+## 🌟 주요 기능
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 기능 | 설명 |
+|------|------|
+| 🎂 **아이돌 생일 정보 제공** | 당월 생일 아티스트 목록 확인 |
+| ⭐ **이벤트 추천** | 디어위드에서 추천하는 이벤트 확인 |
+| 🔥 **HOT & 신규 이벤트** | 가장 인기 있는 이벤트와 새로 등록된 이벤트 확인 |
+| 📝 **닉네임 설정 & 회원 관리** | 소셜 로그인, 닉네임 등록, 회원 정보 관리 |
+| ❤️ **좋아요 기능** | 이벤트 즐겨찾기/좋아요 |
+| 🔍 **검색 기능** | 이벤트 및 아티스트 검색 |
+| 💬 **리뷰 기능** | 실제 사용자들의 이벤트 방문 리뷰 확인 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠 기술 스택
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Frontend
+- **React.js / Next.js / TypeScript**
+- **TailwindCSS** (스타일링)
+- **Zustand** (상태 관리)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### API & 통신
+- **Axios** (HTTP 통신)
 
-## Deploy on Vercel
+### 상태 관리
+- **Zustand + Persisted Storage** (토큰 및 유저 정보 저장)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 기타
+- **SVG 아이콘**: 직접 제작 SVG  
+- **버전 관리**: Git / GitHub
