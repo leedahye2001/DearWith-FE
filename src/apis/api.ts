@@ -18,7 +18,7 @@ export const getMailSignUp = async (
   password: string,
   nickname: string
 ) => {
-  const res = await api.post("/auth/signup", { email, password, nickname });
+  const res = await api.post("/users/signup", { email, password, nickname });
   return res.data.data;
 };
 
