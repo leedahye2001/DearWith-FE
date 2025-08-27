@@ -47,7 +47,7 @@ const useUserStore = create<UserState>()(
   )
 );
 
-// 이메일만 client 저장
+// 이메일 client에 저장
 interface EmailState {
   inputEmail: string;
   setInputEmail: (email: string) => void;
@@ -56,6 +56,17 @@ interface EmailState {
 export const useEmailStore = create<EmailState>((set) => ({
   inputEmail: "",
   setInputEmail: (email) => set({ inputEmail: email }),
+}));
+
+// password client에 저장
+interface PasswordState {
+  password: string;
+  setPassword: (password: string) => void;
+}
+
+export const usePasswordStore = create<PasswordState>((set) => ({
+  password: "",
+  setPassword: (password) => set({ password: password }),
 }));
 
 export default useUserStore;
