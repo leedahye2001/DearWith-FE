@@ -69,4 +69,15 @@ export const usePasswordStore = create<PasswordState>((set) => ({
   setPassword: (password) => set({ password: password }),
 }));
 
+// nickname client에 저장
+interface nicknameState {
+  nickname: string;
+  setNickname: (password: string) => void;
+}
+
+export const useNicknameStore = create<nicknameState>((set) => ({
+  nickname: "",
+  setNickname: (nickname) => set({ nickname: nickname }),
+}));
+
 export default useUserStore;
