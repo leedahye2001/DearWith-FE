@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import Check from "@/svgs/Check.svg";
 import Bottombar from "@/components/template/Bottombar";
 import { getMailSignUp, getNicknameCheck } from "@/apis/api";
-import { useEmailStore, usePasswordStore } from "@/app/stores/userStore";
+import {
+  useEmailStore,
+  useNicknameStore,
+  usePasswordStore,
+} from "@/app/stores/userStore";
 import Backward from "@/svgs/Backward.svg";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Topbar from "@/components/template/Topbar";
@@ -21,6 +25,8 @@ const Page = () => {
   const inputEmail = useEmailStore((state) => state.inputEmail);
   const password = usePasswordStore((state) => state.password);
   const [inputNickname, setInputNickname] = useState<string>("");
+
+  const setNickname = useNicknameStore((state) => state.setNickname);
 
   // 닉네임 에러 메시지를 state로 관리
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
@@ -50,6 +56,9 @@ const Page = () => {
       }
 
       await getMailSignUp(inputEmail, password, inputNickname);
+
+      setNickname(inputNickname);
+
       setCurrentStep((prev) => Math.min(prev + 1, 6));
       router.push("/signup-complete");
     } catch (error) {
