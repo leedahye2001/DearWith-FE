@@ -8,10 +8,12 @@ import Check from "@/svgs/Check.svg";
 import Bottombar from "@/components/template/Bottombar";
 import { getNicknameCheck, updateNickname } from "@/apis/api";
 import useUserStore from "@/app/stores/userStore";
+import Popup from "@/components/Popup/Popup";
 
 const Page = () => {
   const router = useRouter();
   const [inputNickname, setInputNickname] = useState<string>("");
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleNicknameChange = (inputNickname: string) => {
     setInputNickname(inputNickname);
@@ -44,7 +46,7 @@ const Page = () => {
         nickname: inputNickname,
       });
 
-      router.push("/main");
+      setShowPopup(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -78,6 +80,26 @@ const Page = () => {
           />
         }
       />
+      {showPopup && (
+        <Popup
+          _titleNode={
+            <div>
+              반가워요! 👋
+              <br />
+              지금 디어위드에서
+              <br /> 진행 중인 이벤트를 확인해 보세요.
+            </div>
+          }
+          _buttonNode={
+            <Button
+              _state="main"
+              _node="시작하기"
+              _buttonProps={{ className: "hover:cursor-pointer" }}
+              _onClick={() => router.push("/main")}
+            />
+          }
+        />
+      )}
     </div>
   );
 };
