@@ -1,10 +1,20 @@
 "use client";
 
-// import Page from "../app/(signup)/mail-send/page";
-// import Page from "./login/page";
-import Page from "./main/page";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Page from "./loading/page";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push("/login");
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
     <main>
       <Page />
