@@ -6,6 +6,7 @@ import Twitter from "@/svgs/Twitter.svg";
 import Clock from "@/svgs/Clock.svg";
 import Location from "@/svgs/Location.svg";
 import Place from "@/svgs/Place.svg";
+import KakaoMap from "./components/KakaoMap";
 
 const Page = () => {
   return (
@@ -126,6 +127,14 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+      <div className="p-[24px]">
+        <h3 className="flex justify-start items-center w-full font-[700] text-[16px] text-text-5 mb-[12px]">
+          위치
+        </h3>
+        <KakaoMap address="서울특별시 마포구 와우산로 29바길 10" />
+      </div>
+
       <div className="p-[24px]">
         <div className="flex justify-between w-full items-center mb-[16px]">
           <h3 className="flex items-center font-[700] text-[16px] text-text-5">
