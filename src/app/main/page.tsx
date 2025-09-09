@@ -8,6 +8,8 @@ import EventSection from "./components/EventSection";
 import Topbar from "@/components/template/Topbar";
 import DearwithLogo from "@/svgs/DearwithLogo.svg";
 import BellDefault from "@/svgs/BellDefault.svg";
+import { Carousel } from "@/components/Carousel/Carousel";
+import { modalCarouselImageJson } from "@/data/modalCarouselImageJson";
 // import useUserStore from "@/app/stores/userStore";
 
 export default function Home() {
@@ -49,13 +51,9 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full justify-center">
       <Topbar _leftImage={<DearwithLogo />} _rightImage={<BellDefault />} />
-      {/* 배너 */}
-      <div className="w-full h-[211px] bg-primary mb-[24px]" />
 
-      {/* 닉네임 테스트 용 */}
-      {/* <div className="px-6 py-4 text-lg font-bold text-text-5">
-        안녕하세요, {nickname ? nickname : "???"} 님 👋
-      </div> */}
+      {/* 캐러셀 */}
+      <Carousel modalCarouselImageJson={modalCarouselImageJson} />
 
       {/* 당월 생일 아티스트 */}
       <BirthdayArtistsSection
