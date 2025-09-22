@@ -22,14 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-screen w-screen bg-white">
+    <html lang="ko" className="w-screen h-screen bg-bg-1">
       <body
-        className={`${mainFont.className} ${inter.className} relative h-full min-h-full min-w-[375px] bg-bg-1`}
+        className={`${mainFont.className} ${inter.className} relative min-h-full min-w-[375px] w-full bg-bg-1`}
       >
         <QueryProvider>
-          <div className="flex w-full items-center justify-center">
-            {children}
-          </div>
+          <div className="w-full max-w-[375px] mx-auto">{children}</div>
         </QueryProvider>
       </body>
     </html>
