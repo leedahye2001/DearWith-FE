@@ -23,7 +23,7 @@ const inputWrapperClasses = {
 
 const inputClasses = {
   common:
-    "flex items-center justify-center text-[14px] font-[400] text-text-3 min-w-[200px] outline-none h-[20px]",
+    "flex items-center justify-center text-[14px] font-[400] text-text-3 min-w-[244px] outline-none h-[20px]",
 };
 
 const Input = ({
