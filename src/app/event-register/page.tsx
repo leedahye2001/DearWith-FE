@@ -1,17 +1,62 @@
 "use client";
 
+import { getRoadName } from "@/apis/api";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Reference from "@/svgs/Reference.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Place {
+  id: string;
+  place_name: string;
+  address_name: string;
+}
 
 const Page = () => {
   const [inputTwitter, setInputTwitter] = useState<string>("");
+  const [inputRoadName, setInputRoadName] = useState<string>("");
+  const [results, setResults] = useState<Place[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   const handleEmailSendChange = (inputTwitter: string) => {
     setInputTwitter(inputTwitter);
+  };
+
+  const handleRoadNameChange = (value: string) => {
+    setInputRoadName(value);
+  };
+
+  const fetchData = async (keyword: string) => {
+    try {
+      const data = await getRoadName(keyword);
+      setResults(data);
+    } catch (e) {
+      console.error(e);
+      setResults([]);
+    }
+  };
+
+  useEffect(() => {
+    if (!inputRoadName.trim()) {
+      setResults([]);
+      return;
+    }
+
+    if (selectedPlace) return;
+
+    const timer = setTimeout(() => {
+      fetchData(inputRoadName);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputRoadName, selectedPlace]);
+
+  const handleSelect = (place: Place) => {
+    setSelectedPlace(place);
+    setInputRoadName(place.address_name);
+    setResults([]);
   };
 
   return (
@@ -28,7 +73,7 @@ const Page = () => {
             </h3>
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <div className="flex items-center gap-[2px] mb-[6px]">
               <p className="text-text-5 text-[14px] font-[600]">주최자 여부</p>
               <Reference />
@@ -52,7 +97,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               주최자 트위터 계정
             </p>
@@ -65,7 +110,7 @@ const Page = () => {
             />
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[48px]">
+          <div className="flex flex-col justify-center items-start mb-[48px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               트위터 링크 (예시)
             </p>
@@ -87,7 +132,7 @@ const Page = () => {
             </h3>
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               아티스트 명
             </p>
@@ -100,7 +145,7 @@ const Page = () => {
             />
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이벤트 명
             </p>
@@ -113,7 +158,7 @@ const Page = () => {
             />
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이벤트 기간
             </p>
@@ -126,31 +171,58 @@ const Page = () => {
             />
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px] relative w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">장소</p>
             <Input
-              _value={inputTwitter}
+              _value={inputRoadName}
               _state="textbox-basic"
               _bottomNode={""}
-              _onChange={handleEmailSendChange}
+              _onChange={handleRoadNameChange}
               _wrapperProps={{}}
             />
+            {results.length > 0 && (
+              <ul className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20">
+                {results.map((place, index) => (
+                  <li
+                    key={place.id || `${place.place_name}-${index}`}
+                    className="px-4 py-2 hover:bg-primary hover:text-white cursor-pointer transition-colors duration-150"
+                    onClick={() => handleSelect(place)}
+                  >
+                    <p className="font-semibold text-gray-800">
+                      {place.place_name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {place.address_name}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               카페 명
             </p>
             <Input
-              _value={inputTwitter}
+              _value={
+                selectedPlace ? `${selectedPlace.place_name}` : inputRoadName
+              }
               _state="textbox-basic"
-              _bottomNode={""}
-              _onChange={handleEmailSendChange}
-              _wrapperProps={{}}
+              _onChange={handleRoadNameChange}
+              _wrapperProps={{
+                className: `${
+                  selectedPlace ? "bg-gray-200 pointer-events-none" : ""
+                }`,
+              }}
+              _inputProps={{
+                readOnly: !!selectedPlace,
+                className: "w-full",
+              }}
             />
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이미지
             </p>
@@ -172,7 +244,7 @@ const Page = () => {
             </h3>
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               기본 특전
             </p>
@@ -194,7 +266,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               선착 특전
             </p>
@@ -216,7 +288,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justity-center items-start mb-[60px]">
+          <div className="flex flex-col justify-center items-start mb-[60px]">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               럭키드로우 특전
             </p>
