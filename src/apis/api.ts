@@ -48,3 +48,10 @@ export const getMain = async () => {
   console.log(res.data);
   return res.data;
 };
+
+// 장소 (도로명 주소)
+export const getRoadName = async (roadName: string) => {
+  const res = await api.get(`/api/places/search?query=${roadName}`);
+  console.log(res.data);
+  return res.data;
+};
