@@ -55,3 +55,10 @@ export const getRoadName = async (roadName: string) => {
   console.log(res.data);
   return res.data;
 };
+
+// 아티스트 검색 (이벤트 등록페이지)
+export const getArtist = async (artist: string) => {
+  const res = await api.get(`/api/artists?query=${artist}`);
+  console.log(res.data.content);
+  return res.data.content;
+};
