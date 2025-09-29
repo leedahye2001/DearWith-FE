@@ -57,8 +57,6 @@ const Kakao = () => {
   useEffect(() => {
     getToken();
   }, [kakaoCode]);
-
-  return <div>카카오 로그인 진행 중입니다...</div>;
 };
 
 export default Kakao;

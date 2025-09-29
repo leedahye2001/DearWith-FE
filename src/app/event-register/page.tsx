@@ -1,12 +1,15 @@
 "use client";
 
-import { getRoadName } from "@/apis/api";
+import { getArtist, getRoadName } from "@/apis/api";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Reference from "@/svgs/Reference.svg";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "@/app/routePath";
+import Image from "next/image";
 
 interface Place {
   id: string;
@@ -14,8 +17,21 @@ interface Place {
   address_name: string;
 }
 
+interface Artist {
+  id: string;
+  nameKr: string;
+  groupName: string;
+  imageUrl: string;
+}
+
 const Page = () => {
+  const router = useRouter();
   const [inputTwitter, setInputTwitter] = useState<string>("");
+
+  const [inputArtist, setInputArtist] = useState<string>("");
+  const [artistResults, setArtistResults] = useState<Artist[]>([]);
+  const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
+
   const [inputRoadName, setInputRoadName] = useState<string>("");
   const [results, setResults] = useState<Place[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -24,6 +40,42 @@ const Page = () => {
     setInputTwitter(inputTwitter);
   };
 
+  // 등록된 아티스트 검색
+  const handleArtistChange = (value: string) => {
+    setInputArtist(value);
+  };
+  const fetchArtistData = async (keyword: string) => {
+    try {
+      const data = await getArtist(keyword);
+      setArtistResults(data);
+    } catch (e) {
+      console.error(e);
+      setArtistResults([]);
+    }
+  };
+
+  useEffect(() => {
+    if (!inputArtist.trim()) {
+      setArtistResults([]);
+      return;
+    }
+
+    if (selectedArtist) return;
+
+    const timer = setTimeout(() => {
+      fetchArtistData(inputArtist);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputArtist, selectedArtist]);
+
+  const handleArtistSelect = (artist: Artist) => {
+    setSelectedArtist(artist);
+    setInputArtist(artist.nameKr);
+    setArtistResults([]);
+  };
+
+  // 장소 검색
   const handleRoadNameChange = (value: string) => {
     setInputRoadName(value);
   };
@@ -57,6 +109,10 @@ const Page = () => {
     setSelectedPlace(place);
     setInputRoadName(place.address_name);
     setResults([]);
+  };
+
+  const handleXLogin = () => {
+    router.push(`http://${BASE_URL}/oauth2/x/authorize`);
   };
 
   return (
@@ -101,6 +157,21 @@ const Page = () => {
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               주최자 트위터 계정
             </p>
+            <Button
+              _state="main"
+              _node={
+                <div className="flex justify-between items-center p-[10px]">
+                  <span className="text-white text-[14px] font-[600]">
+                    X 인증
+                  </span>
+                  <div className="w-[18px]" />
+                </div>
+              }
+              _buttonProps={{
+                className: "hover:cursor-pointer bg-[#191919] text-[#191919]",
+              }}
+              _onClick={handleXLogin}
+            />
             <Input
               _value={inputTwitter}
               _state="textbox-basic"
@@ -132,17 +203,39 @@ const Page = () => {
             </h3>
           </div>
 
-          <div className="flex flex-col justify-center items-start mb-[16px]">
+          <div className="flex flex-col justify-center items-start mb-[16px] relative">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               아티스트 명
             </p>
             <Input
-              _value={inputTwitter}
+              _value={inputArtist}
               _state="textbox-basic"
               _bottomNode={""}
-              _onChange={handleEmailSendChange}
+              _onChange={handleArtistChange}
               _wrapperProps={{}}
             />
+            {artistResults.length > 0 && (
+              <ul className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20">
+                {artistResults.map((artist, index) => (
+                  <li
+                    key={artist.id || `${artist.nameKr}-${index}`}
+                    className="px-4 py-2 hover:bg-primary hover:text-white cursor-pointer transition-colors duration-150 flex justify-start items-center gap-2"
+                    onClick={() => handleArtistSelect(artist)}
+                  >
+                    <Image
+                      src={artist.imageUrl}
+                      alt={artist.imageUrl}
+                      width={40}
+                      height={40}
+                      className="w-[24px] h-[24px] object-cover rounded-full"
+                    />
+                    <p className="font-semibold text-gray-800">
+                      {artist.nameKr} ({artist.groupName})
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="flex flex-col justify-center items-start mb-[16px]">
