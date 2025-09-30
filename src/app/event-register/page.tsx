@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "@/app/routePath";
 import Image from "next/image";
+import { useXAuthStore } from "../stores/useXAuthStore";
 
 interface Place {
   id: string;
@@ -26,7 +27,7 @@ interface Artist {
 
 const Page = () => {
   const router = useRouter();
-  const [inputTwitter, setInputTwitter] = useState<string>("");
+  const { handle, isVerified } = useXAuthStore();
 
   const [inputArtist, setInputArtist] = useState<string>("");
   const [artistResults, setArtistResults] = useState<Artist[]>([]);
@@ -36,7 +37,13 @@ const Page = () => {
   const [results, setResults] = useState<Place[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
-  const handleEmailSendChange = (inputTwitter: string) => {
+  const [inputTwitter, setInputTwitter] = useState<string>("");
+
+  useEffect(() => {
+    if (handle) setInputTwitter(handle);
+  }, [handle]);
+
+  const handleTwitterAccountChange = (inputTwitter: string) => {
     setInputTwitter(inputTwitter);
   };
 
@@ -157,26 +164,30 @@ const Page = () => {
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               주최자 트위터 계정
             </p>
-            <Button
-              _state="main"
-              _node={
-                <div className="flex justify-between items-center p-[10px]">
-                  <span className="text-white text-[14px] font-[600]">
-                    X 인증
-                  </span>
-                  <div className="w-[18px]" />
-                </div>
-              }
-              _buttonProps={{
-                className: "hover:cursor-pointer bg-[#191919] text-[#191919]",
-              }}
-              _onClick={handleXLogin}
-            />
+
             <Input
               _value={inputTwitter}
               _state="textbox-basic"
-              _bottomNode={""}
-              _onChange={handleEmailSendChange}
+              _bottomNode={isVerified ? "인증되었습니다" : ""}
+              _rightNode={
+                <Button
+                  _state="main"
+                  _node={
+                    <div className="flex justify-between items-center p-[10px] w-full">
+                      <span className="text-white text-[14px] font-[600]">
+                        X 인증
+                      </span>
+                      <div className="w-[18px]" />
+                    </div>
+                  }
+                  _buttonProps={{
+                    className:
+                      "hover:cursor-pointer bg-[#191919] text-[#191919]",
+                  }}
+                  _onClick={handleXLogin}
+                />
+              }
+              _onChange={handleTwitterAccountChange}
               _wrapperProps={{}}
             />
           </div>
@@ -189,7 +200,6 @@ const Page = () => {
               _value={inputTwitter}
               _state="textbox-basic"
               _bottomNode={""}
-              _onChange={handleEmailSendChange}
               _wrapperProps={{}}
             />
           </div>
@@ -246,7 +256,6 @@ const Page = () => {
               _value={inputTwitter}
               _state="textbox-basic"
               _bottomNode={""}
-              _onChange={handleEmailSendChange}
               _wrapperProps={{}}
             />
           </div>
@@ -259,7 +268,6 @@ const Page = () => {
               _value={inputTwitter}
               _state="textbox-basic"
               _bottomNode={""}
-              _onChange={handleEmailSendChange}
               _wrapperProps={{}}
             />
           </div>
@@ -323,7 +331,6 @@ const Page = () => {
               _value={inputTwitter}
               _state="textbox-basic"
               _bottomNode={""}
-              _onChange={handleEmailSendChange}
               _wrapperProps={{}}
             />
           </div>
@@ -346,7 +353,6 @@ const Page = () => {
                 _value={inputTwitter}
                 _state="textbox-basic"
                 _bottomNode={""}
-                _onChange={handleEmailSendChange}
                 _wrapperProps={{ className: `w-[244px]` }}
               />
               <Button
@@ -368,7 +374,6 @@ const Page = () => {
                 _value={inputTwitter}
                 _state="textbox-basic"
                 _bottomNode={""}
-                _onChange={handleEmailSendChange}
                 _wrapperProps={{ className: `w-[244px]` }}
               />
               <Button
@@ -390,7 +395,6 @@ const Page = () => {
                 _value={inputTwitter}
                 _state="textbox-basic"
                 _bottomNode={""}
-                _onChange={handleEmailSendChange}
                 _wrapperProps={{ className: `w-[244px]` }}
               />
               <Button

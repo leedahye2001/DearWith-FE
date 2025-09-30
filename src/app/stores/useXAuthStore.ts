@@ -1,14 +1,23 @@
 import { create } from "zustand";
 
-interface AuthState {
-  twitterHandle?: string;
-  twitterId?: string;
-  twitterName?: string;
-  setAuth: (auth: Partial<AuthState>) => void;
+interface XAuthState {
+  result: string;
+  ticket: string;
+  handle: string;
+  isVerified: boolean;
+  setAuthData: (data: {
+    result: string;
+    ticket: string;
+    handle: string;
+  }) => void;
+  setVerified: (verified: boolean) => void;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
-  setAuth: (auth) => set(auth),
+export const useXAuthStore = create<XAuthState>((set) => ({
+  result: "",
+  ticket: "",
+  handle: "",
+  isVerified: false,
+  setAuthData: (data) => set({ ...data }),
+  setVerified: (verified) => set({ isVerified: verified }),
 }));
-
-export default useAuthStore;
