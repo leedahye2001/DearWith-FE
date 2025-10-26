@@ -11,7 +11,7 @@ interface Event {
 }
 
 interface EventSectionProps {
-  title: ReactNode; // title을 커스텀하기 위함
+  title: ReactNode;
   events: Event[];
   likedIds: number[];
   onToggleLike: (id: number) => void;

@@ -3,6 +3,7 @@
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import useKakaoLoader from "./useKakaoLoader";
 import { useEffect, useState } from "react";
+import Location from "@/svgs/Location.svg";
 
 interface KakaoMapProps {
   address?: string;
@@ -44,26 +45,32 @@ const KakaoMapPage = ({ address, lat, lng }: KakaoMapProps) => {
     const kakaoLink = `https://map.kakao.com/link/map/${address ?? ""},${
       coordinates.lat
     },${coordinates.lng}`;
-    navigator.clipboard.writeText(kakaoLink).then(() => {
-      window.open(kakaoLink, "_blank");
-    });
+
+    navigator.clipboard
+      .writeText(kakaoLink)
+      .then(() => {
+        alert("카카오맵 링크가 클립보드에 복사되었습니다.");
+      })
+      .catch(() => {
+        alert("복사에 실패했습니다. 다시 시도해주세요.");
+      });
   };
 
   return (
     <Map
       id="map"
       center={coordinates}
-      className="w-full h-[200px] relative border-divider-1 border-[0.8px]"
+      className="w-full h-[200px] relative border-divider-1 border-[0.8px] rounded-[4px]"
       level={3}
     >
       <MapMarker position={coordinates} />
       <div className="flex justify-between w-full items-center py-[8px]">
-        <p className="flex items-center font-[600] text-[14px] text-text-5">
-          📍 {address}
+        <p className="flex items-center font-[600] text-[14px] text-text-5 gap-[4px]">
+          <Location stroke="#F54129" /> {address}
         </p>
 
         <p
-          className="text-[12px] font-[400] text-text-3"
+          className="text-[12px] font-[400] text-text-3 hover:cursor-pointer"
           onClick={handleCopyLink}
         >
           복사

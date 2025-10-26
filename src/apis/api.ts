@@ -69,3 +69,10 @@ export const getGroup = async (group: string) => {
   console.log(res.data.content);
   return res.data.content;
 };
+
+// 메인 화면
+export const getEventDetail = async (id: string) => {
+  const res = await api.get(`/api/events/${id}`, {}); // 헤더에 token 자동 추가
+  console.log(res.data);
+  return res.data;
+};
