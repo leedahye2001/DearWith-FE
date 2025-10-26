@@ -62,3 +62,10 @@ export const getArtist = async (artist: string) => {
   console.log(res.data.content);
   return res.data.content;
 };
+
+// 아티스트 그룹 검색 (아티스트 등록페이지)
+export const getGroup = async (group: string) => {
+  const res = await api.get(`/api/groups?query=${group}`);
+  console.log(res.data.content);
+  return res.data.content;
+};

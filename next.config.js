@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
 
   images: {
-    domains: ["static.wikia.nocookie.net"],
+    domains: ["dearwith-prod-assets-apne2.s3.ap-northeast-2.amazonaws.com"],
   },
 
   webpack(config) {
