@@ -70,9 +70,16 @@ export const getGroup = async (group: string) => {
   return res.data.content;
 };
 
-// 메인 화면
+// 이벤트 상세페이지
 export const getEventDetail = async (id: string) => {
-  const res = await api.get(`/api/events/${id}`, {}); // 헤더에 token 자동 추가
+  const res = await api.get(`/api/events/${id}`, {});
   console.log(res.data);
   return res.data;
+};
+
+// 이벤트 북마크(찜) 조회페이지
+export const getEventBookmark = async (filterState: string) => {
+  const res = await api.get(`/api/events/bookmark?state=${filterState}`, {});
+  console.log(res.data.content);
+  return res.data.content;
 };

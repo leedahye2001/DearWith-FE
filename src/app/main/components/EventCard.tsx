@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
+import api from "@/apis/instance";
 
 interface EventCardProps {
   id: number;
@@ -28,6 +29,24 @@ export default function EventCard({
     router.push(`/event-detail/${id}`);
   };
 
+  const handleLikeToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // 카드 클릭과 구분
+    onToggleLike(id); // UI 상태 즉시 반영
+
+    try {
+      if (!isLiked) {
+        // 좋아요 (북마크) 추가
+        const res = await api.post(`/api/events/${id}/bookmark`);
+        console.log(res.data);
+      } else {
+        // 좋아요 취소
+        await api.delete(`/api/events/${id}/bookmark`);
+      }
+    } catch (error) {
+      console.error("북마크 토글 실패:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center mb-[38px]">
       {/* 이미지, 좋아요 토글 */}
@@ -35,17 +54,14 @@ export default function EventCard({
         {/* ❤️ 좋아요 버튼 */}
         <div
           className="absolute top-[7px] right-[7.88px] z-10 cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation(); // 🧠 카드 클릭과 구분
-            onToggleLike(id);
-          }}
+          onClick={handleLikeToggle}
         >
           {isLiked ? <HeartFill /> : <HeartDefault />}
         </div>
 
         {/* 🖼️ 이벤트 이미지 클릭 시 상세 이동 */}
         <Image
-          src={imageUrl}
+          src={imageUrl || "/images/carousel/생카1.png"}
           alt={title}
           width={180}
           height={257}

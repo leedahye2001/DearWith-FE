@@ -5,9 +5,10 @@ import { ReactNode } from "react";
 
 interface Event {
   id: number;
-  imageUrl: string;
+  imageUrl: string | null;
   title: string;
   artistNamesKr: string[];
+  bookmarked?: boolean;
 }
 
 interface EventSectionProps {
@@ -33,7 +34,7 @@ export default function EventSection({
           <EventCard
             key={event.id}
             id={event.id}
-            imageUrl={event.imageUrl}
+            imageUrl={event.imageUrl || "/images/carousel/생카1.png"}
             title={event.title}
             artistNamesKr={event.artistNamesKr}
             isLiked={likedIds.includes(event.id)}

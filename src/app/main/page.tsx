@@ -30,6 +30,10 @@ export default function Home() {
     );
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const fetchData = async () => {
     try {
       const data = await getMain();
@@ -39,14 +43,22 @@ export default function Home() {
         hotEvents: data.hotEvents,
         newEvents: data.newEvents,
       });
+      
+      const allEvents = [
+        ...data.recommendedEvents,
+        ...data.hotEvents,
+        ...data.newEvents,
+      ];
+
+      const initialLiked = allEvents
+        .filter((event) => event.bookmarked)
+        .map((event) => event.id);
+
+      setLikedIds(initialLiked);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <div className="flex flex-col w-full justify-center">
