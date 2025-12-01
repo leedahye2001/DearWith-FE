@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js",
-    "src/app/event-detail/components/KakaoMap.js"
+    "src/app/(events)/event-detail/components/KakaoMap.js"
   ],
   "exclude": ["node_modules"]
 }

@@ -57,7 +57,7 @@ export const Carousel: React.FC<CarouselProps> = ({
   };
 
   return (
-    <div className="relative bg-primary w-full h-[211px] mb-[24px] flex justify-center items-center overflow-hidden">
+    <div className="relative bg-grey-light w-full h-[211px] mb-[24px] flex justify-center items-center overflow-hidden">
       <div
         className="w-full h-full flex items-center"
         style={getCarouselStyles()}

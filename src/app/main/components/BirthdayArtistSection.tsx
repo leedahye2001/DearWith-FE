@@ -4,7 +4,12 @@ import BirthdayArtistCard from "./BirthdayArtistCard";
 
 interface BirthdayArtistsSectionProps {
   currentMonth: number | string;
-  birthdayArtists: { id: number; nameKo: string; imageUrl: string }[];
+  birthdayArtists: {
+    id: number;
+    nameKr: string;
+    imageUrl: string;
+    birthDate: string;
+  }[];
 }
 
 export default function BirthdayArtistsSection({
@@ -21,7 +26,8 @@ export default function BirthdayArtistsSection({
           <BirthdayArtistCard
             key={artist.id}
             id={artist.id}
-            nameKo={artist.nameKo}
+            nameKr={artist.nameKr}
+            birthDate={artist.birthDate}
             imageUrl={artist.imageUrl}
           />
         ))}

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Page from "./loading/page";
+import Spinner from "@/components/Spinner/Spinner";
 
 export default function Home() {
   const router = useRouter();
@@ -10,14 +10,14 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push("/login");
-    }, 2000);
+    });
 
     return () => clearTimeout(timer);
   }, [router]);
 
   return (
     <main>
-      <Page />
+      <Spinner />
     </main>
   );
 }

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import useUserStore from "@/app/stores/userStore";
+import Spinner from "@/components/Spinner/Spinner";
 
 const Kakao = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const Kakao = () => {
         { code: kakaoCode },
         { headers: { "Content-Type": "application/json;charset=utf-8" } }
       );
-      console.log("카카오 로그인 서버 응답:", finalResponse.data);
+
       const { message, userId, nickname, role, token, refreshToken } =
         finalResponse.data;
 
@@ -40,10 +41,8 @@ const Kakao = () => {
 
       if (userId) {
         if (nickname === null) {
-          // 신규회원: 닉네임 없음 → 닉네임 설정 페이지
           router.push("/set-nickname");
         } else {
-          // 기존회원: 닉네임 존재 → 메인 페이지
           router.push("/main");
         }
       } else {
@@ -57,6 +56,8 @@ const Kakao = () => {
   useEffect(() => {
     getToken();
   }, [kakaoCode]);
+
+  return <Spinner />;
 };
 
 export default Kakao;

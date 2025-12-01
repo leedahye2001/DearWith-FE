@@ -1,20 +1,124 @@
 "use client";
 
-import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Search from "@/svgs/Search.svg";
-import Cancel from "@/svgs/CancelSmall.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  deletRecentAllSearch,
+  deletRecentSearch,
+  getArtistGroupSearch,
+  getEventSearch,
+  getHotArtistGroupTopTwenty,
+  getRecentSearch,
+} from "@/apis/api";
+import ArtistSearchResult from "./components/ArtistSearchResult";
+import EventSearchResult from "./components/EventSearchResult";
+import RealTimeSearch from "./components/RealTimeSearch";
+import { EventCardProps } from "../main/components/MainEventCard";
+import useCurrentHourLabel from "@/utils/useCurrentHourLabel";
+
+export interface Artist {
+  id: number;
+  nameKr: string;
+  nameEn: string;
+  birthDate: string;
+  imageUrl: string;
+}
+
+export interface EventProps {
+  id: number;
+  title: string;
+  imageUrl: string | null;
+  artistNamesEn?: string[];
+  artistNamesKr?: string[];
+  startDate: string;
+  endDate: string;
+  bookmarkCount?: number;
+  bookmarked?: boolean;
+}
+
+export type EventState = "LATEST" | "UPCOMING" | "POPULAR";
 
 const Page = () => {
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState("");
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [hotArtists, setHotArtists] = useState<Artist[]>([]);
+  const [events, setEvents] = useState<EventCardProps[]>([]);
+  const [category, setCategory] = useState<"ARTIST" | "EVENT">("ARTIST");
+  const [filterState, setFilterState] = useState<EventState>("LATEST");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const hourLabel = useCurrentHourLabel();
 
-  const handleSearchChange = (search: string) => {
-    setSearch(search);
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        const res = await getRecentSearch();
+        setRecentSearches(res || []);
+      } catch (err) {
+        console.error("최근 검색어 불러오기 실패:", err);
+      }
+    };
+
+    fetchRecent();
+  }, []);
+
+  const handleDeleteRecent = async (query: string) => {
+    try {
+      await deletRecentSearch(query);
+      setRecentSearches((prev) => prev.filter((q) => q !== query));
+    } catch (err) {
+      console.error("최근 검색어 삭제 실패:", err);
+    }
+  };
+
+  const handleDeleteRecentAll = async () => {
+    try {
+      await deletRecentAllSearch();
+      setRecentSearches([]);
+    } catch (err) {
+      console.error("최근 검색어 전체 삭제 실패:", err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchHotArtists = async () => {
+      try {
+        const res = await getHotArtistGroupTopTwenty();
+        setHotArtists(res || []);
+      } catch (err) {
+        console.error("실시간 검색어 불러오기 실패:", err);
+      }
+    };
+
+    fetchHotArtists();
+  }, []);
+
+  // 검색 동작
+  const handleSearchChange = async (value: string) => {
+    setSearch(value);
+
+    if (!value) {
+      setArtists([]);
+      setEvents([]);
+      return;
+    }
+
+    try {
+      if (category === "ARTIST") {
+        const res = await getArtistGroupSearch(value);
+        setArtists(res || []);
+      } else {
+        const res = await getEventSearch(value);
+        setEvents(res || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center mt-[54px] gap-[12px]">
+      {/* 검색창 */}
       <Input
         _value={search}
         _state="textbox-basic"
@@ -27,132 +131,113 @@ const Page = () => {
         _containerProps={{ className: `py-[10px]` }}
       />
 
-      <div className="flex flex-col gap-[20px] mt-[12px]">
-        <div className="flex justify-between w-full items-center">
-          <h3 className="flex items-center font-[700] text-[16px] text-text-5">
-            최근 검색어
-          </h3>
-          <p className="text-[12px] font-[400] text-text-5">모두 지우기</p>
-        </div>
-        <div className="flex flex-wrap w-[327px] gap-[8px]">
-          <Button _state="tag" _node="데이식스" _rightNode={<Cancel />} />
-          <Button _state="tag" _node="데이식스" _rightNode={<Cancel />} />
-          <Button _state="tag" _node="데" _rightNode={<Cancel />} />
-          <Button _state="tag" _node="식스" _rightNode={<Cancel />} />
-          <Button _state="tag" _node="데이식스" _rightNode={<Cancel />} />
-          <Button _state="tag" _node="데이식스" _rightNode={<Cancel />} />
-          <Button _state="tag" _node="데이식스" _rightNode={<Cancel />} />
-        </div>
+      {/* 카테고리 탭 */}
+      <div className="flex w-full mt-[12px] border-b border-divider-1">
+        <button
+          className={`flex-1 py-[8px] text-center font-[600] ${
+            category === "ARTIST"
+              ? "border-b-[2px] border-primary text-text-5"
+              : "text-text-3"
+          }`}
+          onClick={() => setCategory("ARTIST")}
+        >
+          아티스트
+        </button>
+        <button
+          className={`flex-1 py-[8px] text-center font-[600] ${
+            category === "EVENT"
+              ? "border-b-[2px] border-primary text-text-5"
+              : "text-text-3"
+          }`}
+          onClick={() => setCategory("EVENT")}
+        >
+          이벤트
+        </button>
       </div>
 
-      <div className="flex flex-col gap-[20px] my-[12px]">
-        <div className="flex justify-between w-full items-center">
-          <h3 className="flex items-center font-[700] text-[16px] text-text-5">
-            실시간 검색어
+      <div className="flex flex-col gap-[20px] mt-[12px] px-[24px] w-full">
+        <div className="flex justify-between">
+          <h3 className="font-[700] text-[16px] text-text-5 mb-[8px]">
+            최근 검색어
           </h3>
-          <p className="text-[12px] font-[400] text-text-3">22:00 기준</p>
+          <button
+            onClick={handleDeleteRecentAll}
+            className="text-[12px] font-[500] text-text-3 hover:cursor-pointer"
+          >
+            모두 지우기
+          </button>
         </div>
 
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-6">
-            1위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
+        {recentSearches.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-2">
+            {recentSearches.map((query) => (
+              <div
+                key={query}
+                className="flex items-center bg-bg-2 text-text-5 rounded-full px-3 py-1 text-[12px] gap-1"
+              >
+                <span>{query}</span>
+                <button
+                  onClick={() => handleDeleteRecent(query)}
+                  className="text-text-3 font-bold"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-6">
-            2위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-6">
-            3위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            4위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            5위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            6위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            7위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            8위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            9위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
-        <div className="flex justify-start w-full items-center">
-          <p className="flex justify-start w-[40px] items-center font-[600] text-[14px] text-text-5">
-            10위
-          </p>
-          <div className="w-[40px] h-[40px] bg-divider-1 rounded-[50px]" />
-          <div className="flex flex-col ml-[8px]">
-            <p className="text-[14px] font-[600] text-text-5">데이식스</p>
-            <p className="text-[12px] font-[400] text-text-4">2015.09.07</p>
-          </div>
-        </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-[12px] overflow-y-auto w-full mb-[20px]">
+        {search ? (
+          category === "ARTIST" ? (
+            artists.length === 0 ? (
+              <p className="text-[12px] text-text-3 flex justify-center items-center h-[500px]">
+                검색 결과가 없습니다.
+              </p>
+            ) : (
+              artists
+                .slice(0, 10)
+                .map((artist) => (
+                  <ArtistSearchResult key={artist.id} artist={artist} />
+                ))
+            )
+          ) : events.length === 0 ? (
+            <p className="text-[12px] text-text-3 flex justify-center items-center h-[500px]">
+              검색 결과가 없습니다.
+            </p>
+          ) : (
+            events
+              .slice(0, 10)
+              .map((event) => (
+                <EventSearchResult
+                  key={event.id}
+                  events={events.slice(0, 10)}
+                  filterState={filterState}
+                  setFilterState={setFilterState}
+                  artistName={search}
+                />
+              ))
+          )
+        ) : (
+          <>
+            <div className="flex justify-between">
+              <h3 className="font-[700] text-[16px] text-text-5 mb-[8px]">
+                실시간 검색어
+              </h3>
+              <p className="text-[12px] font-[500] text-text-3">{hourLabel}</p>
+            </div>
+
+            {hotArtists.map((artist, index) => (
+              <RealTimeSearch
+                key={`${artist.id}-${index}`}
+                artist={artist}
+                index={index}
+                showRank
+              />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );

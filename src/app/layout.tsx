@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/lib/QueryProvider";
+import Navbar from "@/components/template/Navbar";
+import AlertModalClient from "@/components/AlertModal/AlertModalClient";
 
 const mainFont = localFont({
   src: "../../public/font/Pretendard-Medium.otf",
@@ -22,12 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="w-screen h-screen bg-bg-1">
+    <html lang="ko" className="bg-bg-1">
       <body
-        className={`${mainFont.className} ${inter.className} relative min-h-full min-w-[375px] w-full bg-bg-1`}
+        className={`${mainFont.className} ${inter.className} relative bg-bg-1`}
       >
         <QueryProvider>
-          <div className="w-full max-w-[375px] mx-auto">{children}</div>
+          <div className="w-full max-w-[375px] mx-auto pb-[80px]">
+            {children}
+          </div>
+          <AlertModalClient />
+          <Navbar />
         </QueryProvider>
       </body>
     </html>

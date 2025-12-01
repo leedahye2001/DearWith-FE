@@ -54,6 +54,7 @@
   --color-icon-4: #f54129;
 
   --color-bg-1: #ffffff;
+  --color-bg-2: #e8e8e8;
 
   --color-divider-1: #d1d1d1;
   --color-divider-2: #bababa;
@@ -63,6 +64,18 @@
   --color-warning: #ffcc00;
   --color-error: #f54129;
   --color-info: #007aff;
+
+  --color-red-500: #f54129;
+  --color-red-400: #fd725c;
+  --color-red-300: #ff9892;
+  --color-red-100: #ffd5ce;
+  --color-red-200: #ffbeb5;
+
+  --color-beige-100: #fff3d7;
+  --color-beige-200: #ffeecc;
+  --color-beige-300: #ffe5af;
+  --color-beige-400: #ffdb92;
+  --color-beige-500: #ffd175;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 type Artist = {
   id: number;
-  nameKo: string;
+  nameKr: string;
   nameEn: string;
   imageUrl: string;
   groupName: string | null;
@@ -23,11 +23,26 @@ type Event = {
   bookmarked: boolean;
 };
 
+type Review = {
+  reviewId: number;
+  eventId: number;
+  title: string;
+  content: string;
+  images: {
+    id: number;
+    variants: {
+      name: string;
+      url: string;
+    }[];
+  }[];
+};
+
 type MainState = {
   birthdayArtists: Artist[];
   recommendedEvents: Event[];
   hotEvents: Event[];
   newEvents: Event[];
+  latestReviews: Review[];
   setMainData: (data: Partial<MainState>) => void;
 };
 
@@ -36,6 +51,7 @@ const useMainStore = create<MainState>((set) => ({
   recommendedEvents: [],
   hotEvents: [],
   newEvents: [],
+  latestReviews: [],
   setMainData: (data) => set(() => ({ ...data })),
 }));
 

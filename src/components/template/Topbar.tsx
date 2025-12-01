@@ -28,7 +28,10 @@ const Topbar = ({
       {_leftImage ? (
         <div
           {..._leftDivProps}
-          className={twMerge("flex items-center", _leftDivProps?.className)}
+          className={twMerge(
+            "flex items-center hover:cursor-pointer",
+            _leftDivProps?.className
+          )}
         >
           {_leftImage}
         </div>

@@ -4,7 +4,7 @@ import { BASE_URL } from "@/app/routePath";
 
 // 기본 인스턴스 생성
 const api = axios.create({
-  baseURL: `http://${BASE_URL}`,
+  baseURL: `https://${BASE_URL}`,
   headers: {
     "Content-Type": "application/json;charset=utf-8",
   },

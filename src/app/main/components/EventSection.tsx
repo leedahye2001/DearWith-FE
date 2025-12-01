@@ -1,6 +1,6 @@
 "use client";
 
-import EventCard from "./EventCard";
+import EventCard from "./MainEventCard";
 import { ReactNode } from "react";
 
 interface Event {

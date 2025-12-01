@@ -1,0 +1,95 @@
+"use client";
+
+import { useRouter, usePathname } from "next/navigation";
+import Home from "@/svgs/Home.svg";
+import Search from "@/svgs/Search.svg";
+import HeartDefault from "@/svgs/HeartDefault.svg";
+import Person from "@/svgs/Person.svg";
+
+export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname() ?? "";
+
+  return (
+    <div
+      className="
+        fixed bottom-0 left-1/2 -translate-x-1/2
+        w-[375px] h-[80px]
+        bg-white
+        flex justify-between items-center
+        px-[24px] z-50
+        shadow-[0_-32px_32px_rgba(0,0,0,0.03)]
+      "
+    >
+      {/* 홈 */}
+      <button
+        className="flex flex-col justify-center items-center"
+        onClick={() => router.push("/main")}
+      >
+        <Home
+          className={pathname === "/main" ? "text-primary" : "text-icon-2"}
+        />
+        <span
+          className={`text-[12px] mt-[4px] ${
+            pathname === "/main" ? "text-primary" : "text-icon-2"
+          }`}
+        >
+          홈
+        </span>
+      </button>
+
+      {/* 검색 */}
+      <button
+        className="flex flex-col justify-center items-center"
+        onClick={() => router.push("/search")}
+      >
+        <Search
+          className={pathname === "/search" ? "text-primary" : "text-icon-2"}
+        />
+        <span
+          className={`text-[12px] mt-[4px] ${
+            pathname === "/search" ? "text-primary" : "text-icon-2"
+          }`}
+        >
+          검색
+        </span>
+      </button>
+
+      {/* 찜 */}
+      <button
+        className="flex flex-col justify-center items-center"
+        onClick={() => router.push("/event-bookmark")}
+      >
+        <HeartDefault
+          className={
+            pathname === "/event-bookmark" ? "text-primary" : "text-icon-2"
+          }
+        />
+        <span
+          className={`text-[12px] mt-[4px] ${
+            pathname === "/event-bookmark" ? "text-primary" : "text-icon-2"
+          }`}
+        >
+          찜
+        </span>
+      </button>
+
+      {/* 마이 */}
+      <button
+        className="flex flex-col justify-center items-center"
+        onClick={() => router.push("/my-page")}
+      >
+        <Person
+          className={pathname === "/my-page" ? "text-primary" : "text-icon-2"}
+        />
+        <span
+          className={`text-[12px] mt-[4px] ${
+            pathname === "/my-page" ? "text-primary" : "text-icon-2"
+          }`}
+        >
+          마이
+        </span>
+      </button>
+    </div>
+  );
+}
