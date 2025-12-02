@@ -230,3 +230,38 @@ export const deletRecentSearch = async (query: string) => {
 export const deletRecentAllSearch = async () => {
   return await api.delete(`/api/search/recent/delete/all`);
 };
+
+//최근 검색어 조회
+export const getMyPage = async () => {
+  const res = await api.get(`/api/my`);
+  console.log(res.data);
+  return res.data;
+};
+
+// 서비스 알림 설정 변경
+export const updateServiceNotifications = async (enabled: boolean) => {
+  const res = await api.patch("/api/my/notifications/service", { enabled });
+  console.log(res.data);
+  return res.data;
+};
+
+// 이벤트 알림 설정 변경
+export const updateEventNotifications = async (enabled: boolean) => {
+  const res = await api.patch("/api/my/notifications/event", { enabled });
+  console.log(res.data);
+  return res.data;
+};
+
+// 내가 등록한 아티스트 조회
+export const getMyRegisterArtist = async () => {
+  const res = await api.get(`/api/my/artists`);
+  console.log(res.data);
+  return res.data;
+};
+
+// 내가 등록한 아티스트 조회
+export const getMyEventArtist = async () => {
+  const res = await api.get(`/api/my/events`);
+  console.log(res.data);
+  return res.data;
+};
