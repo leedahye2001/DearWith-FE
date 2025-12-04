@@ -35,11 +35,18 @@ const Page = () => {
 
   const fetchSignInData = async () => {
     try {
-      const data = await getSignIn(inputEmail, password);
-      useUserStore.getState().setUser(data);
+      const response = await getSignIn(inputEmail, password);
+
+      useUserStore.getState().setUser({
+        message: response.message ?? "",
+        userId: response.userId,
+        nickname: response.nickname,
+        role: response.role,
+      });
+
       router.push("/main");
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("로그인 실패:", error);
     }
   };
 

@@ -42,7 +42,7 @@ export default function EventReviewWrite({
 }: EventReviewWriteProps) {
   const isEdit = Boolean(reviewData);
 
-  const { openModal } = useModalStore();
+  const { openAlert } = useModalStore();
   const [content, setContent] = useState(reviewData?.content || "");
   const [tags, setTags] = useState<string[]>(reviewData?.tags || []);
   const [newTag, setNewTag] = useState("");
@@ -56,7 +56,7 @@ export default function EventReviewWrite({
   const handleAddTag = () => {
     if (!newTag.trim()) return;
     if (tags.length >= 4)
-      return openModal("태그는 최대 4개까지 추가할 수 있습니다.");
+      return openAlert("태그는 최대 4개까지 추가할 수 있습니다.");
     setTags([...tags, newTag.trim()]);
     setNewTag("");
   };
@@ -72,7 +72,7 @@ export default function EventReviewWrite({
     const selected = Array.from(files);
     const totalCount = imageFiles.length + selected.length;
     if (totalCount > 2)
-      return openModal("최대 2개의 이미지만 등록할 수 있어요.");
+      return openAlert("최대 2개의 이미지만 등록할 수 있어요.");
     const newPreviews = selected.map((file) => URL.createObjectURL(file));
     setImageFiles((prev) => [...prev, ...selected]);
     setImagePreviews((prev) => [...prev, ...newPreviews]);
@@ -114,7 +114,7 @@ export default function EventReviewWrite({
 
   // ✅ 수정/등록 처리
   const handleSubmit = async () => {
-    if (!content.trim()) return openModal("내용을 입력해주세요.");
+    if (!content.trim()) return openAlert("내용을 입력해주세요.");
     try {
       setIsSubmitting(true);
       const uploadedImages = await uploadImages(imageFiles);
@@ -128,7 +128,7 @@ export default function EventReviewWrite({
             displayOrder: img.displayOrder,
           })),
         });
-        openModal("리뷰 수정이 완료되었어요.");
+        openAlert("리뷰 수정이 완료되었어요.");
       } else {
         await api.post(`/api/events/${eventId}/reviews`, {
           content,
@@ -138,7 +138,7 @@ export default function EventReviewWrite({
             displayOrder: img.displayOrder,
           })),
         });
-        openModal("리뷰 등룍이 완료되었어요.");
+        openAlert("리뷰 등룍이 완료되었어요.");
       }
 
       onClose?.();

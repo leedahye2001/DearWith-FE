@@ -23,7 +23,7 @@ interface Group {
 const Page = () => {
   const router = useRouter();
   const handleBackRouter = () => router.back();
-  const { openModal } = useModalStore();
+  const { openAlert } = useModalStore();
 
   const [artistName, setArtistName] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -39,7 +39,7 @@ const Page = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 🧩 이미지 업로드
+  // 이미지 업로드
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
@@ -154,10 +154,10 @@ const Page = () => {
       };
       await api.post("/api/artists", body);
 
-      openModal("아티스트 등록이 완료되었어요.");
+      openAlert("아티스트 등록이 완료되었어요.");
     } catch (error) {
       console.error(error);
-      openModal("등록 중 오류가 발생했습니다.");
+      openAlert("등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }

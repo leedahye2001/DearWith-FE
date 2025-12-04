@@ -20,14 +20,14 @@ interface ArtistItem {
 
 export default function MyRegisterArtistPage() {
   const [data, setData] = useState<ArtistItem[]>([]);
-  const { openModal } = useModalStore();
+  const { openAlert } = useModalStore();
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await getMyRegisterArtist();
 
       if (!res || res.totalElements === 0) {
-        openModal("등록한 아티스트가 없습니다.");
+        openAlert("등록한 아티스트가 없습니다.");
         return;
       }
 
@@ -35,7 +35,7 @@ export default function MyRegisterArtistPage() {
     };
 
     fetchData();
-  }, [openModal]);
+  }, [openAlert]);
 
   return (
     <>

@@ -8,8 +8,6 @@ type UserState = {
   userId: string;
   nickname: string;
   role: string;
-  token: string;
-  refreshToken: string;
 
   setUser: (user: Omit<UserState, "setUser" | "clearUser">) => void;
   clearUser: () => void;
@@ -22,8 +20,6 @@ const useUserStore = create<UserState>()(
       userId: "",
       nickname: "",
       role: "",
-      token: "",
-      refreshToken: "",
 
       setUser: (user) =>
         set((state) => ({
@@ -36,8 +32,6 @@ const useUserStore = create<UserState>()(
           userId: "",
           nickname: "",
           role: "",
-          token: "",
-          refreshToken: "",
         })),
     }),
     {

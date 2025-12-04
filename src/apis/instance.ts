@@ -1,30 +1,80 @@
-import axios from "axios";
-import useUserStore from "@/app/stores/userStore";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { BASE_URL } from "@/app/routePath";
+import Router from "next/router";
+import useUserStore from "@/app/stores/userStore";
+import { getRefreshToken } from "./api";
 
-// 기본 인스턴스 생성
+interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+interface FailedRequestQueueItem {
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}
+
+let isRefreshing = false;
+let failedQueue: FailedRequestQueueItem[] = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((queued) => {
+    if (error) queued.reject(error);
+    else queued.resolve(token);
+  });
+
+  failedQueue = [];
+};
+
 const api = axios.create({
   baseURL: `https://${BASE_URL}`,
-  headers: {
-    "Content-Type": "application/json;charset=utf-8",
-  },
+  withCredentials: true,
+  headers: { "Content-Type": "application/json;charset=utf-8" },
 });
 
-// 요청 인터셉터: token 자동 추가
-api.interceptors.request.use(async (config) => {
-  let token = useUserStore.getState().token;
+api.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryAxiosRequestConfig;
 
-  if (!token) {
-    await new Promise((res) => setTimeout(res, 100));
-    token = useUserStore.getState().token;
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    if (error.response.status === 401) {
+      originalRequest._retry = true;
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => api(originalRequest));
+      }
+
+      isRefreshing = true;
+
+      try {
+        await getRefreshToken();
+
+        processQueue(null);
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.error("Refresh Token Failed:", refreshError);
+
+        processQueue(refreshError, null);
+
+        useUserStore.getState().clearUser();
+        Router.push("/login");
+
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
   }
-
-  if (token) {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
+);
 
 export default api;

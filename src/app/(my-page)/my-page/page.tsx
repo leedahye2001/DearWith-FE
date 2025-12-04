@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Forward from "@/svgs/Forward.svg";
 import Settings from "@/svgs/Settings.svg";
-import ProfileBasic from "@/svgs/ProfileBasic.svg"; 
+import ProfileBasic from "@/svgs/ProfileBasic.svg";
 import {
   getMyPage,
+  postLogout,
   updateEventNotifications,
   updateServiceNotifications,
 } from "@/apis/api";
@@ -14,6 +15,7 @@ import ToggleItem from "../components/ToggleItem";
 import useModalStore from "@/app/stores/useModalStore";
 import Spinner from "@/components/Spinner/Spinner";
 import { useRouter } from "next/navigation";
+import useUserStore from "@/app/stores/userStore";
 
 export interface MenuItemProps {
   text: string;
@@ -38,7 +40,9 @@ export interface MyPageResponse {
 }
 
 const Page = () => {
+  const router = useRouter();
   const [data, setData] = useState<MyPageResponse | null>(null);
+  const { openConfirm } = useModalStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +56,14 @@ const Page = () => {
   if (!data) return <Spinner />;
 
   const { profile, stats, notifications } = data;
+
+  const handleLogout = () => {
+    openConfirm("로그아웃 하시겠습니까?", async () => {
+      await postLogout();
+      useUserStore.getState().clearUser();
+      router.push("/login");
+    });
+  };
 
   return (
     <div className="px-[24px] mt-[54px] pb-10">
@@ -129,7 +141,10 @@ const Page = () => {
       <Divider />
       <MenuItem text="개인정보처리방침" />
       <Divider />
-      <button className="mt-6 text-left text-[14px] font-[400] text-text-5">
+      <button
+        className="mt-6 text-left text-[14px] font-[400] text-text-5 hover:cursor-pointer"
+        onClick={handleLogout}
+      >
         로그아웃
       </button>
     </div>
@@ -168,14 +183,14 @@ function Section({
 }
 
 function MenuItem({ text, path, hasData }: MenuItemProps) {
-  const { openModal } = useModalStore();
+  const { openAlert } = useModalStore();
   const router = useRouter();
 
   const handleClick = () => {
     if (hasData === false) {
-      if (text.includes("이벤트")) openModal("등록한 이벤트가 없습니다.");
+      if (text.includes("이벤트")) openAlert("등록한 이벤트가 없습니다.");
       else if (text.includes("아티스트"))
-        openModal("등록한 아티스트가 없습니다.");
+        openAlert("등록한 아티스트가 없습니다.");
       return;
     }
 

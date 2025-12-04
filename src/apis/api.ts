@@ -39,7 +39,37 @@ export const updateNickname = async (nickname: string) => {
 
 // 로그인
 export const getSignIn = async (email: string, password: string) => {
-  const res = await api.post("/auth/signin", { email, password });
+  const res = await api.post(
+    "/auth/signin",
+    { email, password },
+    {
+      withCredentials: true,
+    }
+  );
+  return res.data;
+};
+
+// 토큰 재발급
+export const getRefreshToken = async () => {
+  const res = await api.post(
+    "/auth/refresh",
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+  return res.data;
+};
+
+// 로그아웃
+export const postLogout = async () => {
+  const res = await api.post(
+    "/auth/logout",
+    {},
+    {
+      withCredentials: true,
+    }
+  );
   return res.data;
 };
 

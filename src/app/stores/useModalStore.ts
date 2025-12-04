@@ -1,18 +1,31 @@
-// stores/modalStore.ts
 import { create } from "zustand";
 
-interface ModalState {
-  message: string | null;
+type ModalType = "alert" | "confirm";
+
+type ModalState = {
   showModal: boolean;
-  openModal: (msg: string) => void;
+  message: string;
+  type: ModalType;
+  onConfirm?: () => void;
+  openAlert: (message: string) => void;
+  openConfirm: (message: string, onConfirm: () => void) => void;
   closeModal: () => void;
-}
+};
 
 const useModalStore = create<ModalState>((set) => ({
-  message: null,
   showModal: false,
-  openModal: (msg: string) => set({ message: msg, showModal: true }),
-  closeModal: () => set({ message: null, showModal: false }),
+  message: "",
+  type: "alert",
+  onConfirm: undefined,
+
+  openAlert: (message) =>
+    set({ showModal: true, message, type: "alert", onConfirm: undefined }),
+
+  openConfirm: (message, onConfirm) =>
+    set({ showModal: true, message, type: "confirm", onConfirm }),
+
+  closeModal: () =>
+    set({ showModal: false, message: "", onConfirm: undefined }),
 }));
 
 export default useModalStore;

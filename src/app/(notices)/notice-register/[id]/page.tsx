@@ -11,23 +11,23 @@ const NoticeRegisterPage = () => {
   const [content, setContent] = useState("");
   const router = useRouter();
 
-  const { openModal } = useModalStore();
+  const { openAlert } = useModalStore();
   const params = useParams<{ id: string }>();
   const eventId = params?.id ?? "";
 
   const maxLength = 300;
 
   const handleSubmit = async () => {
-    if (!title.trim()) return openModal("제목을 입력해주세요.");
-    if (!content.trim()) return openModal("내용을 입력해주세요.");
+    if (!title.trim()) return openAlert("제목을 입력해주세요.");
+    if (!content.trim()) return openAlert("내용을 입력해주세요.");
 
     try {
       await eventNoticePost(title, content, eventId);
-      openModal("공지 등록이 완료되었습니다.");
+      openAlert("공지 등록이 완료되었습니다.");
       router.back();
     } catch (e) {
       console.error(e);
-      openModal("제목과 내용을 입력해주세요.");
+      openAlert("제목과 내용을 입력해주세요.");
     }
   };
 

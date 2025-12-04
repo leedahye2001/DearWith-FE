@@ -7,25 +7,27 @@ import { BASE_URL } from "@/app/routePath";
 
 const Kakao = () => {
   const router = useRouter();
-  const kakaoCode = router.query.code as string;
+  const kakaoCode = router.query.code as string; // 카카오에서 받은 code
   const [loading] = useState(true);
 
   const handleSocial = async () => {
     if (!kakaoCode) return;
 
     try {
-      // 먼저 로그인 시도
+      // 1️⃣ 먼저 로그인 시도
       const loginResponse = await axios.post(
         `https://${BASE_URL}/auth/oauth/kakao`,
         { code: kakaoCode },
-        { headers: { "Content-Type": "application/json;charset=utf-8" } }
+        {
+          withCredentials: true,
+        }
       );
 
       const { needSignUp, signIn } = loginResponse.data;
 
       if (needSignUp) {
-        // 신규 회원 -> 닉네임 필요
-        const nickname = prompt("닉네임을 입력해주세요.");
+        // 2️⃣ 신규 회원 -> 닉네임 필요
+        const nickname = prompt("닉네임을 입력해주세요."); // 간단하게 prompt로 받음
         if (!nickname) return;
 
         const signupResponse = await axios.post(
@@ -44,12 +46,10 @@ const Kakao = () => {
           { headers: { "Content-Type": "application/json;charset=utf-8" } }
         );
 
-        const { token, refreshToken, userId, role } = signupResponse.data;
+        const { userId, role } = signupResponse.data;
 
         useUserStore.getState().setUser({
           ...useUserStore.getState(),
-          token,
-          refreshToken,
           userId,
           nickname,
           role,
@@ -57,13 +57,11 @@ const Kakao = () => {
 
         router.push("/main");
       } else {
-        // 기존 회원 -> 바로 로그인 처리
-        const { token, refreshToken, userId, nickname, role } = signIn;
+        // 3️⃣ 기존 회원 -> 바로 로그인 처리
+        const { userId, nickname, role } = signIn;
 
         useUserStore.getState().setUser({
           ...useUserStore.getState(),
-          token,
-          refreshToken,
           userId,
           nickname,
           role,
