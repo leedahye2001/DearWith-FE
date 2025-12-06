@@ -5,8 +5,9 @@ import Image from "next/image";
 import Forward from "@/svgs/Forward.svg";
 import { getMyRegisterArtist } from "@/apis/api";
 import useModalStore from "@/app/stores/useModalStore";
-import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
+import Backward from "@/svgs/Backward.svg";
+import { useRouter } from "next/navigation";
 
 interface ArtistItem {
   id: number;
@@ -19,6 +20,8 @@ interface ArtistItem {
 }
 
 export default function MyRegisterArtistPage() {
+  const router = useRouter();
+  const handleBackRouter = () => router.back();
   const [data, setData] = useState<ArtistItem[]>([]);
   const { openAlert } = useModalStore();
 
@@ -39,7 +42,11 @@ export default function MyRegisterArtistPage() {
 
   return (
     <>
-      <Topbar _topNode="내가 등록한 아티스트" />
+      <Topbar
+        _leftImage={<Backward onClick={handleBackRouter} />}
+        _topNode="내가 등록한 아티스트"
+      />
+
       {/* 왼쪽 텍스트 + 이미지 */}
       {data.length > 0 && (
         <div className="flex flex-col gap-[2px]">
@@ -53,12 +60,10 @@ export default function MyRegisterArtistPage() {
 }
 
 function ArtistCard({ id, nameKr, imageUrl, createdAt }: ArtistItem) {
-  const router = useRouter();
-
   return (
     <div
       className="flex justify-between items-center py-[16px] border-b border-divider-1 cursor-pointer"
-      onClick={() => router.push(`/artist/${id}`)}
+      key={id}
     >
       <div className="flex items-center gap-4">
         <div className="w-[52px] h-[52px] rounded-full overflow-hidden bg-gray-200">

@@ -125,7 +125,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
           content: post.content,
           tags: post.tags,
           images: post.images.map((img, idx) => ({
-            url: img.variants[0]?.url || "",
+            url: img.variants[0]?.url,
             displayOrder: idx,
           })),
         } as ReviewDetail;
@@ -160,20 +160,31 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             .reverse()
             .slice(0, 4)
             .map((img, idx, arr) => {
-              const url = img.variants[0]?.url || "";
+              const url =
+                Array.isArray(img?.variants) && img.variants.length > 0
+                  ? img.variants[0].url
+                  : null;
+
               const isLast = idx === arr.length - 1 && photoReviews.length > 4;
               return (
                 <div
                   key={idx}
                   className="relative w-[78px] h-[78px] rounded-[4px] overflow-hidden flex-shrink-0"
                 >
-                  <Image
-                    width={78}
-                    height={78}
-                    src={url}
-                    alt={url}
-                    className="w-full h-full object-cover"
-                  />
+                  {url ? (
+                    <Image
+                      width={78}
+                      height={78}
+                      src={url}
+                      alt={url}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                      <p className="text-text-3 text-[12px]">이미지 없음</p>
+                    </div>
+                  )}
+
                   {isLast && (
                     <div
                       onClick={() =>
@@ -203,12 +214,18 @@ const EventReview = ({ eventId }: EventReviewProps) => {
               {/* 프로필 */}
               <div className="flex w-full">
                 <div className="w-[36px] h-[36px] rounded-[50px] bg-divider-1 overflow-hidden">
-                  {post.profileImageUrl && (
+                  {post.profileImageUrl ? (
                     <Image
                       src={post.profileImageUrl}
                       alt={post.nickname}
+                      width={36}
+                      height={36}
                       className="w-full h-full object-cover"
                     />
+                  ) : (
+                    <div className="w-[36px] h-[36px] flex items-center justify-center bg-gray-200 rounded-full text-[10px] text-text-3">
+                      No Img
+                    </div>
                   )}
                 </div>
                 <div className="flex flex-col pl-[12px]">
@@ -270,19 +287,25 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             {post.images.length > 0 && (
               <div className="flex justify-between my-[12px] ">
                 {post.images.map((img, idx) => {
-                  const url = img.variants[0]?.url || "";
+                  const url = img.variants[0]?.url;
                   return (
                     <div
                       key={idx}
                       className="w-[160.5px] h-[160.5px] rounded-[4px] flex-shrink-0 overflow-hidden"
                     >
-                      <Image
-                        width={160.5}
-                        height={160.5}
-                        src={url}
-                        alt={url}
-                        className="w-full h-full object-cover"
-                      />
+                      {url ? (
+                        <Image
+                          width={160.5}
+                          height={160.5}
+                          src={url}
+                          alt={url}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <p className="text-text-3 text-[12px]">이미지 없음</p>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

@@ -20,7 +20,7 @@ import useUserStore from "@/app/stores/userStore";
 export interface MenuItemProps {
   text: string;
   path?: string;
-  hasData?: boolean;
+  hasData: boolean;
 }
 
 export interface MyPageResponse {
@@ -132,14 +132,14 @@ const Page = () => {
       <Divider />
 
       <Section title="고객지원">
-        <MenuItem text="공지사항" />
-        <MenuItem text="1:1 문의하기" />
-        <MenuItem text="비밀번호 변경" />
-        <MenuItem text="앱 버전 v0.10" />
+        <MenuItem text="공지사항" hasData />
+        <MenuItem text="1:1 문의하기" hasData />
+        <MenuItem text="비밀번호 변경" hasData />
+        <MenuItem text="앱 버전 v0.10" hasData />
       </Section>
 
       <Divider />
-      <MenuItem text="개인정보처리방침" />
+      <MenuItem text="개인정보처리방침" hasData />
       <Divider />
       <button
         className="mt-6 text-left text-[14px] font-[400] text-text-5 hover:cursor-pointer"
@@ -188,13 +188,17 @@ function MenuItem({ text, path, hasData }: MenuItemProps) {
 
   const handleClick = () => {
     if (hasData === false) {
-      if (text.includes("이벤트")) openAlert("등록한 이벤트가 없습니다.");
-      else if (text.includes("아티스트"))
+      if (text.includes("이벤트")) {
+        openAlert("등록한 이벤트가 없습니다.");
+      } else if (text.includes("아티스트")) {
         openAlert("등록한 아티스트가 없습니다.");
+      }
       return;
     }
 
-    if (path) router.push(path);
+    if (path) {
+      router.push(path);
+    }
   };
 
   return (

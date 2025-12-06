@@ -56,14 +56,23 @@ export default function MainEventCard({
           {isLiked ? <HeartFill /> : <HeartDefault />}
         </div>
 
-        <Image
-          src={imageUrl}
-          alt={title}
-          width={180}
-          height={252}
-          className="w-full h-full cursor-pointer object-cover"
-          onClick={handleCardClick}
-        />
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={title}
+            width={180}
+            height={252}
+            className="w-full h-full cursor-pointer object-cover"
+            onClick={handleCardClick}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center bg-gray-200 cursor-pointer"
+            onClick={handleCardClick}
+          >
+            <p className="text-text-3 text-[12px]">이미지 없음</p>
+          </div>
+        )}
       </div>
 
       <div

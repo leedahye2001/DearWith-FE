@@ -11,6 +11,7 @@ import Twitter from "@/svgs/Twitter.svg";
 import Clock from "@/svgs/Clock.svg";
 import Place from "@/svgs/Place.svg";
 import Calendar from "@/svgs/Calendar.svg";
+import XVerification from "@/svgs/XVerification.svg";
 import KakaoMap from "../components/KakaoMap";
 import Image from "next/image";
 import {
@@ -133,7 +134,6 @@ export default function EventDetailPage() {
   }, [event]);
 
   const isOpenNow = (openTime: string, closeTime: string) => {
-    // 둘 다 null이면 기본값
     const _open = openTime ?? "10:00";
     const _close = closeTime ?? "23:00";
 
@@ -214,12 +214,18 @@ export default function EventDetailPage() {
           {/* 이벤트 대표 이미지 */}
           {event.images?.length > 0 && (
             <div className="relative w-full h-[536px]">
-              <Image
-                src={event.images[0].imageUrl}
-                alt={event.title}
-                fill
-                className="object-cover"
-              />
+              {event.images[0].imageUrl ? (
+                <Image
+                  src={event.images[0].imageUrl}
+                  alt={event.title}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 cursor-pointer">
+                  <p className="text-text-3 text-[12px]">이미지 없음</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -249,9 +255,10 @@ export default function EventDetailPage() {
               <p className="font-[600] text-[14px] text-text-5 pl-[8px]">
                 주최
               </p>
-              <p className="font-[400] text-[12px] text-text-4 underline pl-[16px]">
+              <p className="font-[400] text-[12px] text-text-4 underline pl-[16px] pr-[4px]">
                 @{event.organizer?.xHandle}
               </p>
+              {event.organizer?.verified === true ? <XVerification /> : ""}
             </div>
 
             <div className="flex items-center justify-start mb-[4px]">
@@ -280,7 +287,7 @@ export default function EventDetailPage() {
                     영업 중
                   </span>
                 ) : (
-                  <span className="px-[6px] py-[2px] text-[12px] rounded-md bg-bg-2 text-text-3 font-semibold">
+                  <span className="px-[6px] py-[2px] text-[12px] rounded-md text-text-3 font-semibold">
                     영업 종료
                   </span>
                 )}

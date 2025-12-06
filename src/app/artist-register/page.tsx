@@ -146,10 +146,9 @@ const Page = () => {
 
       const body = {
         nameKr: artistName,
-        // 그룹이 선택되었으면 id를, 아니면 새 그룹명을 보냄
         groupId: selectedGroup ? selectedGroup.id : null,
         groupName: selectedGroup ? null : groupName,
-        ImageTmpKey, // 대문자 → 소문자 수정
+        ImageTmpKey,
         birthDate: birthday || null,
       };
       await api.post("/api/artists", body);
