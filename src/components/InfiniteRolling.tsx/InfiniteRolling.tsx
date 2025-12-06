@@ -5,7 +5,7 @@ import Image from "next/image";
 import ProfileBasic from "@/svgs/ProfileBasic.svg";
 
 interface Item {
-  id: number;
+  id: string;
   imageUrl: string | null;
   nameKr: string;
 }

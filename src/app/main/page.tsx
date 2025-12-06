@@ -15,7 +15,7 @@ import BellNotification from "./components/BellNotification";
 import Image from "next/image";
 
 interface hotArtistGroup {
-  id: number;
+  id: string;
   imageUrl: string;
   nameKr: string;
   type: string;
@@ -33,9 +33,9 @@ export default function Home() {
   const newEvents = useMainStore((state) => state.newEvents);
   const latestReviews = useMainStore((state) => state.latestReviews);
   const [hotData, setHotData] = useState<hotArtistGroup[]>([]);
-  const [likedIds, setLikedIds] = useState<number[]>([]);
+  const [likedIds, setLikedIds] = useState<string[]>([]);
 
-  const toggleLike = (id: number) => {
+  const toggleLike = (id: string) => {
     setLikedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
@@ -61,7 +61,7 @@ export default function Home() {
       // banner 이미지 추출
       const bannerUrls =
         data.banners?.map(
-          (b: { id: number; imageUrl: string }) => b.imageUrl
+          (b: { id: string; imageUrl: string }) => b.imageUrl
         ) || [];
       setBannerImages(bannerUrls);
 

@@ -96,7 +96,6 @@ const Page = () => {
       <div className="flex gap-5 mt-5">
         <Stat label="찜한 이벤트" value={stats.eventBookmarkCount} />
         <Stat label="찜한 아티스트" value={stats.artistBookmarkCount} />
-        <Stat label="작성한 리뷰" value={stats.reviewCount} />
       </div>
 
       <Divider />
@@ -106,6 +105,11 @@ const Page = () => {
           text="내가 등록한 이벤트"
           path="/my-register-event"
           hasData={stats.eventBookmarkCount > 0}
+        />
+        <MenuItem
+          text="내가 작성한 리뷰"
+          path="/my-register-review"
+          hasData={stats.reviewCount > 0}
         />
         <MenuItem
           text="내가 등록한 아티스트"

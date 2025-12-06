@@ -290,8 +290,15 @@ export const getMyRegisterArtist = async () => {
 };
 
 // 내가 등록한 아티스트 조회
-export const getMyEventArtist = async () => {
+export const getMyRegisterEvent = async () => {
   const res = await api.get(`/api/my/events`);
+  console.log(res.data);
+  return res.data;
+};
+
+// 내가 작성한 리뷰 조회
+export const getMyRegisterReview = async () => {
+  const res = await api.get(`/api/my/reviews`);
   console.log(res.data);
   return res.data;
 };

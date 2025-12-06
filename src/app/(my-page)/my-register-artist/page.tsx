@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 interface ArtistItem {
   id: number;
   nameKr: string;
-  nameEn: string;
   imageUrl: string;
   birthDate: string;
   type: string;

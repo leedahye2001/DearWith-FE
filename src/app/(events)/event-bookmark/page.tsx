@@ -9,7 +9,6 @@ export interface Event {
   id: number;
   title: string;
   imageUrl: string | null;
-  artistNamesEn: string[];
   artistNamesKr: string[];
   startDate: string;
   endDate: string;

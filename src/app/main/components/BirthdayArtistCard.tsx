@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 interface BirthdayArtistCardProps {
-  id: number;
+  id: string;
   nameKr: string;
   imageUrl: string;
   birthDate: string;
@@ -30,7 +30,11 @@ export default function BirthdayArtistCard({
 
   return (
     <div key={id} className="flex flex-col items-center mb-[28px]">
-      <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center border-[1.5px] border-primary p-[4px] mb-[8px]">
+      <div
+        className={`w-[72px] h-[72px] rounded-full flex items-center justify-center p-[4px] mb-[8px] transition-all ${
+          isBirthday ? "border-[2px] border-primary" : "border-none"
+        }`}
+      >
         <div className="w-[64px] h-[64px] rounded-full overflow-hidden">
           {imageUrl && (
             <Image

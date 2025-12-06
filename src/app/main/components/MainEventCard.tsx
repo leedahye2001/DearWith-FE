@@ -6,18 +6,28 @@ import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
 import { deleteEventLike, postEventLike } from "@/apis/api";
 
+export interface EventImageVariant {
+  name: string;
+  url: string;
+}
+
+export interface EventImage {
+  id: string;
+  variants: EventImageVariant[];
+}
+
 export interface EventCardProps {
-  id: number;
-  imageUrl: string;
+  id: string;
+  image: EventImage | null;
   title: string;
   artistNamesKr: string[];
   isLiked: boolean;
-  onToggleLike: (id: number) => void;
+  onToggleLike: (id: string) => void;
 }
 
 export default function MainEventCard({
   id,
-  imageUrl,
+  image,
   title,
   artistNamesKr,
   isLiked,
@@ -25,21 +35,21 @@ export default function MainEventCard({
 }: EventCardProps) {
   const router = useRouter();
 
+  const imageUrl = image?.variants?.[0]?.url || image?.variants?.[1]?.url || "";
+
   const handleCardClick = () => {
     router.push(`/event-detail/${id}`);
   };
 
   const handleLikeToggle = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // 카드 클릭과 구분
-    onToggleLike(id); // UI 상태 즉시 반영
+    e.stopPropagation();
+    onToggleLike(id);
 
     try {
       if (!isLiked) {
-        // 좋아요 (북마크) 추가
-        await postEventLike;
+        await postEventLike(id);
       } else {
-        // 좋아요 취소
-        await deleteEventLike;
+        await deleteEventLike(id);
       }
     } catch (error) {
       console.error("북마크 토글 실패:", error);
@@ -55,7 +65,6 @@ export default function MainEventCard({
         >
           {isLiked ? <HeartFill /> : <HeartDefault />}
         </div>
-
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -64,6 +73,7 @@ export default function MainEventCard({
             height={252}
             className="w-full h-full cursor-pointer object-cover"
             onClick={handleCardClick}
+            unoptimized
           />
         ) : (
           <div

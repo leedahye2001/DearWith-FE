@@ -1,57 +1,67 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DownSmall from "@/svgs/DownSmall.svg";
-import EventListCard, {
-  EventListCardProps,
-} from "@/app/(events)/event-bookmark/components/EventListCard";
-import { getMyRegisterArtist } from "@/apis/api";
+import Backward from "@/svgs/Backward.svg";
+import RegisterEventListCard, {
+  RegisterEventListCardProps,
+} from "./components/RegisterEventListCard";
+import { getMyRegisterEvent } from "@/apis/api";
 import { EventState } from "@/app/search/page";
 import Topbar from "@/components/template/Topbar";
+import { useRouter } from "next/navigation";
+
 export interface MyRegisteredEvent {
-  id: number;
+  id: string;
   title: string;
   images: {
-    id: number;
+    id: string;
     variants: {
       name: string;
       url: string;
     }[];
   }[];
-  artistNamesEn: string[];
   artistNamesKr: string[];
-  groupNamesEn: string[];
-  groupNamesKr: string[];
   openTime: string;
   closeTime: string;
   startDate: string;
   endDate: string;
-  bookmarkCount: number;
+  bookmarkCount: string;
   bookmarked: boolean;
-}
-
-export interface MappedEventItem {
-  id: number;
-  title: string;
-  imageUrl: string | null;
-  startDate: string;
-  endDate: string;
-  bookmarkCount: number;
-  bookmarked: boolean;
-  artistName?: string;
-  groupName?: string;
 }
 
 const MyRegisteredEvents = () => {
-  const [events, setEvents] = useState<EventListCardProps[]>([]);
-  const [filterState, setFilterState] = useState<EventState>("LATEST");
+  const [events, setEvents] = useState<RegisterEventListCardProps[]>([]);
+  const [likedIds, setLikedIds] = useState<string[]>([]);
+  // const [filterState, setFilterState] = useState<EventState>("LATEST");
+
+  const router = useRouter();
+  const handleBackRouter = () => router.back();
+
+  const toggleLike = (id: string) => {
+    setLikedIds((prev) => {
+      const updated = prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
+
+      // events 상태도 업데이트
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === id
+            ? { ...event, bookmarked: updated.includes(id) }
+            : event
+        )
+      );
+
+      return updated;
+    });
+  };
 
   const fetchData = async () => {
     try {
-      const res = await getMyRegisterArtist(); // ← API 콜
+      const res = await getMyRegisterEvent();
       const list = res?.content || [];
 
-      const mapped: EventListCardProps[] = list.map(
+      const mapped: RegisterEventListCardProps[] = list.map(
         (item: MyRegisteredEvent) => ({
           id: item.id,
           title: item.title,
@@ -60,12 +70,23 @@ const MyRegisteredEvents = () => {
           endDate: item.endDate,
           bookmarkCount: item.bookmarkCount,
           bookmarked: item.bookmarked,
-          artistName: item.artistNamesKr?.join(", "),
-          groupName: item.groupNamesKr?.join(", "),
+          artistNamesKr: item.artistNamesKr?.[0],
         })
       );
 
-      setEvents(mapped);
+      const initialLiked = mapped
+        .filter((event) => event.bookmarked)
+        .map((event) => event.id);
+
+      setLikedIds(initialLiked);
+
+      // 🔥 likedIds 반영된 상태로 이벤트 저장
+      setEvents(
+        mapped.map((event) => ({
+          ...event,
+          bookmarked: initialLiked.includes(event.id),
+        }))
+      );
     } catch (err) {
       console.error(err);
     }
@@ -73,24 +94,25 @@ const MyRegisteredEvents = () => {
 
   useEffect(() => {
     fetchData();
-  }, [filterState]);
+  }, []);
 
   return (
     <>
-      {/* ■ Topbar */}
-      <Topbar _topNode="내가 등록한 이벤트" />
+      <Topbar
+        _leftImage={<Backward onClick={handleBackRouter} />}
+        _topNode="내가 등록한 이벤트"
+      />
 
-      {/* ■ Content */}
       <div className="flex flex-col w-full justify-center pt-[16px] px-[24px]">
-        {/* 헤더 */}
         <div className="flex justify-between items-center mb-[16px]">
-          <h1 className="text-[14px] font-[600] text-text-5">
-            등록한 이벤트{" "}
-            <span className="text-primary font-[600]">{events.length}</span>
-          </h1>
+          <div className="flex items-center gap-[6px]">
+            <h1 className="text-[14px] font-[600] text-text-5">
+              등록한 이벤트
+            </h1>
+            <span className="text-text-3 font-[600]">{events.length}</span>
+          </div>
 
-          {/* 정렬 셀렉트 */}
-          <div className="relative">
+          {/* <div className="relative">
             <select
               value={filterState}
               onChange={(e) => setFilterState(e.target.value as EventState)}
@@ -101,10 +123,9 @@ const MyRegisteredEvents = () => {
               <option value="POPULAR">좋아요순</option>
             </select>
             <DownSmall className="absolute right-[8px] top-1/2 -translate-y-1/2 pointer-events-none w-[14px] h-[14px]" />
-          </div>
+          </div> */}
         </div>
 
-        {/* 리스트 */}
         <div className="grid grid-cols-2 gap-[16px] pb-[20px] w-full">
           {events.length === 0 ? (
             <div className="col-span-2 flex flex-col items-center justify-center min-h-[calc(100vh-140px)]">
@@ -113,7 +134,13 @@ const MyRegisteredEvents = () => {
               </p>
             </div>
           ) : (
-            events.map((event) => <EventListCard key={event.id} {...event} />)
+            events.map((event) => (
+              <RegisterEventListCard
+                key={event.id}
+                {...event}
+                onToggleLike={toggleLike}
+              />
+            ))
           )}
         </div>
       </div>

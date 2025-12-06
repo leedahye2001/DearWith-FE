@@ -5,7 +5,7 @@ import BirthdayArtistCard from "./BirthdayArtistCard";
 interface BirthdayArtistsSectionProps {
   currentMonth: number | string;
   birthdayArtists: {
-    id: number;
+    id: string;
     nameKr: string;
     imageUrl: string;
     birthDate: string;

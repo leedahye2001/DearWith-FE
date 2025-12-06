@@ -2,7 +2,7 @@
 import { create } from "zustand";
 
 type Artist = {
-  id: number;
+  id: string;
   nameKr: string;
   nameEn: string;
   imageUrl: string;
@@ -12,7 +12,7 @@ type Artist = {
 };
 
 type Event = {
-  id: number;
+  id: string;
   title: string;
   imageUrl: string;
   artistNamesEn: string[];
@@ -24,7 +24,7 @@ type Event = {
 };
 
 type Review = {
-  reviewId: number;
+  reviewId: string;
   eventId: number;
   title: string;
   content: string;
