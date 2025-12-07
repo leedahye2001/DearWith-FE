@@ -5,12 +5,12 @@ import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
 
 interface EventCardProps {
-  id: number;
+  id: string;
   imageUrl: string;
   title: string;
   artistNamesKr: string[];
-  isLiked: boolean;
-  onToggleLike: (id: number) => void;
+  bookmarked: boolean;
+  onToggleLike: (id: string) => void;
 }
 
 export default function EventCard({
@@ -18,7 +18,7 @@ export default function EventCard({
   imageUrl,
   title,
   artistNamesKr,
-  isLiked,
+  bookmarked,
   onToggleLike,
 }: EventCardProps) {
   return (
@@ -29,7 +29,7 @@ export default function EventCard({
           className="absolute top-[7px] right-[7.88px] cursor-pointer"
           onClick={() => onToggleLike(id)}
         >
-          {isLiked ? <HeartFill /> : <HeartDefault />}
+          {bookmarked ? <HeartFill /> : <HeartDefault />}
         </div>
 
         <Image

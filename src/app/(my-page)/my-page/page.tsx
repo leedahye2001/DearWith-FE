@@ -15,7 +15,7 @@ import ToggleItem from "../components/ToggleItem";
 import useModalStore from "@/app/stores/useModalStore";
 import Spinner from "@/components/Spinner/Spinner";
 import { useRouter } from "next/navigation";
-import useUserStore from "@/app/stores/userStore";
+import useUserStore, { useProfileStore } from "@/app/stores/userStore";
 
 export interface MenuItemProps {
   text: string;
@@ -65,6 +65,11 @@ const Page = () => {
     });
   };
 
+  const handleProfileUpdate = () => {
+    useProfileStore.getState().setProfile(profile); // profile은 API에서 가져온 { nickname, profileImageUrl }
+    router.push("/profile-update");
+  };
+
   return (
     <div className="px-[24px] mt-[54px] pb-10">
       <div className="flex justify-between items-center gap-3">
@@ -72,7 +77,7 @@ const Page = () => {
           <div className="w-[48px] h-[48px] rounded-full overflow-hidden">
             {profile?.profileImageUrl ? (
               <Image
-                src={profile.profileImageUrl}
+                src={profile?.profileImageUrl}
                 width={52}
                 height={52}
                 alt="profile"
@@ -90,7 +95,9 @@ const Page = () => {
           </div>
         </div>
 
-        <Settings />
+        <button onClick={handleProfileUpdate}>
+          <Settings />
+        </button>
       </div>
 
       <div className="flex gap-5 mt-5">

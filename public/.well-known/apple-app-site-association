@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "7D45FX9GH7.com.dearwith.app",
+        "paths": [
+          "/*"
+        ]
+      }
+    ]
+  }
+}

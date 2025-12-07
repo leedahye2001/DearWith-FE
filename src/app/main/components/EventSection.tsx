@@ -8,12 +8,12 @@ interface EventImageVariant {
   url: string;
 }
 
-interface EventImage {
+export interface EventImage {
   id: string;
   variants: EventImageVariant[];
 }
 
-interface Event {
+export interface Event {
   id: string;
   images?: EventImage[];
   title: string;
@@ -47,7 +47,7 @@ export default function EventSection({
             image={event.images?.[0] ?? null}
             title={event.title}
             artistNamesKr={event.artistNamesKr}
-            isLiked={likedIds.includes(event.id)}
+            bookmarked={likedIds.includes(event.id)}
             onToggleLike={onToggleLike}
           />
         ))}

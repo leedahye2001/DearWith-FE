@@ -62,7 +62,7 @@ const Page = () => {
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center items-center px-[24px] pt-[34px]">
-      <h1 className="w-full text-left font-[700] text-text-5 text-[20px] pb-[40px]">
+      <h1 className="w-full text-left font-[700] text-text-5 text-[20px] pb-[40px] pt-[58px]">
         반가워요👋
         <br />
         디어위드와 함께
@@ -101,8 +101,6 @@ const Page = () => {
         _onClick={fetchSignInData}
       />
       <div className="flex text-[12px] font-[400] gap-[16px]">
-        <p>이메일 칮기</p>
-        <p>|</p>
         <p>비밀번호 찾기</p>
         <p>|</p>
         <p onClick={handleSignup}>회원가입</p>

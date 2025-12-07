@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.dearwith.app",
+      "sha256_cert_fingerprints": [
+        "41:5A:C9:E5:AC:3D:A1:A4:79:69:FE:FB:B7:0F:63:FA:A0:45:24:F1:8A:86:CE:32:48:5B:18:F8:D1:A2:AF:F2" 
+      ]
+    }
+  }
+]

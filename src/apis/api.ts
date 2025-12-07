@@ -132,6 +132,13 @@ export const getEventBookmark = async (filterState: string) => {
   return res.data.content;
 };
 
+// 아티스트 북마크(찜) 조회페이지
+export const getArtistBookmark = async () => {
+  const res = await api.get(`/api/my/artists/bookmark`,{});
+  console.log(res.data.content);
+  return res.data.content;
+};
+
 // 이벤트 리뷰 목록
 export const getEventReviewDetail = async (id: string) => {
   const res = await api.get(`/api/events/${id}/reviews`, {});
@@ -193,6 +200,26 @@ export const deleteEventLike = async (reviewId: string) => {
   return await api.delete(`/api/events/${reviewId}/bookmark`);
 };
 
+//아티스트 찜 하기
+export const postArtistLike = async (artistId: string) => {
+  return await api.post(`/api/artists/${artistId}/bookmark`);
+};
+
+//아티스트 찜 취소
+export const deleteArtistLike = async (artistId: string) => {
+  return await api.delete(`/api/artists/${artistId}/bookmark`);
+};
+
+//그룹 찜 하기
+export const postGroupLike = async (groupId: string) => {
+  return await api.post(`/api/groups/${groupId}/bookmark`);
+};
+
+//그룹 찜 취소
+export const deleteGroupLike = async (groupId: string) => {
+  return await api.delete(`/api/groups/${groupId}/bookmark`);
+};
+
 //이벤트 공지 등록 /api/events/{eventId}/notices
 export const eventNoticePost = async (
   title: string,
@@ -211,8 +238,16 @@ export const deleteEventPost = async (eventId: string, noticeId: string) => {
   return await api.delete(` /api/events/${eventId}/notices/${noticeId}`);
 };
 
+//검색 - id별 아티스트 이벤트 목록
 export const getArtistEvents = async (artistId: string, sort: string) => {
   const res = await api.get(`/api/artists/${artistId}/events?sort=${sort}`);
+  console.log(res.data);
+  return res.data;
+};
+
+//검색 - id별 그룹 이벤트 목록
+export const getGroupEvents = async (groupId: string, sort: string) => {
+  const res = await api.get(`/api/groups/${groupId}/events?sort=${sort}`);
   console.log(res.data);
   return res.data;
 };
@@ -253,7 +288,7 @@ export const addRecentSearch = async (query: string) => {
 
 //최근 검색어 삭제
 export const deletRecentSearch = async (query: string) => {
-  return await api.delete(`/api/search/recent/delete/${query}`);
+  return await api.delete(`/api/search/recent/delete?query=${query}`);
 };
 
 //최근 검색어 전체 삭제
@@ -261,7 +296,7 @@ export const deletRecentAllSearch = async () => {
   return await api.delete(`/api/search/recent/delete/all`);
 };
 
-//최근 검색어 조회
+//마이페이지 조회
 export const getMyPage = async () => {
   const res = await api.get(`/api/my`);
   console.log(res.data);
@@ -300,5 +335,53 @@ export const getMyRegisterEvent = async () => {
 export const getMyRegisterReview = async () => {
   const res = await api.get(`/api/my/reviews`);
   console.log(res.data);
+  return res.data;
+};
+
+// 현재 로그인 회원 정보 조회
+export const getUserInfo = async () => {
+  const res = await api.get(`/users/me`);
+  console.log(res.data);
+  return res.data;
+};
+
+// 프로필 사진 삭제
+export const deleteProfileImage = async () => {
+  return await api.delete(`/users/me/profile/image`);
+};
+
+// 프로필 사진 추가/수정
+export const updateProfileImage = async (tmpKey: string) => {
+  const res= await api.patch(`/users/me/profile/image`, { tmpKey });
+  console.log(res.data);
+  return res.data;
+};
+
+export const requestPresignedUrl = async (params: {
+  filename: string;
+  contentType: string;
+  domain: string;
+}) => {
+  const res = await api.post("/api/uploads/presign", params, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+  return res.data;
+};
+
+
+export const uploadToS3 = async (file: File, uploadUrl: string) => {
+  await fetch(uploadUrl, {
+    method: "PUT",
+    body: file,
+    headers: {
+      "Content-Type": file.type,
+    },
+  });
+};
+
+
+export const commitUpload = async (tmpKey: string) => {
+  const res = await api.post("/api/uploads/commit", { tmpKey });
   return res.data;
 };

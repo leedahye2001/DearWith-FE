@@ -8,22 +8,28 @@ import { addRecentSearch } from "@/apis/api";
 const ArtistSearchResult = ({ artist }: { artist: Artist }) => {
   const router = useRouter();
 
-  const handleClick = async () => {
+  const handleClick = async (type: string) => {
     // 최근 검색어 추가
     addRecentSearch(artist.nameKr);
-
-    // 검색 결과 페이지 이동
-    router.push(
-      `/search/${artist.id}?artistId=${
-        artist.id
-      }&artistName=${encodeURIComponent(artist.nameKr)}`
-    );
+    {
+      type === "ARTIST"
+        ? router.push(
+            `/search/${artist.id}?artistId=${
+              artist.id
+            }&artistName=${encodeURIComponent(artist.nameKr)}&type="ARTIST"`
+          )
+        : router.push(
+            `/search/${artist.id}?groupId=${
+              artist.id
+            }&groupName=${encodeURIComponent(artist.nameKr)}&type="GROUP"`
+          );
+    }
   };
 
   return (
     <div
-      className="flex justify-between w-full items-center cursor-pointer"
-      onClick={handleClick}
+      className="flex justify-between w-full items-center cursor-pointer px-[24px]"
+      onClick={() => handleClick(artist.type)}
     >
       <div className="flex gap-[12px]">
         <div className="flex justify-center items-center w-[40px] h-[40px] rounded-full overflow-hidden">

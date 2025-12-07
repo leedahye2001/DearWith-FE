@@ -80,7 +80,7 @@ const MyRegisteredEvents = () => {
 
       setLikedIds(initialLiked);
 
-      // 🔥 likedIds 반영된 상태로 이벤트 저장
+      // likedIds 반영된 상태로 이벤트 저장
       setEvents(
         mapped.map((event) => ({
           ...event,

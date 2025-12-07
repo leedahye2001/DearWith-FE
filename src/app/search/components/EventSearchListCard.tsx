@@ -4,10 +4,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
+import { deleteEventLike, postEventLike } from "@/apis/api";
+import { EventImage } from "@/app/main/components/MainEventCard";
 
-export interface EventListCardProps {
+export interface EventSearchListCardProps {
   id: string;
-  imageUrl: string;
+  images?: EventImage[];
   title: string;
   artistNamesKr: string[];
   bookmarked: boolean;
@@ -15,29 +17,32 @@ export interface EventListCardProps {
   eventState?: "SCHEDULED" | "IN_PROGRESS" | "ENDED";
 }
 
-export default function EventListCard({
+export default function EventSearchListCard({
   id,
-  imageUrl,
+  images,
   title,
   artistNamesKr,
   bookmarked,
   onToggleLike,
   eventState,
-}: EventListCardProps) {
+}: EventSearchListCardProps) {
   const router = useRouter();
 
   const handleCardClick = () => router.push(`/event-detail/${id}`);
-  const handleLikeToggle = (e: React.MouseEvent) => {
+  const handleLikeToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleLike(id);
-  };
 
-  const statusBadge =
-    eventState === "SCHEDULED"
-      ? "진행 예정"
-      : eventState === "ENDED"
-      ? "진행 종료"
-      : null;
+    try {
+      if (!bookmarked) {
+        await postEventLike(id);
+      } else {
+        await deleteEventLike(id);
+      }
+    } catch (error) {
+      console.error("북마크 토글 실패:", error);
+    }
+  };
 
   const isScheduled = eventState === "SCHEDULED";
   const isEnded = eventState === "ENDED";
@@ -45,9 +50,9 @@ export default function EventListCard({
   return (
     <div className="flex flex-col items-center mb-[38px] relative">
       <div className="relative rounded-[4px] w-[157px] h-[292px] overflow-hidden mb-[10px]">
-        {imageUrl ? (
+        {images?.[0]?.variants?.[0]?.url ? (
           <Image
-            src={imageUrl}
+            src={images?.[0]?.variants?.[0]?.url}
             alt={title}
             width={157}
             height={220}
@@ -62,18 +67,6 @@ export default function EventListCard({
         >
           {bookmarked ? <HeartFill /> : <HeartDefault />}
         </div>
-
-        {statusBadge && (
-          <div className="absolute bottom-0 left-0 bg-black/40 px-[10px] py-[6px] z-30">
-            <span className="text-[10px] text-white font-[600]">
-              {statusBadge}
-            </span>
-          </div>
-        )}
-
-        {(isScheduled || isEnded) && (
-          <div className="absolute inset-0 bg-white/50 z-20 pointer-events-none" />
-        )}
       </div>
 
       <div
@@ -83,7 +76,7 @@ export default function EventListCard({
         onClick={handleCardClick}
       >
         <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
-          {artistNamesKr.join(", ")}
+          {artistNamesKr}
         </p>
       </div>
 

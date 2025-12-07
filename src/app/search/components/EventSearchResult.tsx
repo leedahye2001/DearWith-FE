@@ -1,9 +1,11 @@
 import DownSmall from "@/svgs/DownSmall.svg";
 import { EventState } from "../page";
-import EventListCard, { EventListCardProps } from "@/app/(events)/event-bookmark/components/EventListCard";
+import EventSearchListCard, {
+  EventSearchListCardProps,
+} from "./EventSearchListCard";
 
 interface Props {
-  events: EventListCardProps[];
+  events: EventSearchListCardProps[];
   artistName: string;
   filterState: EventState;
   setFilterState: (v: EventState) => void;
@@ -39,7 +41,9 @@ const EventSearchResult = ({ events, filterState, setFilterState }: Props) => {
             </p>
           </div>
         ) : (
-          events.map((event) => <EventListCard key={event.id} {...event} />)
+          events.map((event) => (
+            <EventSearchListCard key={event.id} {...event} />
+          ))
         )}
       </div>
     </div>

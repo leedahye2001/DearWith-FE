@@ -156,14 +156,20 @@ export default function Home() {
                 className="flex justify-start items-start border border-divider-1 rounded-[4px] p-[12px] min-w-[260px] gap-[10px] cursor-pointer"
                 onClick={() => router.push(`/review/${review.reviewId}`)}
               >
-                <div className="w-[40px] h-[40px] rounded-[4px] overflow-hidden">
-                  <Image
-                    src={review.images?.[0]?.variants?.[0]?.url}
-                    alt={review.title}
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative w-[40px] h-[40px] overflow-hidden rounded-[4px] shrink-0">
+                  {review.images?.[0]?.variants?.[0]?.url ? (
+                    <Image
+                      src={review.images?.[0]?.variants?.[0]?.url}
+                      alt={review.title}
+                      fill
+                      sizes="40px"
+                      className="object-cover !w-full !h-full"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-[10px] text-text-3">
+                      No Img
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col">

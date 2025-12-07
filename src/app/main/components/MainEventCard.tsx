@@ -21,7 +21,7 @@ export interface EventCardProps {
   image: EventImage | null;
   title: string;
   artistNamesKr: string[];
-  isLiked: boolean;
+  bookmarked: boolean;
   onToggleLike: (id: string) => void;
 }
 
@@ -30,7 +30,7 @@ export default function MainEventCard({
   image,
   title,
   artistNamesKr,
-  isLiked,
+  bookmarked,
   onToggleLike,
 }: EventCardProps) {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function MainEventCard({
     onToggleLike(id);
 
     try {
-      if (!isLiked) {
+      if (!bookmarked) {
         await postEventLike(id);
       } else {
         await deleteEventLike(id);
@@ -63,7 +63,7 @@ export default function MainEventCard({
           className="absolute top-[7px] right-[7.88px] z-10 cursor-pointer"
           onClick={handleLikeToggle}
         >
-          {isLiked ? <HeartFill /> : <HeartDefault />}
+          {bookmarked ? <HeartFill /> : <HeartDefault />}
         </div>
         {imageUrl ? (
           <Image

@@ -41,6 +41,20 @@ const useUserStore = create<UserState>()(
   )
 );
 
+// 프로필 사진 저장 (마이페이지)
+type UserProfile = {
+  nickname: string;
+  profileImageUrl: string;
+};
+
+export const useProfileStore = create<{ profile: UserProfile | null; setProfile: (p: UserProfile) => void }>()(
+  (set) => ({
+    profile: null,
+    setProfile: (p) => set({ profile: p }),
+  })
+);
+
+
 // 이메일 client에 저장
 interface EmailState {
   inputEmail: string;
