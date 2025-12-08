@@ -7,7 +7,11 @@ import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Spinner from "@/components/Spinner/Spinner";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import WriteTitle from "./WriteTitle";
+import TagCancel from "@/svgs/TagCancel.svg";
+import Close from "@/svgs/Close.svg";
+import Checker from "@/svgs/Checker.svg";
 
 interface UploadedImage {
   tmpKey: string;
@@ -31,7 +35,7 @@ export interface ReviewDetail {
 
 interface EventReviewWriteProps {
   eventId: string;
-  reviewData?: ReviewDetail; // 목록에서 넘겨주는 리뷰 데이터
+  reviewData?: ReviewDetail;
   onClose?: () => void;
 }
 
@@ -43,6 +47,7 @@ export default function EventReviewWrite({
   const isEdit = Boolean(reviewData);
 
   const { openAlert } = useModalStore();
+
   const [content, setContent] = useState(reviewData?.content || "");
   const [tags, setTags] = useState<string[]>(reviewData?.tags || []);
   const [newTag, setNewTag] = useState("");
@@ -50,13 +55,14 @@ export default function EventReviewWrite({
   const [imagePreviews, setImagePreviews] = useState<string[]>(
     reviewData?.images.map((img) => img.url || "") || []
   );
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ✅ 태그 추가/삭제
+  // 태그 추가/삭제
   const handleAddTag = () => {
     if (!newTag.trim()) return;
     if (tags.length >= 4)
-      return openAlert("태그는 최대 4개까지 추가할 수 있습니다.");
+      return openAlert("태그는 최대 4개까지 등록할 수 있어요.");
     setTags([...tags, newTag.trim()]);
     setNewTag("");
   };
@@ -65,7 +71,7 @@ export default function EventReviewWrite({
     setTags(tags.filter((t) => t !== tag));
   };
 
-  // ✅ 이미지 추가/삭제
+  // 이미지 추가/삭제
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -83,7 +89,7 @@ export default function EventReviewWrite({
     setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  // ✅ 이미지 업로드 (S3 Presigned URL)
+  // 이미지 업로드 (S3 Presigned URL)
   const putToS3 = async (url: string, file: File, contentType: string) => {
     const res = await fetch(url, {
       method: "PUT",
@@ -112,9 +118,9 @@ export default function EventReviewWrite({
     return uploaded;
   };
 
-  // ✅ 수정/등록 처리
+  // 수정/등록 처리
   const handleSubmit = async () => {
-    if (!content.trim()) return openAlert("내용을 입력해주세요.");
+    if (!content.trim()) return openAlert("리뷰를 작성해주세요.");
     try {
       setIsSubmitting(true);
       const uploadedImages = await uploadImages(imageFiles);
@@ -138,7 +144,7 @@ export default function EventReviewWrite({
             displayOrder: img.displayOrder,
           })),
         });
-        openAlert("리뷰 등룍이 완료되었어요.");
+        openAlert("리뷰 등록이 완료되었어요.");
       }
 
       onClose?.();
@@ -151,21 +157,27 @@ export default function EventReviewWrite({
   };
 
   return (
-    <div className="px-[20px] py-[24px]">
-      <h2 className="text-[18px] font-[700] text-text-5 mb-[16px]">
-        {isEdit ? "리뷰 수정하기" : "리뷰 작성하기"}
-      </h2>
+    <div className="px-[20px] py-[24px] flex flex-col justify-center">
+      <WriteTitle id={1} question={"내용 작성"} />
+      <div className="w-full border border-divider-1 rounded-[4px] p-[12px] mb-[32px]">
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="리뷰 내용을 입력해주세요."
+          maxLength={300}
+          className="w-full h-[230px] resize-none focus:outline-none text-[14px] text-text-5 bg-transparent"
+        />
+        <div className="flex justify-end text-[12px] text-text-3">
+          {content.length}/300
+        </div>
+      </div>
 
-      {/* 내용 */}
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="리뷰 내용을 입력해주세요"
-        className="w-full h-[120px] p-[12px] border border-divider-1 rounded-[8px] text-[14px] text-text-5 focus:outline-none mb-[16px]"
+      <WriteTitle
+        id={2}
+        question={"태그 추가"}
+        answer={"태그는 최대 4개까지 등록할 수 있어요."}
       />
-
-      {/* 태그 입력 */}
-      <div className="flex gap-2 mb-[12px]">
+      <div className="flex flex-col gap-2 mb-[12px]">
         <Input
           _value={newTag}
           _state="textbox-basic"
@@ -174,59 +186,95 @@ export default function EventReviewWrite({
             placeholder: "태그 입력 (최대 4개)",
             className: "placeholder:text-text-3",
           }}
+          _wrapperProps={{ className: "w-full" }}
         />
-        <Button
-          _state="sub"
-          _node="추가"
-          _onClick={handleAddTag}
-          _buttonProps={{ className: "bg-[#E6E6E6] text-black" }}
-        />
-      </div>
-
-      {/* 태그 리스트 */}
-      <div className="flex flex-wrap gap-2 mb-[16px]">
-        {tags.map((tag) => (
-          <div
-            key={tag}
-            className="bg-[#F86852] text-white text-[12px] font-[600] px-[8px] py-[4px] rounded-[12px] flex items-center gap-1"
-          >
-            #{tag}
-            <button onClick={() => handleRemoveTag(tag)}>×</button>
-          </div>
-        ))}
-      </div>
-
-      {/* 이미지 업로드 */}
-      <div className="mb-[16px]">
-        <label className="text-[14px] font-[600] text-text-5 mb-[8px] block">
-          이미지 추가 (최대 2장)
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleImageChange}
-          className="mb-[8px]"
-        />
-        <div className="flex gap-2">
-          {imagePreviews.map((url, idx) => (
-            <div key={idx} className="relative">
-              <Image
-                width={100}
-                height={100}
-                src={url}
-                alt={`preview-${idx}`}
-                className="w-full h-full object-cover rounded-[8px]"
-              />
-              <button
-                onClick={() => handleRemoveImage(idx)}
-                className="absolute top-1 right-1 bg-black/60 text-white text-[12px] rounded-full w-[20px] h-[20px]"
-              >
-                ×
+        <div className="flex flex-col gap-[8px] ">
+          {tags.map((tag) => (
+            <div
+              key={tag}
+              className="bg-white w-full h-[44px] text-text-5 text-[14px] font-[400] rounded-[4px] border-[1px] border-divider-1 flex justify-between p-[10px]"
+            >
+              {tag}
+              <button onClick={() => handleRemoveTag(tag)}>
+                <TagCancel />
               </button>
             </div>
           ))}
         </div>
+        <Button
+          _state="main"
+          _node="+ 추가하기"
+          _onClick={handleAddTag}
+          _buttonProps={{
+            className: "bg-red-300 text-white mb-[16px] w-full mt-[12px]",
+          }}
+        />
+      </div>
+
+      <WriteTitle
+        id={3}
+        question={"이미지 추가"}
+        answer={"태그는 최대 2개까지 등록할 수 있어요."}
+      />
+      <div className="flex gap-[8px]">
+        {/* 선택된 이미지 2칸 슬롯 */}
+        {Array.from({ length: 2 }).map((_, idx) => {
+          const image = imagePreviews[idx];
+          return (
+            <div
+              key={idx}
+              className="relative w-[60px] h-[60px] rounded-[4px] border border-divider-1 flex justify-center items-center overflow-hidden bg-[#F9F9F9]"
+            >
+              {image ? (
+                <>
+                  <Image
+                    width={60}
+                    height={60}
+                    src={image}
+                    alt={`uploaded-${idx}`}
+                    className="object-cover"
+                  />
+                  {/* 삭제 버튼 */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage(idx);
+                    }}
+                    className="absolute top-[0px] right-[0px] flex items-center justify-center"
+                  >
+                    <Close />
+                  </button>
+                </>
+              ) : (
+                <Checker />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 이미지 미리보기 */}
+      <div className="flex gap-[8px] min-w-max items-center">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleImageChange}
+        />
+        <Button
+          _state="main"
+          _node="+ 추가하기"
+          _onClick={() => {
+            if (imagePreviews.length >= 2)
+              return openAlert("최대 2개의 이미지만 등록할 수 있어요.");
+            fileInputRef.current?.click();
+          }}
+          _buttonProps={{
+            className: "bg-red-300 text-white mt-[16px] w-full",
+          }}
+        />
       </div>
 
       <Button
@@ -236,7 +284,7 @@ export default function EventReviewWrite({
         }
         _onClick={handleSubmit}
         _buttonProps={{
-          className: "mt-6 bg-[#FD725C] hover:cursor-pointer w-full",
+          className: "w-full my-[60px]",
           disabled: isSubmitting,
         }}
       />
