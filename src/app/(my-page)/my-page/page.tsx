@@ -21,6 +21,7 @@ export interface MenuItemProps {
   text: string;
   path?: string;
   hasData: boolean;
+  rightNode?: React.ReactNode;
 }
 
 export interface MyPageResponse {
@@ -143,10 +144,21 @@ const Page = () => {
       <Divider />
 
       <Section title="고객지원">
-        <MenuItem text="공지사항" hasData />
-        <MenuItem text="1:1 문의하기" hasData />
-        <MenuItem text="비밀번호 변경" hasData />
-        <MenuItem text="앱 버전 v0.10" hasData />
+        <MenuItem text="공지사항" rightNode={<Forward />} hasData />
+        <MenuItem text="1:1 문의하기" rightNode={<Forward />} hasData />
+        <MenuItem
+          text="비밀번호 변경"
+          rightNode={<Forward />}
+          path="/verify-password"
+          hasData
+        />
+        <MenuItem
+          text="앱 버전"
+          rightNode={
+            <p className="text-[14px] font-[400] text-text-3">v 0.10</p>
+          }
+          hasData
+        />
       </Section>
 
       <Divider />
@@ -193,7 +205,7 @@ function Section({
   );
 }
 
-function MenuItem({ text, path, hasData }: MenuItemProps) {
+function MenuItem({ text, path, rightNode, hasData }: MenuItemProps) {
   const { openAlert } = useModalStore();
   const router = useRouter();
 
@@ -218,7 +230,7 @@ function MenuItem({ text, path, hasData }: MenuItemProps) {
       onClick={handleClick}
     >
       <p className="text-[14px] font-[400]">{text}</p>
-      <Forward />
+      <div>{rightNode}</div>
     </div>
   );
 }

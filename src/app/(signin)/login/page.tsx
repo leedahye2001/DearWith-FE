@@ -15,6 +15,9 @@ const Page = () => {
   const [inputEmail, setInputEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState(
+    "영문, 숫자, 특수문자 포함 8자리 이상"
+  );
 
   // 비밀번호 토글
   const togglePassword = () => setShowPassword((prev) => !prev);
@@ -23,9 +26,17 @@ const Page = () => {
     setInputEmail(inputEmail);
   };
 
-  const handlePasswordChange = (password: string) => {
-    setPassword(password);
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+
+    if (passwordRegex.test(value)) {
+      setPasswordError("");
+    } else {
+      setPasswordError("영문, 숫자, 특수문자 포함 8자리 이상");
+    }
   };
+
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=-]).{8,}$/;
 
   // 이메일 유효성 검사
   const emailErrorMessage =
@@ -46,7 +57,7 @@ const Page = () => {
 
       router.push("/main");
     } catch (error) {
-      console.error("로그인 실패:", error);
+      setPasswordError("비밀번호를 다시 입력해주세요.");
     }
   };
 
@@ -92,6 +103,7 @@ const Page = () => {
           </button>
         }
         _containerProps={{ className: "pb-[55px]" }}
+        _bottomNode={password && passwordError}
       />
 
       <Button
@@ -100,6 +112,7 @@ const Page = () => {
         _buttonProps={{ className: "hover:cursor-pointer mb-[12px]" }}
         _onClick={fetchSignInData}
       />
+
       <div className="flex text-[12px] font-[400] gap-[16px]">
         <p>비밀번호 찾기</p>
         <p>|</p>

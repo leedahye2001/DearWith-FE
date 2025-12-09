@@ -385,3 +385,16 @@ export const commitUpload = async (tmpKey: string) => {
   const res = await api.post("/api/uploads/commit", { tmpKey });
   return res.data;
 };
+
+// 기존 비밀번호 조회 (현재 비밀번호 확인)
+export const getPasswordVerify = async (currentPassword: string) => {
+  const res = await api.post("/users/me/password/verify", {currentPassword});
+  return res.data;
+};
+
+
+// 비밀번호 변경
+export const getPasswordConfirm = async (newPassword: string) => {
+  const res = await api.post("/users/password/change", {newPassword});
+  return res.data;
+};
