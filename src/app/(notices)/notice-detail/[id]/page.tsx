@@ -102,6 +102,7 @@ const NoticeDetailPage = () => {
               _buttonProps={{
                 className: "hover:cursor-pointer bg-red-400",
               }}
+              _onClick={() => router.push("/inquiry-register")}
             />
           </div>
         </div>

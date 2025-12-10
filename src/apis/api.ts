@@ -390,9 +390,39 @@ export const getPasswordVerify = async (currentPassword: string) => {
   return res.data;
 };
 
-
 // 비밀번호 변경
 export const getPasswordConfirm = async (newPassword: string) => {
   const res = await api.post("/users/password/change", {newPassword});
+  return res.data;
+};
+
+// 내 문의사항 목록 조회
+export const getMyInquiryList = async () => {
+  const res = await api.get("/api/inquiries/my");
+  return res.data;
+};
+
+// 내 문의사항 상세 조회
+export const getMyInquiryDetail = async (inquiryId:string) => {
+  const res = await api.get(`/api/inquiries/${inquiryId}`);
+  return res.data;
+};
+
+// 문의사항 등록하기
+export const registerInquiry = async (
+  title: string,
+  content: string,
+) => {
+  const res = await api.post("/api/inquiries", { title, content });
+  return res.data.data;
+};
+
+
+// 답변 만족도 조사
+export const answerSatisfaction = async (
+  inquiryId: string,
+  satisfactionStatus: string,
+) => {
+  const res = await api.post(`/api/inquiries/${inquiryId}/satisfaction`, {satisfactionStatus});
   return res.data;
 };

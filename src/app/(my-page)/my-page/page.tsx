@@ -145,7 +145,12 @@ const Page = () => {
 
       <Section title="고객지원">
         <MenuItem text="공지사항" rightNode={<Forward />} hasData />
-        <MenuItem text="1:1 문의하기" rightNode={<Forward />} hasData />
+        <MenuItem
+          text="1:1 문의하기"
+          rightNode={<Forward />}
+          path="/my-inquiry-list"
+          hasData
+        />
         <MenuItem
           text="비밀번호 변경"
           rightNode={<Forward />}
