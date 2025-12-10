@@ -6,116 +6,63 @@ import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
-import RoundChecker from "@/svgs/RoundChecker.svg";
-import { useEffect, useRef, useState } from "react";
+import ProfileArtist from "@/svgs/ProfileArtist.svg";
+import Add from "@/svgs/Add.svg";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import useModalStore from "../stores/useModalStore";
-
-interface Group {
-  id: number;
-  nameKr: string;
-  nameEn?: string;
-  description?: string;
-  imageUrl?: string;
-}
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import CalendarInput from "@/components/Input/CalendarInput";
 
 const Page = () => {
   const router = useRouter();
   const handleBackRouter = () => router.back();
   const { openAlert } = useModalStore();
 
+  const [registerType, setRegisterType] = useState<"artist" | "group">(
+    "artist"
+  );
+
   const [artistName, setArtistName] = useState("");
   const [groupName, setGroupName] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [ImageTmpKey, setImageTmpKey] = useState<string | null>(null);
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+  const [debut, setDebut] = useState<Date | null>(null);
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // 그룹 검색 관련
-  const [inputGroupName, setInputGroupName] = useState("");
-  const [groupResults, setGroupResults] = useState<Group[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 이미지 업로드
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
+  const handleImageClick = () => fileInputRef.current?.click();
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
-
-    try {
-      const tmpKey = await uploadImage(file);
-      setImageTmpKey(tmpKey);
-    } catch (err) {
-      console.error(err);
-      alert("이미지 업로드 실패");
-    }
+    setImageFile(file);
   };
 
-  // 🧩 그룹 검색 API (300ms 디바운스)
-  useEffect(() => {
-    if (!inputGroupName.trim()) {
-      setGroupResults([]);
-      return;
-    }
-
-    const t = setTimeout(async () => {
-      try {
-        const data = await getGroup(inputGroupName);
-        const groups = data?.content ?? [];
-        setGroupResults(groups);
-      } catch (err) {
-        console.error("그룹 검색 실패:", err);
-        setGroupResults([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(t);
-  }, [inputGroupName]);
-
-  // 🧩 그룹명 입력 시
-  const handleGroupInputChange = (value: string) => {
-    setInputGroupName(value);
-    setSelectedGroup(null);
-    setGroupName(value);
-  };
-
-  // 🧩 그룹 선택 시
-  const handleSelectGroup = (group: Group) => {
-    setSelectedGroup(group);
-    setGroupName(group.nameKr);
-    setInputGroupName(group.nameKr);
-    setGroupResults([]);
-  };
-
-  // 🧩 S3 PUT 요청
+  // S3 업로드
   const putToS3 = async (url: string, file: File, contentType: string) => {
     const res = await fetch(url, {
       method: "PUT",
-      headers: {
-        "Content-Type": contentType || "application/octet-stream",
-      },
+      headers: { "Content-Type": contentType },
       body: file,
       credentials: "omit",
       mode: "cors",
     });
 
-    if (!res.ok) {
-      const msg = await res.text().catch(() => "");
-      throw new Error(`S3 PUT failed: ${res.status} ${msg}`);
-    }
+    if (!res.ok) throw new Error("S3 업로드 실패");
   };
 
-  // 🧩 presign → PUT (도메인: artist)
   const uploadImage = async (file: File): Promise<string> => {
+    // 1. Presigned URL 요청
     const presignRes = await api.post("/api/uploads/presign", {
       filename: file.name,
       contentType: file.type || "application/octet-stream",
@@ -124,39 +71,55 @@ const Page = () => {
 
     const { url, key } = presignRes.data as { url: string; key: string };
 
-    try {
-      await putToS3(url, file, file.type || "application/octet-stream");
-      console.log(`PUT 완료: ${file.name}`);
-      return key;
-    } catch (err) {
-      console.error(` PUT 실패: ${file.name}`, err);
-      throw err;
-    }
+    // 2. S3에 업로드 (tmp 경로에 저장)
+    await putToS3(url, file, file.type || "application/octet-stream");
+
+    // 3. tmpKey 반환 (commit 없이)
+    return key;
   };
 
-  //  등록 버튼 클릭 시
   const handleSubmit = async () => {
-    if (!artistName || !ImageTmpKey || !birthday) {
-      alert("이미지, 아티스트 명, 생일을 입력해주세요.");
-      return;
-    }
+    if (!imageFile) return openAlert("이미지를 등록해주세요.");
+
+    if (registerType === "artist" && (!artistName || !birthDate))
+      return openAlert("아티스트 명과 생일을 입력해주세요.");
+
+    if (registerType === "group" && (!groupName || !debut))
+      return openAlert("그룹 명과 데뷔일을 입력해주세요.");
 
     try {
       setIsSubmitting(true);
 
-      const body = {
-        nameKr: artistName,
-        groupId: selectedGroup ? selectedGroup.id : null,
-        groupName: selectedGroup ? null : groupName,
-        ImageTmpKey,
-        birthDate: birthday || null,
-      };
-      await api.post("/api/artists", body);
+      // 이미지 업로드 (tmpKey 반환)
+      const tmpKey = await uploadImage(imageFile);
 
-      openAlert("아티스트 등록이 완료되었어요.");
+      // 날짜 포맷팅 (YYYY-MM-DD)
+      const formatDate = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+
+      const body =
+        registerType === "artist"
+          ? {
+              nameKr: artistName,
+              tmpKey,
+              birthDate: birthDate ? formatDate(birthDate) : undefined,
+            }
+          : {
+              nameKr: groupName,
+              tmpKey,
+              debutDate: debut,
+            };
+
+      await api.post("/api/artists", body);
+      openAlert("아티스트 등록이 완료되었습니다.");
+      router.back();
     } catch (error) {
       console.error(error);
-      openAlert("등록 중 오류가 발생했습니다.");
+      openAlert("오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +135,7 @@ const Page = () => {
       <div className="px-[24px] pt-[36px]">
         <div className="flex flex-col justify-center items-center mb-[24px]">
           {/* 이미지 업로드 */}
-          <div className="items-center justify-center flex flex-col">
+          <div className="items-center justify-center flex flex-col mb-[32px]">
             <input
               ref={fileInputRef}
               type="file"
@@ -180,119 +143,151 @@ const Page = () => {
               className="hidden"
               onChange={handleImageChange}
             />
-            <div
-              onClick={handleImageClick}
-              className="rounded-full border border-divider-1 flex justify-center items-center w-[72px] h-[72px] hover:cursor-pointer"
-            >
-              {preview ? (
-                <Image
-                  src={preview}
-                  alt={preview}
-                  className="object-cover w-full h-full overflow-hidden"
-                  width={72}
-                  height={72}
-                />
-              ) : (
-                <RoundChecker />
-              )}
+            <div className="relative w-[72px] h-[72px]">
+              <div
+                onClick={handleImageClick}
+                className="rounded-full flex justify-center items-center w-[72px] h-[72px] cursor-pointer overflow-hidden"
+              >
+                {preview ? (
+                  <Image
+                    src={preview}
+                    alt="preview"
+                    fill
+                    className="object-cover rounded-full"
+                  />
+                ) : (
+                  <ProfileArtist />
+                )}
+              </div>
+
+              {/* 추가 버튼 (우측하단 겹치기) */}
+              <div
+                className="absolute bottom-0 right-0 bg-red-400 w-[20px] h-[20px] rounded-full flex items-center justify-center border border-white z-50 cursor-pointer"
+                onClick={handleImageClick}
+              >
+                <Add />
+              </div>
             </div>
             <p className="text-[10px] font-[400] text-text-3 mt-[8px]">
               아티스트 프로필 사진을 등록해주세요.
             </p>
           </div>
 
-          {/* 아티스트명 */}
-          <div className="mt-4">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-              아티스트 명 *
-            </p>
-            <Input
-              _value={artistName}
-              _state="textbox-basic"
-              _onChange={setArtistName}
-            />
+          {/* 등록 선택 토글 */}
+          <div className="w-full">
+            <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
+              등록 구분
+            </h1>
+            <div className="flex gap-[8px]">
+              <Button
+                _state="main"
+                _node="그룹 명 등록"
+                _onClick={() => setRegisterType("group")}
+                _buttonProps={{
+                  className: `hover:cursor-pointer w-[160px] ${
+                    registerType === "group"
+                      ? "bg-red-400 text-text-1 text-[14px] font-[500]"
+                      : "bg-bg-1 text-text-5 text-[14px] font-[500] border-[1px] border-red-400"
+                  }`,
+                }}
+              />
+              <Button
+                _state="main"
+                _node="아티스트 명 등록"
+                _onClick={() => setRegisterType("artist")}
+                _buttonProps={{
+                  className: `hover:cursor-pointer w-[160px] ${
+                    registerType === "artist"
+                      ? "bg-red-400 text-text-1 text-[14px] font-[500]"
+                      : "bg-bg-1 text-text-5 text-[14px] font-[500] border-[1px] border-red-400"
+                  }`,
+                }}
+              />
+            </div>
           </div>
 
-          {/* 그룹명 + 검색 */}
-          <div className="mt-4 relative w-full">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-              그룹 명
-            </p>
-            <Input
-              _value={inputGroupName}
-              _state="textbox-basic"
-              _onChange={handleGroupInputChange}
-            />
-
-            {groupResults.length > 0 && (
-              <div className="absolute z-10 bg-white border border-divider-1 rounded-[6px] w-full mt-1 shadow-sm max-h-[160px] overflow-y-auto">
-                {groupResults.map((group) => (
-                  <div
-                    key={group.id}
-                    className="px-3 py-2 text-[14px] hover:bg-secondary-200 cursor-pointer flex items-center gap-2"
-                    onClick={() => handleSelectGroup(group)}
-                  >
-                    {group.imageUrl && (
-                      <Image
-                        width={24}
-                        height={24}
-                        src={group.imageUrl}
-                        alt={group.nameKr}
-                        className="object-cover rounded-full overflow-hidden"
-                      />
-                    )}
-                    <span>{group.nameKr}</span>
-                  </div>
-                ))}
+          {/* FORM */}
+          {registerType === "artist" ? (
+            <>
+              <div className="mt-6 w-full">
+                <Input
+                  _value={artistName}
+                  _state="textbox-basic"
+                  _onChange={setArtistName}
+                  _title="아티스트 명 *"
+                  _inputProps={{
+                    placeholder: "아티스트 명을 입력해주세요.",
+                  }}
+                />
               </div>
-            )}
-          </div>
 
-          {/* 생일 */}
-          <div className="mt-[16px]">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-              생일 *
-            </p>
-            <Input
-              _value={birthday}
-              _state="textbox-basic"
-              _inputProps={{ type: "date" }}
-              _onChange={setBirthday}
-            />
-          </div>
-
-          <div className="h-[1px] bg-divider-1 w-full mt-[32px]" />
-          <p className="w-full text-text-3 font-[400] text-[12px] mb-[48px] mt-[6px]">
-            * 표시는 필수 입력 항목입니다.
-          </p>
+              <div className="mt-4 w-full">
+                <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                  생일 *
+                </h1>
+                <DatePicker
+                  selected={birthDate}
+                  onChange={(date) => setBirthDate(date)}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={<CalendarInput placeholder="0000-00-00" />}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mt-6 w-full">
+                <Input
+                  _value={groupName}
+                  _state="textbox-basic"
+                  _onChange={setGroupName}
+                  _title="그룹 명 *"
+                  _inputProps={{
+                    placeholder: "그룹 명을 입력해주세요.",
+                  }}
+                />
+              </div>
+              <div className="mt-4 w-full">
+                <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                  데뷔일 *
+                </h1>
+                <DatePicker
+                  selected={debut}
+                  onChange={(debut) => setDebut(debut)}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={<CalendarInput placeholder="0000-00-00" />}
+                />
+              </div>
+            </>
+          )}
         </div>
+
         {/* 안내문 */}
-        <div className="flex flex-col bg-secondary-300 w-[327.5px] rounded-[8px] h-[152px] p-[20px] mb-[62px]">
-          <div className="flex w-full justify-start items-center gap-[6px] pb-[4px]">
-            <div className="flex justify-center items-center rounded-xl w-[14px] h-[14px] bg-primary text-secondary-300 font-[600] text-[12px]">
+        <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[20px] mb-[62px] mt-[52px]">
+          <div className="flex w-full justify-start items-center gap-[6px] pb-[8px]">
+            <div className="flex justify-center items-center rounded-full w-[14px] h-[14px] bg-primary text-secondary-300 font-[600] text-[10px]">
               !
             </div>
             <p className="text-text-5 text-[14px] font-[600]">
               아티스트 등록 시 유의 사항
             </p>
           </div>
-          <p className="text-text-4 text-[12px] font-[400]">
-            {`· 등록한 아티스트 확인은 [마이>내 아티스트] 에서 확인하실 수 있습니다.`}
-          </p>
-          <p className="text-primary text-[12px] font-[400]">
-            · 아티스트 등록 및 진행에 관하여 발생된 모든 문제는 디어위드에서
-            책임지지 않습니다.
-          </p>
+          <div className="flex flex-col gap-[4px]">
+            <p className="text-text-4 text-[12px] font-[400]">
+              · 등록한 아티스트 확인은 [마이{">"} 내 아티스트] 에서 확인하실 수
+              있습니다.
+            </p>
+            <p className="text-primary text-[12px] font-[400]">
+              · 아티스트 등록 및 진행에 관하여 발생된 모든 문제는 디어위드에서
+              책임지지 않습니다.
+            </p>
+          </div>
         </div>
 
         <Button
           _state="main"
-          _node={isSubmitting ? "등록 중" : "아티스트 등록하기"}
+          _node="아티스트 등록하기"
           _onClick={handleSubmit}
-          _buttonProps={{
-            className: "mt-6 bg-[#FD725C] hover:cursor-pointer",
-            disabled: isSubmitting,
-          }}
+          _buttonProps={{ className: "mt-6", disabled: isSubmitting }}
         />
       </div>
     </div>

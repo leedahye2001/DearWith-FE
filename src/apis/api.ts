@@ -347,7 +347,7 @@ export const getUserInfo = async () => {
 
 // 프로필 사진 삭제
 export const deleteProfileImage = async () => {
-  return await api.delete(`/users/me/profile/image`);
+  return await api.delete(`/users/me/profile/image`, {});
 };
 
 // 프로필 사진 추가/수정
@@ -369,7 +369,6 @@ export const requestPresignedUrl = async (params: {
   return res.data;
 };
 
-
 export const uploadToS3 = async (file: File, uploadUrl: string) => {
   await fetch(uploadUrl, {
     method: "PUT",
@@ -379,7 +378,6 @@ export const uploadToS3 = async (file: File, uploadUrl: string) => {
     },
   });
 };
-
 
 export const commitUpload = async (tmpKey: string) => {
   const res = await api.post("/api/uploads/commit", { tmpKey });
