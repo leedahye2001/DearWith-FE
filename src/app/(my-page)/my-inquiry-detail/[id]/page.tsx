@@ -45,6 +45,16 @@ const InquiryDetailPage = () => {
   };
 
   useEffect(() => {
+    if (notice?.satisfactionStatus) {
+      if (notice.satisfactionStatus === "SATISFIED") {
+        setSatisfaction("good");
+      } else if (notice.satisfactionStatus === "UNSATISFIED") {
+        setSatisfaction("bad");
+      }
+    }
+  }, [notice]);
+
+  useEffect(() => {
     const fetchInquiry = async () => {
       try {
         const res = await getMyInquiryDetail(inquiryId);
@@ -61,12 +71,11 @@ const InquiryDetailPage = () => {
 
   // 만족도 API 처리
   const handleSatisfaction = (type: "good" | "bad") => {
-    const apiType = type === "good" ? "SATISFACTION" : "UNSATISFACTION";
+    const apiType = type === "good" ? "SATISFIED" : "UNSATISFIED";
 
-    openConfirm("소중한 의견 감사합니다.", async () => {
+    openConfirm("의견을 제출하시겠습니까?", async () => {
       try {
         await answerSatisfaction(inquiryId, apiType);
-        openAlert("의견이 제출되었습니다.");
         setSatisfaction(type);
       } catch (e) {
         console.error(e);
