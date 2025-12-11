@@ -5,11 +5,22 @@ import { useRouter } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
 
+export interface PhotoVariant {
+  name: string;
+  url: string;
+}
+
+export interface PhotoImage {
+  id: number;
+  variants: PhotoVariant[];
+}
+
 export interface EventListCardProps {
   id: string;
-  imageUrl: string;
+  images: PhotoImage[];
   title: string;
   artistNamesKr: string[];
+  groupNamesKr: string[];
   bookmarked: boolean;
   onToggleLike: (id: string) => void;
   eventState?: "SCHEDULED" | "IN_PROGRESS" | "ENDED";
@@ -17,14 +28,17 @@ export interface EventListCardProps {
 
 export default function EventListCard({
   id,
-  imageUrl,
+  images,
   title,
   artistNamesKr,
+  groupNamesKr,
   bookmarked,
   onToggleLike,
   eventState,
 }: EventListCardProps) {
   const router = useRouter();
+
+  const imageUrl = images[0]?.variants?.[0]?.url;
 
   const handleCardClick = () => router.push(`/event-detail/${id}`);
   const handleLikeToggle = (e: React.MouseEvent) => {
@@ -82,9 +96,15 @@ export default function EventListCard({
         }`}
         onClick={handleCardClick}
       >
-        <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
-          {artistNamesKr.join(", ")}
-        </p>
+        {artistNamesKr?.length > 0 ? (
+          <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
+            {artistNamesKr.join(", ")}
+          </p>
+        ) : groupNamesKr?.length > 0 ? (
+          <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
+            {groupNamesKr.join(", ")}
+          </p>
+        ) : null}
       </div>
 
       <div

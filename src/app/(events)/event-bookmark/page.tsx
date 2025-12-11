@@ -12,14 +12,15 @@ import {
   postGroupLike,
 } from "@/apis/api";
 import DownSmall from "@/svgs/DownSmall.svg";
-import EventListCard from "./components/EventListCard";
+import EventListCard, { PhotoImage } from "./components/EventListCard";
 import ArtistListCard from "./components/ArtistListCard";
 
 export interface EventBookmarkProps {
   id: string;
   title: string;
-  imageUrl: string;
+  images: PhotoImage[];
   artistNamesKr: string[];
+  groupNamesKr: string[];
   startDate: string;
   endDate: string;
   bookmarkCount: string;

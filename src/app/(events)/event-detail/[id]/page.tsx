@@ -40,11 +40,15 @@ interface EventDetail {
     lat: number;
   };
   images: {
-    id: number;
-    imageUrl: string;
-    displayOrder: number;
+    id: string;
+    variants: { name: string; url: string }[];
   }[];
   artists: {
+    id: number;
+    nameKr: string;
+    profileImageUrl: string;
+  }[];
+  artistGroups: {
     id: number;
     nameKr: string;
     profileImageUrl: string;
@@ -91,6 +95,7 @@ export default function EventDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"home" | "review">("home");
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // 클릭 시 토글
   const toggleBookmark = async () => {
@@ -211,35 +216,66 @@ export default function EventDetailPage() {
       {/* 👇 탭에 따른 내용 */}
       {activeTab === "home" ? (
         <>
-          {/* 이벤트 대표 이미지 */}
           {event.images?.length > 0 && (
-            <div className="relative w-full h-[536px]">
-              {event.images[0].imageUrl ? (
-                <Image
-                  src={event.images[0].imageUrl}
-                  alt={event.title}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200 cursor-pointer">
-                  <p className="text-text-3 text-[12px]">이미지 없음</p>
-                </div>
-              )}
+            <div className="relative w-full h-[536px] overflow-hidden">
+              <div
+                className="flex h-full transition-transform duration-300"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              >
+                {event.images.map((img, idx) => {
+                  const url = img?.variants?.[0]?.url || null;
+
+                  return (
+                    <div key={idx} className="relative min-w-full h-full">
+                      {url ? (
+                        <Image
+                          src={url}
+                          alt={`${event.title}-${idx}`}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <p className="text-text-3 text-[12px]">이미지 없음</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* 인덱스 표시 UI */}
+              <div className="absolute bottom-[12px] right-[12px] flex justify-center items-center px-[15px] py-[4px] rounded-[20px] bg-bg-1/80 text-text-5 text-[12px] font-[600]">
+                {currentIndex + 1}
+                <p className="text-text-3 font-[400]">
+                  &nbsp;|&nbsp;{event.images.length}
+                </p>
+              </div>
             </div>
           )}
 
-          <div className="p-[24px]">
+          <div className="p-[12px]">
             <div className="flex justify-between items-center pb-[8px] pt-[28px]">
               <div className="flex gap-[4px]">
-                {event.artists.map((artist) => (
-                  <div
-                    key={artist.id}
-                    className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto text-[12px] font-[600] rounded-[4px]"
-                  >
-                    {artist.nameKr}
-                  </div>
-                ))}
+                {event.artists?.length > 0
+                  ? event.artists.map((artist) => (
+                      <div
+                        key={artist.id}
+                        className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto text-[12px] font-[600] rounded-[4px]"
+                      >
+                        {artist.nameKr}
+                      </div>
+                    ))
+                  : event.artistGroups?.length > 0
+                  ? event.artistGroups.map((artistGroup) => (
+                      <div
+                        key={artistGroup.id}
+                        className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto text-[12px] font-[600] rounded-[4px]"
+                      >
+                        {artistGroup.nameKr}
+                      </div>
+                    ))
+                  : null}
               </div>
               <button onClick={toggleBookmark}>
                 {isBookmarked ? <HeartFill /> : <HeartDefault />}

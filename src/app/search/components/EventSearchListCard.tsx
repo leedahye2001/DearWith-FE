@@ -50,9 +50,9 @@ export default function EventSearchListCard({
   return (
     <div className="flex flex-col items-center mb-[38px] relative">
       <div className="relative rounded-[4px] w-[157px] h-[292px] overflow-hidden mb-[10px]">
-        {images?.[0]?.variants?.[0]?.url ? (
+        {images?.[2]?.variants?.[2]?.url ? (
           <Image
-            src={images?.[0]?.variants?.[0]?.url}
+            src={images?.[2]?.variants?.[2]?.url}
             alt={title}
             width={157}
             height={220}

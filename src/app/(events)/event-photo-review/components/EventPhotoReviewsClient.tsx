@@ -14,8 +14,8 @@ interface PhotoVariant {
 }
 
 interface PhotoReviewImage {
-  id: string; // 리뷰 ID
-  variants: PhotoVariant[];
+  reviewId: string;
+  images: PhotoVariant[];
 }
 
 export default function EventPhotoReviewsClient({ id }: { id: string }) {
@@ -27,13 +27,26 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
     const fetchPhotos = async () => {
       try {
         const res = await getEventPhotoReviews(id);
-        setPhotos(res.images || []);
+
+        const formatted: PhotoReviewImage[] = (res?.images ?? []).map(
+          (item: any) => {
+            const large = item.image?.variants?.[2];
+
+            return {
+              reviewId: String(item.reviewId),
+              images: large ? [large] : [], // 배열로 감싸줘야 함
+            };
+          }
+        );
+
+        setPhotos(formatted);
       } catch (err) {
         console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchPhotos();
   }, [id]);
 
@@ -55,15 +68,15 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
         _topNode="포토리뷰 전체보기"
       />
 
-      <div className="grid grid-cols-3 gap-[8px] p-[16px]">
+      <div className="grid grid-cols-3 gap-[8px]">
         {photos.map((photo) =>
-          photo.variants.map((variant, index) => (
+          photo.images.map((variant, index) => (
             <div
-              key={`${photo.id}-${index}`}
+              key={`${photo.reviewId}-${index}`}
               className="relative w-full aspect-square cursor-pointer"
               onClick={() =>
                 router.push(
-                  `/event-photo-review/${id}/${photo.id}?img=${index}`
+                  `/event-photo-review/${id}/${photo.reviewId}?img=${index}`
                 )
               }
             >
@@ -72,7 +85,7 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
                 height={122}
                 src={variant.url}
                 alt={variant.name}
-                className="object-cover rounded-[6px] w-full h-full"
+                className="object-cover w-full h-full"
               />
             </div>
           ))

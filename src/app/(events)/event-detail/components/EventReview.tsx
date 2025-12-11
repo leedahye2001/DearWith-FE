@@ -16,10 +16,12 @@ import {
 import Image from "next/image";
 import Spinner from "@/components/Spinner/Spinner";
 
-// ------------------- 타입 정의 -------------------
 interface PostImage {
-  group: string;
-  variants: { name: string; url: string }[];
+  reviewId: string;
+  image: {
+    id: string;
+    variants: { name: string; url: string }[];
+  };
 }
 
 interface Post {
@@ -28,7 +30,10 @@ interface Post {
   profileImageUrl: string;
   content: string;
   createdAt: string;
-  images: PostImage[];
+  images: {
+    group: string;
+    variants: { name: string; url: string }[];
+  }[];
   tags: string[];
   likeCount: number;
   liked: boolean;
@@ -47,7 +52,6 @@ interface EventReviewProps {
   eventId: string;
 }
 
-// ------------------- 메인 컴포넌트 -------------------
 const EventReview = ({ eventId }: EventReviewProps) => {
   const router = useRouter();
 
@@ -59,7 +63,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  // ------------------- 리뷰 리스트 + 사진 리뷰 불러오기 -------------------
   useEffect(() => {
     if (!eventId) return;
 
@@ -80,7 +83,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
     fetchEvent();
   }, [eventId]);
 
-  // ------------------- 좋아요 토글 -------------------
   const handleLikeToggle = async (reviewId: string) => {
     if (!posts) return;
     const updatedPosts = { ...posts };
@@ -91,7 +93,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
     const wasLiked = target.liked;
 
     try {
-      // 낙관적 업데이트
       target.liked = !wasLiked;
       target.likeCount += wasLiked ? -1 : 1;
       setPosts({ ...updatedPosts });
@@ -100,14 +101,12 @@ const EventReview = ({ eventId }: EventReviewProps) => {
       else await postReviewLike(reviewId);
     } catch (err) {
       console.error(err);
-      // 실패 시 원복
       target.liked = wasLiked;
       target.likeCount += wasLiked ? 1 : -1;
       setPosts({ ...updatedPosts });
     }
   };
 
-  // ------------------- 로딩 상태 -------------------
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-[400px] text-text-5">
@@ -115,7 +114,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
       </div>
     );
 
-  // ------------------- 작성/수정 모드 -------------------
   const editingReview = editingReviewId
     ? (() => {
         const post = posts?.content.find((p) => p.id === editingReviewId);
@@ -125,7 +123,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
           content: post.content,
           tags: post.tags,
           images: post.images.map((img, idx) => ({
-            url: img.variants[0]?.url,
+            url: img.variants[2]?.url,
             displayOrder: idx,
           })),
         } as ReviewDetail;
@@ -146,7 +144,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
     );
   }
 
-  // ------------------- 리뷰 리스트 렌더 -------------------
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       {/* 상단: 사진 리뷰 */}
@@ -154,43 +151,41 @@ const EventReview = ({ eventId }: EventReviewProps) => {
         <h3 className="font-[600] text-[14px] text-text-5 mb-[8px]">
           등록된 리뷰 {photoReviews.length}개
         </h3>
+
         <div className="flex gap-[8px]">
           {photoReviews
             .slice()
-            .reverse()
             .slice(0, 4)
             .map((img, idx, arr) => {
               const url =
-                Array.isArray(img?.variants) && img.variants.length > 0
-                  ? img.variants[0].url
+                Array.isArray(img?.image?.variants) &&
+                img.image.variants.length > 0
+                  ? img.image.variants[2].url
                   : null;
 
               const isLast = idx === arr.length - 1 && photoReviews.length > 4;
+
               return (
                 <div
                   key={idx}
                   className="relative w-[78px] h-[78px] rounded-[4px] overflow-hidden flex-shrink-0"
                 >
-                  {url ? (
-                    <Image
-                      width={78}
-                      height={78}
-                      src={url}
-                      alt={url}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                      <p className="text-text-3 text-[12px]">이미지 없음</p>
-                    </div>
-                  )}
+                  <div
+                    className="absolute inset-0 bg-center bg-cover"
+                    style={{ backgroundImage: `url(${url})` }}
+                  />
 
                   {isLast && (
                     <div
                       onClick={() =>
                         router.push(`/event-photo-review/${eventId}`)
                       }
-                      className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center z-10"
+                      className="
+                  absolute inset-0 
+                  bg-black/40
+                  z-20 flex items-center justify-center
+                  cursor-pointer
+                "
                     >
                       <span className="text-white font-[600] text-[14px]">
                         + 더 보기
@@ -243,7 +238,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                 </div>
               </div>
 
-              {/* ⋮ 메뉴 */}
+              {/* 메뉴 */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -287,7 +282,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             {post.images.length > 0 && (
               <div className="flex justify-between my-[12px] ">
                 {post.images.map((img, idx) => {
-                  const url = img.variants[0]?.url;
+                  const url = img.variants[2]?.url;
                   return (
                     <div
                       key={idx}
