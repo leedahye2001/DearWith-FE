@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
+import HeartFill from "@/svgs/HeartFill.svg";
 import Etc from "@/svgs/Etc.svg";
 import { FAB } from "@/components/FAB/FAB";
+
 import Write from "@/svgs/Write.svg";
 import EventReviewWrite, { ReviewDetail } from "./EventReviewWrite";
 import {
@@ -330,10 +332,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                 className="flex gap-[2px] items-center"
                 onClick={() => handleLikeToggle(post.id)}
               >
-                <HeartDefault
-                  stroke={post.liked ? "#FD725C" : "#757575"}
-                  fill={post.liked ? "#FD725C" : "none"}
-                />
+                {post.liked ? <HeartFill /> : <HeartDefault />}
                 <p>{post.likeCount}</p>
               </button>
             </div>

@@ -169,6 +169,14 @@ export const patchEventReviewDetail = async (
   return res.data;
 };
 
+export const getReviewDetail = async (
+  reviewId: string,
+  photoId: string
+) => {
+  const res = await api.get(`/api/reviews/${reviewId}/${photoId}`, {});
+  return res.data;
+};
+
 // 핫 아티스트/그룹 Top 20
 export const getHotArtistGroupTopTwenty = async () => {
   const res = await api.get(`/api/search/artists/artists-groups`);
