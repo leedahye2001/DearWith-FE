@@ -9,6 +9,7 @@ import { useState } from "react";
 import useUserStore from "../../stores/userStore";
 import ViewDefault from "@/svgs/ViewDefault.svg";
 import ViewOn from "@/svgs/ViewOn.svg";
+import { requestAppleLogin, isAppleNative } from "@/lib/native/bridge";
 
 const Page = () => {
   const router = useRouter();
@@ -69,6 +70,10 @@ const Page = () => {
     router.push(
       "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=a1c8f8ab77b2ad88da439427df5c5226&redirect_uri=https://www.dearwith.kr/oauth/kakao"
     );
+  };
+
+  const handleAppleLogin = () => {
+    requestAppleLogin(); 
   };
 
   return (
@@ -143,6 +148,25 @@ const Page = () => {
         }}
         _onClick={handleKakaoLogin}
       />
+
+      {isAppleNative() && (
+        <Button
+          _state="main"
+          _node={
+            <div className="flex justify-between items-center p-[10px]">
+              <KakaoLogo />
+              <span className="text-white text-[14px] font-[600]">
+                Apple로 시작하기
+              </span>
+              <div className="w-[18px]" />
+            </div>
+          }
+          _buttonProps={{
+            className: "mt-[8px] hover:cursor-pointer bg-black",
+          }}
+          _onClick={handleAppleLogin}
+        />
+      )}
     </div>
   );
 };

@@ -117,7 +117,7 @@ const Page = () => {
   };
 
   return (
-    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center mt-[54px] gap-[12px]">
+    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center gap-[12px]">
       {/* 검색창 */}
       <div className="flex w-full justify-center">
         <Input

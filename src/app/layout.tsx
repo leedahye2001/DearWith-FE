@@ -3,7 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/lib/QueryProvider";
 import Navbar from "@/components/template/Navbar";
-import AlertModalClient from "@/components/AlertModal/AlertModalClient";
+import AlertModalClient from "@/components/AlertModal/AlertModalClient"; 
+import NativeBridgeProvider from "@/lib/native/NativeBridgeProvider";
 
 const mainFont = localFont({
   src: "../../public/font/Pretendard-Medium.otf",
@@ -29,7 +30,9 @@ export default function RootLayout({
         className={`${mainFont.className} ${inter.className} relative bg-bg-1`}
       >
         <QueryProvider>
-          <div className="w-full max-w-[375px] mx-auto pb-[80px]">
+          <NativeBridgeProvider />
+
+          <div className="w-full max-w-[428px] mx-auto pb-[80px]">
             {children}
           </div>
           <AlertModalClient />

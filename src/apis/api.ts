@@ -434,3 +434,20 @@ export const answerSatisfaction = async (
   const res = await api.post(`/api/inquiries/${inquiryId}/satisfaction`, {satisfactionStatus});
   return res.data;
 };
+
+
+// 푸시 기기 등록/갱신 
+export type PlatformType = "IOS" | "ANDROID";
+
+export const postPushDevice = async (payload: {
+  deviceId: string;
+  fcmToken: string;
+  platform: PlatformType;
+  phoneModel?: string;
+  osVersion?: string;
+}) => {
+  const res = await api.post("/api/push/devices", payload, {
+    withCredentials: true,
+  });
+  return res.data;
+};
