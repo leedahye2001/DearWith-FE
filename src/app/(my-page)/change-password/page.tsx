@@ -13,7 +13,7 @@ import ViewDefault from "@/svgs/ViewDefault.svg";
 import ViewOn from "@/svgs/ViewOn.svg";
 import useModalStore from "@/app/stores/useModalStore";
 import useUserStore from "@/app/stores/userStore";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/components/Progressbar/Progressbar";
 
 const Page = () => {
   const router = useRouter();

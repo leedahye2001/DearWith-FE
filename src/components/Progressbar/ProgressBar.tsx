@@ -1,16 +1,16 @@
 "use client";
 
-interface ProgressBarProps {
+interface ProgressbarProps {
   totalSteps: number;
   currentStep: number;
   className?: string;
 }
 
-const ProgressBar = ({
+const Progressbar = ({
   totalSteps,
   currentStep,
   className,
-}: ProgressBarProps) => {
+}: ProgressbarProps) => {
   const progressPercent = (currentStep / totalSteps) * 100;
 
   return (
@@ -27,4 +27,4 @@ const ProgressBar = ({
   );
 };
 
-export default ProgressBar;
+export default Progressbar;

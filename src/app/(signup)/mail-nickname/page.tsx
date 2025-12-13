@@ -14,7 +14,7 @@ import {
 } from "@/app/stores/userStore";
 import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/components/Progressbar/Progressbar";
 
 const Page = () => {
   const router = useRouter();

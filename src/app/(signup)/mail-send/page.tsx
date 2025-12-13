@@ -10,7 +10,7 @@ import Button from "@/components/Button/Button";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Bottombar from "@/components/template/Bottombar";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/components/Progressbar/Progressbar";
 
 const Page = () => {
   const router = useRouter();

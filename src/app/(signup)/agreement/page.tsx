@@ -7,7 +7,7 @@ import Button from "@/components/Button/Button";
 import Checkbox from "@/components/Checkbox/Checkbox";
 import Bottombar from "@/components/template/Bottombar";
 import Topbar from "@/components/template/Topbar";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/components/Progressbar/Progressbar";
 
 const Page = () => {
   const router = useRouter();

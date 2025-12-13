@@ -7,7 +7,7 @@ import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
 import GuideSection from "./components/GuideSection";
 import { useNicknameStore } from "@/app/stores/userStore";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/components/Progressbar/Progressbar";
 
 const Page = () => {
   const router = useRouter();

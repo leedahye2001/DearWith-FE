@@ -11,7 +11,7 @@ import ViewOn from "@/svgs/ViewOn.svg";
 import Check from "@/svgs/Check.svg";
 import Bottombar from "@/components/template/Bottombar";
 import Button from "@/components/Button/Button";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/components/Progressbar/Progressbar";
 
 const Page = () => {
   const router = useRouter();
