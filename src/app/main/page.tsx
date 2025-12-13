@@ -154,7 +154,11 @@ export default function Home() {
               <div
                 key={review.reviewId}
                 className="flex justify-start items-start border border-divider-1 rounded-[4px] p-[12px] min-w-[260px] gap-[10px] cursor-pointer"
-                onClick={() => router.push(`/review/${review.reviewId}`)}
+                onClick={() =>
+                  router.push(
+                    `/review-detail/${review.reviewId}/${review.images[0].id}`
+                  )
+                }
               >
                 <div className="relative w-[40px] h-[40px] overflow-hidden rounded-[4px] shrink-0">
                   {review.images?.[0]?.variants?.[1]?.url ? (
