@@ -8,7 +8,7 @@ import {
   postEventLike,
   deleteEventLike,
 } from "@/apis/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { EventCardProps } from "@/app/main/components/MainEventCard";
 import { EventState } from "../page";
 import Topbar from "@/components/template/Topbar";
@@ -19,7 +19,6 @@ const Page = () => {
   const searchParams = useSearchParams();
 
   const rawType = searchParams?.get("type") ?? "";
-
   const type = decodeURIComponent(rawType).replace(/^"+|"+$/g, "");
 
   const artistId = searchParams?.get("artistId") ?? "";
@@ -33,32 +32,35 @@ const Page = () => {
   const [filterState, setFilterState] = useState<EventState>("LATEST");
   const [likedIds, setLikedIds] = useState<string[]>([]);
 
-  const toggleLike = async (id: string) => {
-    const isLiked = likedIds.includes(id);
-
-    setLikedIds((prev) =>
-      isLiked ? prev.filter((v) => v !== id) : [...prev, id]
-    );
-    setEvents((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
-    );
-
-    try {
-      if (isLiked) await deleteEventLike(id);
-      else await postEventLike(id);
-    } catch (err) {
-      console.error("좋아요 토글 실패:", err);
+  const toggleLike = useCallback(
+    async (id: string) => {
+      const isLiked = likedIds.includes(id);
 
       setLikedIds((prev) =>
-        isLiked ? [...prev, id] : prev.filter((v) => v !== id)
+        isLiked ? prev.filter((v) => v !== id) : [...prev, id]
       );
       setEvents((prev) =>
-        prev.map((e) => (e.id === id ? { ...e, isLiked } : e))
+        prev.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
       );
-    }
-  };
 
-  const fetchEvents = async () => {
+      try {
+        if (isLiked) await deleteEventLike(id);
+        else await postEventLike(id);
+      } catch (err) {
+        console.error("좋아요 토글 실패:", err);
+
+        setLikedIds((prev) =>
+          isLiked ? [...prev, id] : prev.filter((v) => v !== id)
+        );
+        setEvents((prev) =>
+          prev.map((e) => (e.id === id ? { ...e, isLiked } : e))
+        );
+      }
+    },
+    [likedIds]
+  );
+
+  const fetchEvents = useCallback(async () => {
     try {
       let res;
 
@@ -97,11 +99,11 @@ const Page = () => {
       console.error("이벤트 조회 실패:", err);
       setEvents([]);
     }
-  };
+  }, [type, artistId, groupId, filterState, toggleLike]);
 
   useEffect(() => {
     fetchEvents();
-  }, [type, artistId, groupId, filterState]);
+  }, [fetchEvents]);
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">

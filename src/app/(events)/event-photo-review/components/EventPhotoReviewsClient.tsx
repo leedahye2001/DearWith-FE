@@ -23,6 +23,19 @@ interface PhotoReview {
   image: PhotoImage;
 }
 
+// API 응답 타입 정의
+interface ApiPhotoReviewItem {
+  reviewId: string | number;
+  image: {
+    id: number;
+    variants?: PhotoVariant[];
+  };
+}
+
+interface ApiResponse {
+  images?: ApiPhotoReviewItem[];
+}
+
 export default function EventPhotoReviewsClient({ id }: { id: string }) {
   const router = useRouter();
   const [photos, setPhotos] = useState<PhotoReview[]>([]);
@@ -31,21 +44,23 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const res = await getEventPhotoReviews(id);
+        const res: ApiResponse = await getEventPhotoReviews(id);
 
         const list = res?.images ?? [];
 
-        const formatted: PhotoReview[] = list.map((item: any) => {
-          const large = item.image?.variants?.[2];
+        const formatted: PhotoReview[] = list.map(
+          (item: ApiPhotoReviewItem) => {
+            const large = item.image?.variants?.[2];
 
-          return {
-            reviewId: Number(item.reviewId),
-            image: {
-              id: item.image.id,
-              variants: large ? [large] : [],
-            },
-          };
-        });
+            return {
+              reviewId: Number(item.reviewId),
+              image: {
+                id: item.image.id,
+                variants: large ? [large] : [],
+              },
+            };
+          }
+        );
 
         setPhotos(formatted);
       } catch (err) {
@@ -77,30 +92,37 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
         _topNode="포토리뷰 전체보기"
       />
 
-      <div className="grid grid-cols-3 gap-[8px]">
-        {photos.map((photo) => {
-          const variant = photo.image.variants[0];
-          if (!variant) return null;
+      <div className="grid grid-cols-3 gap-[8px] p-[8px]">
+        {photos.length === 0 ? (
+          <div className="col-span-3 flex justify-center items-center h-[300px]">
+            <p className="text-text-3">포토리뷰가 없습니다.</p>
+          </div>
+        ) : (
+          photos.map((photo) => {
+            const variant = photo.image.variants[0];
+            if (!variant) return null;
 
-          return (
-            <div
-              key={photo.image.id}
-              className="relative w-full aspect-square cursor-pointer"
-              onClick={() =>
-                router.push(
-                  `/review-detail/${photo.reviewId}/${photo.image.id}`
-                )
-              }
-            >
-              <Image
-                src={variant.url}
-                alt={variant.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={photo.image.id}
+                className="relative w-full aspect-square cursor-pointer"
+                onClick={() =>
+                  router.push(
+                    `/review-detail/${photo.reviewId}/${photo.image.id}`
+                  )
+                }
+              >
+                <Image
+                  src={variant.url}
+                  alt={variant.name}
+                  fill
+                  sizes="(max-width: 768px) 33vw, 25vw"
+                  className="object-cover"
+                />
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

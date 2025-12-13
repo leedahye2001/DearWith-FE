@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 export interface RegisterReviewListCardProps {
   id: string;
@@ -12,14 +11,11 @@ export interface RegisterReviewListCardProps {
 }
 
 export default function RegisterReviewListCard({
-  id,
   imageUrl,
   eventTitle,
   reviewContent,
   createdAt,
 }: RegisterReviewListCardProps) {
-  const router = useRouter();
-
   return (
     <div className="flex w-full cursor-pointer border-b border-divider-1 py-[16px] gap-[12px]">
       <div className="relative w-[60px] h-[60px] rounded-[6px] overflow-hidden bg-gray-200">

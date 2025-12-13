@@ -1,10 +1,11 @@
 "use client";
-
+import { Suspense } from "react";
 import { useXAuthStore } from "@/app/stores/useXAuthStore";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Spinner from "@/components/Spinner/Spinner";
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const setAuthData = useXAuthStore((state) => state.setAuthData);
@@ -25,4 +26,12 @@ export default function VerifyPage() {
   }, [result, ticket, handle, setAuthData, setVerified, router]);
 
   return <div>OAuth 인증 처리중...</div>;
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <VerifyContent />
+    </Suspense>
+  );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { getGroup } from "@/apis/api";
 import api from "@/apis/instance";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";

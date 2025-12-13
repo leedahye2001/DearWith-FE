@@ -22,8 +22,6 @@ export default function ArtistListCard({
   nameKr,
   imageUrl,
   createdAt,
-  birthDate,
-  debutDate,
   bookmarked,
   type,
   onToggleLike,

@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { registerInquiry } from "@/apis/api";
 import useModalStore from "@/app/stores/useModalStore";
 import Button from "@/components/Button/Button";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Input from "@/components/Input/Input";
-import Bottombar from "@/components/template/Bottombar";
 
 const InquiryRegisterPage = () => {
   const [title, setTitle] = useState("");

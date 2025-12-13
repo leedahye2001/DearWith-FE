@@ -91,11 +91,10 @@ export default function EventDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const [event, setEvent] = useState<EventDetail | null>(null);
-  // const [notice, setNotice] = useState<Notice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"home" | "review">("home");
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex] = useState(0);
 
   // 클릭 시 토글
   const toggleBookmark = async () => {

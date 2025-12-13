@@ -10,19 +10,20 @@ const ArtistSearchResult = ({ artist }: { artist: Artist }) => {
 
   const handleClick = async (type: string) => {
     // 최근 검색어 추가
-    addRecentSearch(artist.nameKr);
-    {
-      type === "ARTIST"
-        ? router.push(
-            `/search/${artist.id}?artistId=${
-              artist.id
-            }&artistName=${encodeURIComponent(artist.nameKr)}&type="ARTIST"`
-          )
-        : router.push(
-            `/search/${artist.id}?groupId=${
-              artist.id
-            }&groupName=${encodeURIComponent(artist.nameKr)}&type="GROUP"`
-          );
+    await addRecentSearch(artist.nameKr);
+
+    if (type === "ARTIST") {
+      router.push(
+        `/search/${artist.id}?artistId=${
+          artist.id
+        }&artistName=${encodeURIComponent(artist.nameKr)}&type=ARTIST`
+      );
+    } else {
+      router.push(
+        `/search/${artist.id}?groupId=${
+          artist.id
+        }&groupName=${encodeURIComponent(artist.nameKr)}&type=GROUP`
+      );
     }
   };
 

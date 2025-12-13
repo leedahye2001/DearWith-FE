@@ -6,7 +6,6 @@ import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
 import Etc from "@/svgs/Etc.svg";
 import { FAB } from "@/components/FAB/FAB";
-
 import Write from "@/svgs/Write.svg";
 import EventReviewWrite, { ReviewDetail } from "./EventReviewWrite";
 import {
@@ -37,7 +36,7 @@ interface Post {
     variants: { name: string; url: string }[];
   }[];
   tags: string[];
-  likeCount: number;
+  likeCount: string;
   liked: boolean;
   editable: boolean;
 }

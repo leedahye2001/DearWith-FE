@@ -56,7 +56,7 @@ const Page = () => {
       });
 
       router.push("/main");
-    } catch (error) {
+    } catch {
       setPasswordError("비밀번호를 다시 입력해주세요.");
     }
   };

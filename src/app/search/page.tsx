@@ -13,7 +13,6 @@ import {
   getRecentSearch,
 } from "@/apis/api";
 import ArtistSearchResult from "./components/ArtistSearchResult";
-import EventSearchResult from "./components/EventSearchResult";
 import RealTimeSearch from "./components/RealTimeSearch";
 import { EventCardProps } from "../main/components/MainEventCard";
 import useCurrentHourLabel from "@/utils/useCurrentHourLabel";
@@ -46,8 +45,7 @@ const Page = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [hotArtists, setHotArtists] = useState<Artist[]>([]);
   const [events, setEvents] = useState<EventCardProps[]>([]);
-  const [category, setCategory] = useState<"ARTIST" | "EVENT">("ARTIST");
-  const [filterState, setFilterState] = useState<EventState>("LATEST");
+  const [category] = useState<"ARTIST" | "EVENT">("ARTIST");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const hourLabel = useCurrentHourLabel();
 
@@ -135,29 +133,6 @@ const Page = () => {
         />
       </div>
 
-      {/* 카테고리 탭 */}
-      {/* <div className="flex w-full mt-[12px] border-b border-divider-1">
-        <button
-          className={`flex-1 py-[8px] text-center font-[600] ${
-            category === "ARTIST"
-              ? "border-b-[2px] border-primary text-text-5"
-              : "text-text-3"
-          }`}
-          onClick={() => setCategory("ARTIST")}
-        >
-          아티스트
-        </button>
-        <button
-          className={`flex-1 py-[8px] text-center font-[600] ${
-            category === "EVENT"
-              ? "border-b-[2px] border-primary text-text-5"
-              : "text-text-3"
-          }`}
-          onClick={() => setCategory("EVENT")}
-        >
-          이벤트
-        </button>
-      </div> */}
       {recentSearches.length > 0 && (
         <div className="flex flex-col gap-[16px] mt-[12px] px-[24px] w-full">
           <div className="flex justify-between">
@@ -194,7 +169,7 @@ const Page = () => {
       <div className="flex flex-col gap-[20px] overflow-y-auto w-full mb-[20px] mt-[12px]">
         {search && (
           <h1 className="px-[24px] text-[16px] font-[700] text-text-5">
-            '{search}'에 대한 검색 결과
+            &apos;{search}&apos;에 대한 검색 결과
           </h1>
         )}
 
@@ -211,27 +186,21 @@ const Page = () => {
                   <ArtistSearchResult key={artist.id} artist={artist} />
                 ))
             )
+          ) : events.length === 0 ? (
+            <p className="text-[12px] text-text-3 flex justify-center items-center h-[500px]">
+              검색 결과가 없습니다.
+            </p>
           ) : (
-            <></>
+            <div className="flex flex-col gap-[12px] px-[24px]">
+              {events.slice(0, 10).map((event) => (
+                <div key={event.id} className="p-4 border rounded">
+                  <h3>{event.title}</h3>
+                  {/* 이벤트 카드 컴포넌트 추가 */}
+                </div>
+              ))}
+            </div>
           )
         ) : (
-          // events.length === 0 ? (
-          //   <p className="text-[12px] text-text-3 flex justify-center items-center h-[500px]">
-          //     검색 결과가 없습니다.
-          //   </p>
-          // ) : (
-          //   events
-          //     .slice(0, 10)
-          //     .map((event) => (
-          //       <EventSearchResult
-          //         key={event.id}
-          //         events={events.slice(0, 10)}
-          //         filterState={filterState}
-          //         setFilterState={setFilterState}
-          //         artistName={search}
-          //       />
-          //     ))
-          // )
           <div className="flex flex-col gap-[20px] mt-[12px] px-[24px] w-full">
             <div className="flex justify-between">
               <h3 className="font-[700] text-[16px] text-text-5">
@@ -253,4 +222,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;

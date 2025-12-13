@@ -67,7 +67,7 @@ const Page = () => {
       openAlert("비밀번호가 변경되었어요. 다시 로그인 해주세요.");
 
       router.push("/login");
-    } catch (error) {
+    } catch {
       setConfirmPasswordError("비밀번호를 다시 입력해주세요.");
     }
   };

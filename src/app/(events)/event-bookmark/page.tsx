@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   deleteArtistLike,
   deleteEventLike,
@@ -69,6 +69,7 @@ export default function Page() {
       console.error("찜 API 실패:", error);
     }
   };
+
   const toggleEventLike = async (id: string) => {
     const isLiked = likedEventsIds.includes(id);
 
@@ -85,7 +86,7 @@ export default function Page() {
     }
   };
 
-  const fetchBookmarkedEvents = async () => {
+  const fetchBookmarkedEvents = useCallback(async () => {
     try {
       const res: EventBookmarkProps[] = await getEventBookmark(filterState);
       const now = new Date();
@@ -112,9 +113,9 @@ export default function Page() {
     } catch (error) {
       console.error("북마크 이벤트 조회 실패:", error);
     }
-  };
+  }, [filterState]);
 
-  const fetchBookmarkedArtists = async () => {
+  const fetchBookmarkedArtists = useCallback(async () => {
     try {
       const res: ArtistBookmarkProps[] = await getArtistBookmark();
       setArtists(res);
@@ -123,12 +124,15 @@ export default function Page() {
     } catch (error) {
       console.error("북마크 아티스트 조회 실패:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (category === "EVENT") fetchBookmarkedEvents();
-    else fetchBookmarkedArtists();
-  }, [filterState, category]);
+    if (category === "EVENT") {
+      fetchBookmarkedEvents();
+    } else {
+      fetchBookmarkedArtists();
+    }
+  }, [category, fetchBookmarkedEvents, fetchBookmarkedArtists]);
 
   const count = category === "EVENT" ? events.length : artists.length;
 

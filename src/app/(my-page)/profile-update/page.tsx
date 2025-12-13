@@ -60,8 +60,9 @@ const Page = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.onchange = (e: any) => {
-      const file = e.target.files?.[0];
+    input.onchange = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
       if (file) handleImageUpload(file);
     };
     input.click();
@@ -183,7 +184,9 @@ const Page = () => {
         </div>
 
         {/* 탈퇴하기 */}
-        <p className="text-text-2 underline text-[14px]">탈퇴하기</p>
+        <p className="text-text-2 underline text-[14px] cursor-pointer">
+          탈퇴하기
+        </p>
 
         {/* 변경하기 */}
         <Bottombar
@@ -199,7 +202,7 @@ const Page = () => {
       </div>
 
       {showSheet && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-end z-9999">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-end z-[9999]">
           <div className="bg-white w-full rounded-t-[12px] p-[20px] flex flex-col text-center text-[16px] font-[500]">
             <button
               className="flex justify-start py-[16px]"

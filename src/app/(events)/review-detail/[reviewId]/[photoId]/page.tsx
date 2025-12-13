@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { use } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
 import Etc from "@/svgs/Etc.svg";
@@ -10,7 +9,6 @@ import { postReviewLike, deleteReviewLike, getReviewDetail } from "@/apis/api";
 import Image from "next/image";
 import Spinner from "@/components/Spinner/Spinner";
 import Topbar from "@/components/template/Topbar";
-import { useRouter } from "next/navigation";
 import Backward from "@/svgs/Backward.svg";
 
 /* ===================== types ===================== */
@@ -46,27 +44,22 @@ const getImageUrl = (variants?: { name: string; url: string }[]) =>
 /* ===================== component ===================== */
 
 const ReviewDetail = () => {
+  // ✅ 모든 Hook을 최상위에서 호출
   const params = useParams<{
     reviewId: string;
     photoId: string;
   }>();
-
-  if (!params) {
-    return (
-      <div className="flex justify-center items-center h-[300px]">
-        <Spinner />
-      </div>
-    );
-  }
-  const { reviewId, photoId } = params;
-
+  const router = useRouter();
   const [post, setPost] = useState<ReviewDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  const router = useRouter();
+  // params에서 값 추출 (params가 null일 수 있음)
+  const reviewId = params?.reviewId;
+  const photoId = params?.photoId;
+
   useEffect(() => {
-    if (!reviewId) return;
+    if (!reviewId || !photoId) return;
 
     const fetchReview = async () => {
       try {
@@ -100,14 +93,25 @@ const ReviewDetail = () => {
     setPost(next);
 
     try {
-      post.liked
-        ? await deleteReviewLike(post.id)
-        : await postReviewLike(post.id);
+      if (post.liked) {
+        await deleteReviewLike(post.id);
+      } else {
+        await postReviewLike(post.id);
+      }
     } catch (err) {
       console.error(err);
       setPost(prev);
     }
   };
+
+  // ✅ 조건부 렌더링은 Hook 호출 이후에
+  if (!params) {
+    return (
+      <div className="flex justify-center items-center h-[300px]">
+        <Spinner />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -168,7 +172,7 @@ const ReviewDetail = () => {
 
       {/* images */}
       {Array.isArray(post.images) && post.images.length > 0 && (
-        <div className="flex gap-[6px] my-[12px] overflow-x-auto">
+        <div className="flex gap-[6px] my-[12px] overflow-x-auto px-[24px]">
           {post.images.map((img, idx) => {
             if (!img || !img.variants) return null;
 
@@ -178,7 +182,7 @@ const ReviewDetail = () => {
             return (
               <div
                 key={`image-${post.id}-${idx}`}
-                className="flex-1 min-w-[160px] aspect-square overflow-hidden relative"
+                className="flex-1 min-w-[160px] aspect-square overflow-hidden relative rounded-[4px]"
               >
                 <Image
                   src={url}
@@ -193,6 +197,7 @@ const ReviewDetail = () => {
           })}
         </div>
       )}
+
       <div className="px-[24px]">
         {/* content */}
         <p className="text-[14px] my-[12px]">{post.content || ""}</p>

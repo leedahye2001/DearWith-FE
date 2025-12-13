@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getHotArtistGroupTopTwenty, getMain } from "@/apis/api";
 import useMainStore from "../stores/useMainStore";
 import BirthdayArtistsSection from "./components/BirthdayArtistSection";
@@ -41,11 +41,7 @@ export default function Home() {
     );
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const data = await getMain();
       const hotArtistGroupData = await getHotArtistGroupTopTwenty();
@@ -79,7 +75,11 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [setMainData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleRouter = (url: string) => {
     router.push(url);
