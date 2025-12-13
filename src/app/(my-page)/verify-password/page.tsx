@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import Bottombar from "@/components/template/Bottombar";
 import { getPasswordVerify } from "@/apis/api";
 import Backward from "@/svgs/Backward.svg";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Topbar from "@/components/template/Topbar";
 import WriteTitle from "@/app/(events)/event-detail/components/WriteTitle";
 import ViewDefault from "@/svgs/ViewDefault.svg";
 import ViewOn from "@/svgs/ViewOn.svg";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 
 const Page = () => {
   const router = useRouter();

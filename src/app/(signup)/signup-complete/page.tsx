@@ -4,10 +4,10 @@ import Button from "@/components/Button/Button";
 import { useRouter } from "next/navigation";
 import Bottombar from "@/components/template/Bottombar";
 import Backward from "@/svgs/Backward.svg";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Topbar from "@/components/template/Topbar";
 import GuideSection from "./components/GuideSection";
 import { useNicknameStore } from "@/app/stores/userStore";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 
 const Page = () => {
   const router = useRouter();

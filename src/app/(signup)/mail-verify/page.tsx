@@ -5,12 +5,12 @@ import { useState } from "react";
 import { getMailVerify, getMailSend } from "@/apis/api";
 import { useEmailStore } from "@/app/stores/userStore";
 import Button from "@/components/Button/Button";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Bottombar from "@/components/template/Bottombar";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Input from "@/components/Input/Input";
 import Countdown from "@/utils/Countdown";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 
 const Page = () => {
   const router = useRouter();

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePasswordStore } from "@/app/stores/userStore";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Input from "@/components/Input/Input";
@@ -12,6 +11,7 @@ import ViewOn from "@/svgs/ViewOn.svg";
 import Check from "@/svgs/Check.svg";
 import Bottombar from "@/components/template/Bottombar";
 import Button from "@/components/Button/Button";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 
 const Page = () => {
   const router = useRouter();

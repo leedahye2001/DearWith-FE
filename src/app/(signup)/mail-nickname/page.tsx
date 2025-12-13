@@ -13,8 +13,8 @@ import {
   usePasswordStore,
 } from "@/app/stores/userStore";
 import Backward from "@/svgs/Backward.svg";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Topbar from "@/components/template/Topbar";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 
 const Page = () => {
   const router = useRouter();
