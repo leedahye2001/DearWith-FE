@@ -85,31 +85,33 @@ const Page = () => {
         <br />
         생카를 즐겨볼까요?
       </h1>
-
-      <Input
-        _value={inputEmail}
-        _state="textbox-underline"
-        _title="이메일"
-        _bottomNode={emailErrorMessage}
-        _onChange={handleEmailChange}
-        _containerProps={{ className: "pb-[20px]" }}
-      />
-      <Input
-        _value={password}
-        _state="textbox-underline"
-        _title="비밀번호"
-        _onChange={handlePasswordChange}
-        _inputProps={{
-          type: showPassword ? "text" : "password",
-        }}
-        _rightNode={
-          <button type="button" onClick={togglePassword}>
-            {showPassword ? <ViewOn /> : <ViewDefault />}
-          </button>
-        }
-        _containerProps={{ className: "pb-[55px]" }}
-        _bottomNode={password && passwordError}
-      />
+      <div className="w-full">
+        <Input
+              _value={inputEmail}
+              _state="textbox-underline"
+              _title="이메일"
+              _bottomNode={emailErrorMessage}
+              _onChange={handleEmailChange}
+              _containerProps={{ className: "pb-[20px]" }}
+            />
+        <Input
+          _value={password}
+          _state="textbox-underline"
+          _title="비밀번호"
+          _onChange={handlePasswordChange}
+          _inputProps={{
+            type: showPassword ? "text" : "password",
+          }}
+          _rightNode={
+            <button type="button" onClick={togglePassword}>
+              {showPassword ? <ViewOn /> : <ViewDefault />}
+            </button>
+          }
+          _containerProps={{ className: "pb-[55px]" }}
+          _bottomNode={password && passwordError}
+        />
+      </div>
+     
 
       <Button
         _state="main"

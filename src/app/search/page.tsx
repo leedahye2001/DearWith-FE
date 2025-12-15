@@ -129,7 +129,7 @@ const Page = () => {
             placeholder: "어떤 가수의 이벤트를 찾고있나요?",
             className: `placeholder:text-text-3`,
           }}
-          _containerProps={{ className: `py-[10px]` }}
+          _containerProps={{ className: `py-[10px] w-full px-[24px]` }}
         />
       </div>
 

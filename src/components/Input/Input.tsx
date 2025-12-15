@@ -16,14 +16,14 @@ interface BasicInputProps {
 
 const inputWrapperClasses = {
   "textbox-basic":
-    "flex w-[327px] h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center",
+    "flex w-full h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center",
   "textbox-underline":
-    "flex w-[327px] h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between",
+    "flex w-full h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between",
 };
 
 const inputClasses = {
   common:
-    "flex items-center justify-center text-[14px] font-[400] text-text-3 min-w-[244px] outline-none h-[20px]",
+    "flex items-center justify-center text-[14px] font-[400] text-text-3 w-full outline-none h-[20px]",
 };
 
 const Input = ({

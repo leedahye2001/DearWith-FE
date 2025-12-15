@@ -102,7 +102,7 @@ export default function NoticeListPage({
               </div>
             ))
           ) : (
-            <div className="flex justify-center items-center text-[14px] text-text-4">
+            <div className="min-h-[calc(100vh-100px)] flex justify-center items-center text-[14px] text-text-4">
               등록된 공지사항이 없습니다.
             </div>
           )}

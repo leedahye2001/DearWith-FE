@@ -9,7 +9,7 @@ interface ButtonProps {
 }
 
 const ButtonClasses = {
-  main: "bg-primary w-[327px] h-[44px] text-text-1 text-[14px] font-[600] rounded-[4px]",
+  main: "bg-primary w-full h-[44px] text-text-1 text-[14px] font-[600] rounded-[4px]",
   sub: "min-w-[37px] min-h-[24px] rounded-[4px] border-[1px] border-divider-1 font-[600] text-[12px] text-text-3 px-[8px] py-[4px]",
   tag: "flex justify-center items-center h-[24px] border-[1px] border-primary rounded-[4px] font-[600] text-[12px] text-text-5 gap-1 p-[8px]",
 };

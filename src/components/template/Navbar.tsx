@@ -12,14 +12,7 @@ export default function Navbar() {
 
   return (
     <div
-      className="
-        fixed bottom-0 left-1/2 -translate-x-1/2
-        w-[375px] h-[80px]
-        bg-white
-        flex justify-between items-center
-        px-[24px] z-50
-        shadow-[0_-32px_32px_rgba(0,0,0,0.03)]
-      "
+      className=" fixed bottom-0 left-1/2 -translate-x-1/2 w-[428px] h-[80px] bg-white flex justify-between items-center px-[24px] z-50 shadow-[0_-32px_32px_rgba(0,0,0,0.03)]"
     >
       {/* 홈 */}
       <button

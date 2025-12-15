@@ -8,25 +8,34 @@ interface Props {
   placeholder?: string;
 }
 
-const CalendarInput = forwardRef<HTMLInputElement, Props>(
+const CalendarInput = forwardRef<HTMLDivElement, Props>(
   ({ value, onClick, placeholder }, ref) => {
-    const displayValue: string =
+    const displayValue =
       value && value.trim() !== "" ? value : placeholder ?? "";
 
     return (
-      <div onClick={onClick} ref={ref} style={{ width: "100%" }}>
+      <div
+        ref={ref}
+        onClick={onClick}
+        className="w-full"
+      >
         <Input
           _state="textbox-basic"
-          _rightNode={<Calendar />}
           _value={displayValue}
+          _containerProps={{
+            className: "w-full",
+          }}
           _inputProps={{
             readOnly: true,
+            className: "w-full",
           }}
+          _rightNode={<Calendar />}
         />
       </div>
     );
   }
 );
+
 
 CalendarInput.displayName = "CalendarInput";
 export default CalendarInput;

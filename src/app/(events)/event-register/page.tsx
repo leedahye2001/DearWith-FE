@@ -10,11 +10,16 @@ import { BASE_URL } from "@/app/routePath";
 import Image from "next/image";
 import dayjs from "dayjs";
 import { useXAuthStore } from "../../stores/useXAuthStore";
+import useModalStore from "../../stores/useModalStore";
 import api from "@/apis/instance";
 import Reference from "@/svgs/Reference.svg";
 import Gallery from "@/svgs/Gallery.svg";
 import Checker from "@/svgs/Checker.svg";
 import Close from "@/svgs/Close.svg";
+import TagCancel from "@/svgs/TagCancel.svg";
+import SearchProfileBasic from "@/svgs/SearchProfileBasic.svg";
+import Forward from "@/svgs/Forward.svg";
+import Check from "@/svgs/Check.svg";
 
 interface Benefit {
   name: string;
@@ -51,6 +56,7 @@ interface UploadedImage {
 const Page = () => {
   const router = useRouter();
   const { handle, isVerified, ticket } = useXAuthStore();
+  const { openAlert } = useModalStore();
   const handleBackRouter = () => router.back();
 
   const [inputArtist, setInputArtist] = useState("");
@@ -64,6 +70,9 @@ const Page = () => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [openTime, setOpenTime] = useState("");
+  const [closeTime, setCloseTime] = useState("");
+  const [xLink, setXLink] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]); // 실제 업로드용 파일들
   const [imagePreviews, setImagePreviews] = useState<string[]>([]); // 미리보기용 URL
@@ -87,15 +96,21 @@ const Page = () => {
     const all: Benefit[] = [];
 
     // 기본특전
-    basicTags.forEach((tag, i) =>
+    basicTags.forEach((tag, i) =>{
+      const dayIndex = i + 1;
+      if (dayIndex < 1) throw new Error("dayIndex must be >= 1");
+
+      const visibleFrom = dayjs(startDate)
+        .add(dayIndex - 1, "day")
+        .format("YYYY-MM-DD");
       all.push({
         name: tag,
         benefitType: "INCLUDED",
         dayIndex: 1, // 기본특전은 항상 1
         displayOrder: i + 1,
-        visibleFrom: startDate,
+        visibleFrom,
       })
-    );
+  });
 
     // 일별 선착순 특전 (LIMITED)
     firstTags.forEach((tag, i) => {
@@ -127,11 +142,46 @@ const Page = () => {
   ) => {
     const trimmed = input.trim();
     if (!trimmed) return;
-    if (tags.includes(trimmed)) return alert("이미 추가된 항목입니다.");
-    if (tags.length >= 5) return alert("최대 5개까지만 등록할 수 있습니다.");
+    if (tags.includes(trimmed)) return openAlert("이미 추가된 항목입니다.");
+    if (tags.length >= 10)
+      return openAlert("최대 10개까지만 등록할 수 있습니다.");
     setTags([...tags, trimmed]);
     setInput("");
   };
+
+  const handleDateInput =
+    (setter: (v: string) => void) => (value: string) => {
+      // 숫자만 추출 후 최대 8자리(yyyyMMdd)까지 허용
+      const digits = value.replace(/\D/g, "").slice(0, 8);
+      let formatted = digits;
+
+      if (digits.length > 4 && digits.length <= 6) {
+        // yyyy.mm
+        formatted = `${digits.slice(0, 4)}.${digits.slice(4)}`;
+      } else if (digits.length > 6) {
+        // yyyy.mm.dd
+        formatted = `${digits.slice(0, 4)}.${digits.slice(4, 6)}.${digits.slice(
+          6,
+          8
+        )}`;
+      }
+
+      setter(formatted);
+    };
+
+  const handleTimeInput =
+    (setter: (v: string) => void) => (value: string) => {
+      const digits = value.replace(/\D/g, "").slice(0, 4); // HHmm
+      if (!digits) {
+        setter("");
+        return;
+      }
+      if (digits.length <= 2) {
+        setter(digits);
+        return;
+      }
+      setter(`${digits.slice(0, 2)}:${digits.slice(2)}`); // HH.mm
+    };
 
   // 태그 삭제 함수
   const handleRemoveTag = (
@@ -152,6 +202,10 @@ const Page = () => {
     setTags: (v: string[]) => void
   ) => {
     if (e.key === "Enter") {
+      // 한글 IME 조합 중 엔터 입력은 무시 (중복/깨짐 방지)
+      const isComposing =
+        (e.nativeEvent as unknown as { isComposing?: boolean }).isComposing;
+      if (isComposing) return;
       e.preventDefault();
       handleAddTag(input, setInput, tags, setTags);
     }
@@ -169,7 +223,7 @@ const Page = () => {
   // 파일 선택 버튼 클릭 시 input 트리거
   const handleGalleryClick = () => {
     if (imageFiles.length >= 5) {
-      alert("최대 5개의 이미지만 업로드할 수 있습니다.");
+      openAlert("최대 5개의 이미지만 업로드할 수 있습니다.");
       return;
     }
     fileInputRef.current?.click();
@@ -184,14 +238,22 @@ const Page = () => {
     const totalCount = imageFiles.length + selected.length;
 
     if (totalCount > 5) {
-      alert("최대 5개의 이미지만 등록할 수 있습니다.");
+      openAlert("최대 5개의 이미지만 등록할 수 있습니다.");
       return;
     }
 
-    const newPreviews = selected.map((file) => URL.createObjectURL(file));
+    const allowed = selected.filter((file) => {
+      const ok = ["image/jpeg", "image/png", "image/jpg"].includes(file.type);
+      if (!ok) openAlert("jpg, jpeg, png 형식의 이미지만 업로드 가능합니다.");
+      return ok;
+    });
+
+    if (!allowed.length) return;
+
+    const newPreviews = allowed.map((file) => URL.createObjectURL(file));
 
     // File과 URL 둘 다 추가
-    setImageFiles((prev) => [...prev, ...selected]);
+    setImageFiles((prev) => [...prev, ...allowed]);
     setImagePreviews((prev) => [...prev, ...newPreviews]);
   };
 
@@ -248,7 +310,7 @@ const Page = () => {
         console.log(`PUT 완료: ${file.name}`);
       } catch (err) {
         console.error(`❌ PUT 실패: ${file.name}`, err);
-        alert(`이미지 업로드 실패: ${file.name}`);
+        openAlert(`이미지 업로드 실패: ${file.name}`);
       }
     }
 
@@ -256,7 +318,11 @@ const Page = () => {
   };
 
   // 아티스트 검색
-  const handleArtistChange = (v: string) => setInputArtist(v);
+  const handleArtistChange = (v: string) => {
+    setSelectedArtist(null); // 새로 입력 시 선택값 해제
+    setInputArtist(v);
+    if (!v.trim()) setArtistResults([]);
+  };
 
   useEffect(() => {
     if (!inputArtist.trim() || selectedArtist) return;
@@ -295,21 +361,29 @@ const Page = () => {
     setResults([]);
   };
 
+  const isValidXLink = xLink.startsWith("https://x.com/");
+
   // 이벤트 등록
   const handleSubmit = async () => {
-    if (!isVerified || !ticket) return alert("X 인증이 필요합니다.");
+    if (isVerified === true && !ticket) return openAlert("X 인증이 필요합니다.");
     if (!selectedArtist || !selectedPlace)
-      return alert("아티스트와 장소를 선택해주세요.");
-    if (isOrganizer === null) return alert("주최자 여부를 선택해주세요.");
+      return openAlert("아티스트와 장소를 선택해주세요.");
+    if (isOrganizer === null) return openAlert("주최자 여부를 선택해주세요.");
 
     try {
       setIsSubmitting(true);
       const imgs = await uploadImages(imageFiles);
 
+      const normalizeDate = (date: string) => date.replace(/\./g, "-");
+      const normalizeTime = (time: string) => time.replace(/\./g, ":");
+
       const body = {
         title,
-        startDate,
-        endDate,
+        startDate: normalizeDate(startDate),
+        endDate: normalizeDate(endDate),
+        openTime: normalizeTime(openTime),
+        closeTime: normalizeTime(closeTime),
+        xLink: isOrganizer === false && isValidXLink ? xLink : "",
         artistIds: [selectedArtist.id],
         place: {
           kakaoPlaceId: selectedPlace.id,
@@ -335,10 +409,10 @@ const Page = () => {
       };
 
       await api.post("/api/events", body);
-      alert(`이벤트 등록이 완료되었습니다.`);
+      openAlert("이벤트 등록이 완료되었습니다.");
     } catch (err) {
       console.error(err);
-      alert("이벤트 등록 중 오류가 발생했습니다.");
+      openAlert("이벤트 등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -371,7 +445,7 @@ const Page = () => {
               _node="주최자 입니다."
               _onClick={() => setIsOrganizer(true)}
               _buttonProps={{
-                className: `hover:cursor-pointer w-[160px] ${
+                className: `hover:cursor-pointer w-full ${
                   isOrganizer === true
                     ? "bg-[#FD725C] text-white"
                     : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
@@ -383,7 +457,7 @@ const Page = () => {
               _node="주최자가 아닙니다."
               _onClick={() => setIsOrganizer(false)}
               _buttonProps={{
-                className: `hover:cursor-pointer w-[160px] ${
+                className: `hover:cursor-pointer w-full ${
                   isOrganizer === false
                     ? "bg-[#FD725C] text-white"
                     : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
@@ -392,16 +466,60 @@ const Page = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-              주최자 트위터 계정
+              주최자 X 계정
             </p>
-            <Input
-              _value={handle || ""}
-              _state="textbox-basic"
-              _bottomNode={isVerified ? "X계정 인증되었습니다." : ""}
-              _inputProps={{ onClick: handleXLogin }}
-            />
+            <div className="flex gap-[8px] w-full">
+              <Input
+                _value={handle || ""}
+                _state="textbox-basic"
+                _containerProps={{ className: "flex-1 min-w-0" }}
+                _wrapperProps={{ className: "w-full" }}
+                _bottomNode={
+                  isVerified
+                    ? ""
+                    : "X 계정을 인증해주세요."
+                }
+              />
+
+              <Button
+                _state="main"
+                _node={isVerified ? "인증완료" : "인증하기"}
+                _onClick={handleXLogin}
+                _buttonProps={{
+                  className: `p-[10px] w-[88px] ${
+                    isVerified
+                      ? "bg-bg-2 text-text-4"
+                      : "bg-[#FD725C] text-white"
+                  } hover:cursor-pointer`,
+                  disabled: isSubmitting,
+                }}
+              />
+            </div>
+            {isOrganizer === false && (
+              <div className="mt-[12px] w-full">
+                <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                  X 링크
+                </p>
+                <Input
+                  _value={xLink}
+                  _state="textbox-basic"
+                  _onChange={setXLink}
+                  _containerProps={{ className: "w-full" }}
+                  _wrapperProps={{ className: "w-full" }}
+                  _inputProps={{
+                    placeholder: "X 계정 링크를 입력해주세요.",
+                  }}
+                  _bottomNode={
+                    xLink && !isValidXLink
+                      ? "X 계정 링크를 다시 입력해주세요."
+                      : ""
+                  }
+                  _rightNode={isValidXLink ? <Check /> : undefined}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -416,7 +534,7 @@ const Page = () => {
           </div>
 
           {/* 아티스트 선택 */}
-          <div>
+          <div className="mt-4 w-full relative">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               아티스트 명
             </p>
@@ -426,56 +544,122 @@ const Page = () => {
               _onChange={handleArtistChange}
             />
             {artistResults.length > 0 && (
-              <ul className="border mt-1 rounded bg-white">
+              <ul className="absolute left-0 top-full w-full border mt-1 rounded bg-white z-20 max-h-[240px] overflow-y-auto shadow-md">
                 {artistResults.map((a) => (
                   <li
                     key={a.id}
                     onClick={() => handleArtistSelect(a)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                    className="flex justify-between w-full items-center cursor-pointer px-[16px] py-[10px] hover:bg-gray-100 gap-[12px]"
                   >
-                    <Image
-                      src={a.imageUrl}
-                      alt={a.nameKr}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                    {a.nameKr} ({a.groupName})
+                    <div className="flex items-center gap-[12px]">
+                      <div className="flex justify-center items-center w-[40px] h-[40px] rounded-full overflow-hidden">
+                        {a.imageUrl ? (
+                          <Image
+                            src={a.imageUrl.trim()}
+                            alt={a.nameKr}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <SearchProfileBasic />
+                        )}
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-[14px] font-[600] text-text-5">
+                          {a.nameKr}
+                        </p>
+                        <p className="text-[12px] font-[400] text-text-4">
+                          {a.groupName}
+                        </p>
+                      </div>
+                    </div>
+                    <Forward />
                   </li>
                 ))}
               </ul>
             )}
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이벤트 명
             </p>
             <Input _value={title} _state="textbox-basic" _onChange={setTitle} />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이벤트 기간
             </p>
-            <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 w-full">
               <Input
                 _value={startDate}
                 _state="textbox-basic"
-                _inputProps={{ type: "date" }}
-                _onChange={setStartDate}
+                _containerProps={{ className: "flex-1 min-w-0" }}
+                _wrapperProps={{ className: "w-full" }}
+                _inputProps={{
+                  placeholder: "yyyy.mm.dd",
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  maxLength: 10,
+                }}
+                _onChange={handleDateInput(setStartDate)}
               />
+              <span className="text-text-5 text-[14px] font-[500]">-</span>
               <Input
                 _value={endDate}
                 _state="textbox-basic"
-                _inputProps={{ type: "date" }}
-                _onChange={setEndDate}
+                _containerProps={{ className: "flex-1 min-w-0" }}
+                _wrapperProps={{ className: "w-full" }}
+                _inputProps={{
+                  placeholder: "yyyy.mm.dd",
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  maxLength: 10,
+                }}
+                _onChange={handleDateInput(setEndDate)}
+              />
+            </div>
+          </div>
+
+          <div className="mt-4 w-full">
+            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+              이벤트 운영 시간
+            </p>
+            <div className="flex items-center gap-2 w-full">
+              <Input
+                _value={openTime}
+                _state="textbox-basic"
+                _containerProps={{ className: "flex-1 min-w-0" }}
+                _wrapperProps={{ className: "w-full" }}
+                _inputProps={{
+                  placeholder: "00:00",
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  maxLength: 5,
+                }}
+                _onChange={handleTimeInput(setOpenTime)}
+              />
+              <span className="text-text-5 text-[14px] font-[500]">-</span>
+              <Input
+                _value={closeTime}
+                _state="textbox-basic"
+                _containerProps={{ className: "flex-1 min-w-0" }}
+                _wrapperProps={{ className: "w-full" }}
+                _inputProps={{
+                  placeholder: "00:00",
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  maxLength: 5,
+                }}
+                _onChange={handleTimeInput(setCloseTime)}
               />
             </div>
           </div>
 
           {/* 장소 */}
-          <div className="mt-4">
+          <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">장소</p>
             <Input
               _value={inputRoadName}
@@ -498,7 +682,7 @@ const Page = () => {
           </div>
 
           {/* 카페 명 */}
-          <div className="mt-4">
+          <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               카페 명
             </p>
@@ -515,7 +699,8 @@ const Page = () => {
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이미지
             </p>
-            <div className="w-[327px] overflow-x-auto scrollbar-hide touch-pan-x">
+            {/* padding 영역에 가려져도 스크롤 되도록 좌우 여백을 풀고 다시 채움 */}
+            <div className="w-full overflow-x-auto scrollbar-hide touch-pan-x -mx-[24px] px-[24px]">
               {/* 숨겨진 파일 input */}
               <input
                 ref={fileInputRef}
@@ -526,11 +711,11 @@ const Page = () => {
                 className="hidden"
               />
 
-              <div className="flex gap-[8px] min-w-max">
+              <div className="flex gap-[8px] min-w-max whitespace-nowrap pr-[4px]">
                 {/* 이미지 업로드 버튼 */}
                 <div
                   onClick={handleGalleryClick}
-                  className="rounded-[4px] border-1 border-divider-1 flex flex-col justify-center items-center w-[60px] h-[60px] hover:cursor-pointer"
+                  className="rounded-[4px] border-1 border-divider-1 flex flex-col justify-center items-center w-[60px] h-[60px] hover:cursor-pointer shrink-0"
                 >
                   <Gallery />
                   <p className="text-[10px] font-[400] text-text-5">
@@ -544,7 +729,7 @@ const Page = () => {
                   return (
                     <div
                       key={idx}
-                      className="relative w-[60px] h-[60px] rounded-[4px] border-1 border-divider-1 flex justify-center items-center overflow-hidden bg-[#F9F9F9]"
+                      className="relative w-[60px] h-[60px] rounded-[4px] border-1 border-divider-1 flex justify-center items-center overflow-hidden bg-[#F9F9F9] shrink-0"
                     >
                       {image ? (
                         <>
@@ -573,12 +758,17 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="h-[1px] bg-divider-1 w-full mb-[6px]" />
-          <p className="text-text-3 font-[400] text-[12px]">
-            첫 번째 이미지는 썸네일로 등록됩니다.
-            <br />
-            권장 크기 : 가로 00px / 세로 00px
-          </p>
+          <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[48px]">
+            <p className="text-text-4 text-[12px] font-[400]">
+            · jpg, jpeg, png 형식의 이미지만 업로드 가능합니다.
+            </p>
+            <p className="text-text-4 text-[12px] font-[400]">
+            · 첫 번째 이미지는 썸네일로 등록됩니다.
+            </p>
+            <p className="text-text-4 text-[12px] font-[400]">
+            · 권장 크기 : 가로 375px / 세로 536px
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col justity-center items-start mb-[24px]">
@@ -592,7 +782,7 @@ const Page = () => {
           </div>
 
           {/* 특전 */}
-          <div className="mt-4">
+          <div className="mt-4 w-full">
             {[
               {
                 title: "기본특전",
@@ -609,58 +799,52 @@ const Page = () => {
                 setTags: setFirstTags,
               },
             ].map(({ title, value, tags, setValue, setTags }) => (
-              <div key={title} className="mt-4">
+              <div key={title} className="mt-4 w-full">
                 <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
                   {title}
                 </p>
-                <div className="flex gap-[8px] w-full">
+                <div className="flex flex-col gap-2 w-full">
                   <Input
                     _value={value}
                     _state="textbox-basic"
                     _onChange={setValue}
-                    _wrapperProps={{ className: "w-[244px]" }}
+                    _wrapperProps={{ className: "w-full" }}
                     _inputProps={{
+                      placeholder: `${title}을 입력해주세요. (최대 10개)`,
+                      className: "placeholder:text-text-3",
                       onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) =>
                         handleKeyDown(e, value, setValue, tags, setTags),
                     }}
                   />
+                  <div className="flex flex-col gap-[8px]">
+                    {tags.map((tag, idx) => (
+                      <div
+                        key={`${title}-${tag}-${idx}`}
+                        className="bg-white w-full h-[44px] text-text-5 text-[14px] font-[400] rounded-[4px] border-[1px] border-divider-1 flex justify-between items-center p-[10px]"
+                      >
+                        <span className="truncate">{tag}</span>
+                        <button onClick={() => handleRemoveTag(idx, tags, setTags)}>
+                          <TagCancel />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                   <Button
                     _state="main"
-                    _node="등록하기"
-                    _onClick={() =>
-                      handleAddTag(value, setValue, tags, setTags)
-                    }
+                    _node="+ 추가하기"
+                    _onClick={() => handleAddTag(value, setValue, tags, setTags)}
                     _buttonProps={{
-                      className:
-                        "p-[10px] bg-[#FD725C] hover:cursor-pointer w-[75px]",
+                      className: "bg-[#FD725C] text-white w-full mt-[12px]",
                       disabled: isSubmitting,
                     }}
                   />
-                </div>
-
-                {/* 태그 리스트 */}
-                <div className="flex flex-row gap-[4px] w-full mt-[8px] flex-wrap">
-                  {tags.map((tag, idx) => (
-                    <div
-                      key={idx}
-                      className="px-[8px] py-[2px] bg-[#FFE5AF] text-[#FD725C] text-[11px] font-[600] rounded-[4px]"
-                    >
-                      {tag}
-                      <button
-                        onClick={() => handleRemoveTag(idx, tags, setTags)}
-                        className="text-[#FD725C] font-[700] ml-[2px] hover:text-[#ff3b2f]"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col bg-secondary-300 w-[327.5px] rounded-[8px] h-[152px] p-[20px] mb-[48px]">
+        <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[48px] mt-[120px]">
           <div className="flex w-full justify-start items-center gap-[6px] pb-[4px]">
             <div className="flex justify-center items-center rounded-xl w-[14px] h-[14px] bg-primary text-secondary-300 font-[600] text-[12px]">
               !
@@ -686,7 +870,7 @@ const Page = () => {
           _node={isSubmitting ? "등록 중..." : "이벤트 등록하기"}
           _onClick={handleSubmit}
           _buttonProps={{
-            className: "mt-6 bg-[#FD725C] hover:cursor-pointer",
+            className: "mt-6 mb-[50px] hover:cursor-pointer",
             disabled: isSubmitting,
           }}
         />

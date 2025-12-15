@@ -309,7 +309,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             )}
 
             {/* 본문 */}
-            <p className="w-[327px] font-[400] text-[14px] text-text-5 leading-[165%] my-[12px]">
+            <p className="w-full font-[400] text-[14px] text-text-5 leading-[165%] my-[12px]">
               {post.content}
             </p>
 

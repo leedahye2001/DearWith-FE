@@ -50,7 +50,7 @@ const Page = () => {
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
-      <Topbar _leftImage={<Backward />} _topNode="제목" />
+      <Topbar _leftImage={<button onClick={() => router.back()}><Backward /></button>} _topNode="제목" />
       <div className="px-[24px] pt-[30px]">
         <h2 className="font-[700] text-text-5 text-[20px] pb-[20px]">
           디어위드와 함께하기 위해
@@ -120,7 +120,7 @@ const Page = () => {
                   checkedItems.item2 &&
                   checkedItems.item3
                 )
-                  ? "opacity-50 cursor-not-allowed"
+                  ? "opacity-50 cursor-not-allowed w-full"
                   : ""
               }`,
               disabled: !(

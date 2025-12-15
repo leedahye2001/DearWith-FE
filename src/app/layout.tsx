@@ -2,8 +2,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/lib/QueryProvider";
-import Navbar from "@/components/template/Navbar";
-import AlertModalClient from "@/components/AlertModal/AlertModalClient"; 
+import LayoutClient from "@/components/template/LayoutClient";
 import NativeBridgeProvider from "@/lib/native/NativeBridgeProvider";
 
 const mainFont = localFont({
@@ -31,12 +30,7 @@ export default function RootLayout({
       >
         <QueryProvider>
           <NativeBridgeProvider />
-
-          <div className="w-full max-w-[428px] mx-auto pb-[80px]">
-            {children}
-          </div>
-          <AlertModalClient />
-          <Navbar />
+          <LayoutClient>{children}</LayoutClient>
         </QueryProvider>
       </body>
     </html>

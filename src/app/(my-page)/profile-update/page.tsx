@@ -173,7 +173,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className="pt-[32px] flex flex-col justify-center">
+        <div className="w-full pt-[32px] flex flex-col justify-center">
           <Input
             _value={nickname}
             _state="textbox-basic"

@@ -43,7 +43,7 @@ export interface MyPageResponse {
 const Page = () => {
   const router = useRouter();
   const [data, setData] = useState<MyPageResponse | null>(null);
-  const { openConfirm } = useModalStore();
+  const { openConfirm, openAlert } = useModalStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,11 +60,17 @@ const Page = () => {
 
   const handleLogout = () => {
     openConfirm("로그아웃 하시겠습니까?", async () => {
-      await postLogout();
-      useUserStore.getState().clearUser();
-      router.push("/login");
+      try {
+        await postLogout();
+      } catch (error) {
+        openAlert("로그아웃에 실패하였습니다.");
+      } finally {
+        useUserStore.getState().clearUser();
+        router.replace("/login");
+      }
     });
   };
+  
 
   const handleProfileUpdate = () => {
     useProfileStore.getState().setProfile(profile); // profile은 API에서 가져온 { nickname, profileImageUrl }

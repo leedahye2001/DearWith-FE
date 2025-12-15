@@ -45,10 +45,16 @@ export default function MyRegisterArtistPage() {
         _leftImage={<Backward onClick={handleBackRouter} />}
         _topNode="내가 등록한 아티스트"
       />
+       <div className="flex justify-between items-center px-[24px]">
+          <div className="flex items-center gap-[6px]">
+            <h1 className="text-[14px] font-[600] text-text-5">작성한 리뷰</h1>
+            <span className="text-text-3 font-[600]">{data.length}</span>
+          </div>
+        </div>
 
       {/* 왼쪽 텍스트 + 이미지 */}
       {data.length > 0 && (
-        <div className="flex flex-col gap-[2px]">
+        <div className="flex flex-col gap-[2px] px-[24px]">
           {data.map((artist) => (
             <ArtistCard key={artist.id} {...artist} />
           ))}

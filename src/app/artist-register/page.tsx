@@ -177,7 +177,7 @@ const Page = () => {
             <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
               등록 구분
             </h1>
-            <div className="flex gap-[8px]">
+            <div className="flex gap-[8px] w-full">
               <Button
                 _state="main"
                 _node="그룹 명 등록"
@@ -185,8 +185,8 @@ const Page = () => {
                 _buttonProps={{
                   className: `hover:cursor-pointer w-[160px] ${
                     registerType === "group"
-                      ? "bg-red-400 text-text-1 text-[14px] font-[500]"
-                      : "bg-bg-1 text-text-5 text-[14px] font-[500] border-[1px] border-red-400"
+                      ? "bg-red-400 text-text-1 text-[14px] font-[500] w-full"
+                      : "bg-bg-1 text-text-5 text-[14px] font-[500] border-[1px] border-red-400 w-full"
                   }`,
                 }}
               />
@@ -197,8 +197,8 @@ const Page = () => {
                 _buttonProps={{
                   className: `hover:cursor-pointer w-[160px] ${
                     registerType === "artist"
-                      ? "bg-red-400 text-text-1 text-[14px] font-[500]"
-                      : "bg-bg-1 text-text-5 text-[14px] font-[500] border-[1px] border-red-400"
+                      ? "bg-red-400 text-text-1 text-[14px] font-[500] w-full"
+                      : "bg-bg-1 text-text-5 text-[14px] font-[500] border-[1px] border-red-400 w-full"
                   }`,
                 }}
               />
@@ -224,12 +224,15 @@ const Page = () => {
                 <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
                   생일 *
                 </h1>
-                <DatePicker
-                  selected={birthDate}
-                  onChange={(date) => setBirthDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  customInput={<CalendarInput placeholder="0000-00-00" />}
-                />
+                <div className="w-full">
+                  <DatePicker
+                    selected={birthDate}
+                    onChange={(date) => setBirthDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    customInput={<CalendarInput placeholder="0000-00-00" />}
+                    wrapperClassName="w-full"
+                  />
+                </div>
               </div>
             </>
           ) : (
@@ -254,6 +257,7 @@ const Page = () => {
                   onChange={(debut) => setDebut(debut)}
                   dateFormat="yyyy-MM-dd"
                   customInput={<CalendarInput placeholder="0000-00-00" />}
+                  wrapperClassName="w-full"
                 />
               </div>
             </>

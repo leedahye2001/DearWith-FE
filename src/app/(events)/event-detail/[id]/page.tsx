@@ -164,10 +164,11 @@ export default function EventDetailPage() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return `${String(date.getFullYear()).slice(2)}.${String(
+    return `${String(date.getFullYear()).slice(0)}.${String(
       date.getMonth() + 1
     ).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
   };
+
 
   const includedBenefits = event.benefits.filter(
     (b) => b.benefitType === "INCLUDED"
@@ -177,7 +178,7 @@ export default function EventDetailPage() {
   );
 
   return (
-    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
+    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center mb-[50px]">
       <Topbar
         _leftImage={
           <button onClick={handleBackRouter}>
@@ -322,7 +323,7 @@ export default function EventDetailPage() {
                     영업 중
                   </span>
                 ) : (
-                  <span className="px-[6px] py-[2px] text-[12px] rounded-md text-text-3 font-semibold">
+                  <span className="px-[6px] py-[2px] text-[12px] rounded-md text-text-3 font-semibold bg-bg-2">
                     영업 종료
                   </span>
                 )}
