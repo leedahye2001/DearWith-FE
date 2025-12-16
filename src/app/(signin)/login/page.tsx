@@ -87,13 +87,13 @@ const Page = () => {
       </h1>
       <div className="w-full">
         <Input
-              _value={inputEmail}
-              _state="textbox-underline"
-              _title="이메일"
-              _bottomNode={emailErrorMessage}
-              _onChange={handleEmailChange}
-              _containerProps={{ className: "pb-[20px]" }}
-            />
+          _value={inputEmail}
+          _state="textbox-underline"
+          _title="이메일"
+          _bottomNode={emailErrorMessage}
+          _onChange={handleEmailChange}
+          _containerProps={{ className: "pb-[20px]" }}
+        />
         <Input
           _value={password}
           _state="textbox-underline"

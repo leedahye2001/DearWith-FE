@@ -41,6 +41,48 @@ const useUserStore = create<UserState>()(
   )
 );
 
+type AuthState = {
+  accessToken: string;
+  refreshToken: string;
+  expirationTime: string;
+
+  setTokens: (tokens: {
+    accessToken: string;
+    refreshToken: string;
+    expirationTime: string;
+  }) => void;
+
+  clearTokens: () => void;
+};
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      accessToken: "",
+      refreshToken: "",
+      expirationTime: "",
+
+      setTokens: ({ accessToken, refreshToken, expirationTime }) =>
+        set({
+          accessToken,
+          refreshToken,
+          expirationTime,
+        }),
+
+      clearTokens: () =>
+        set({
+          accessToken: "",
+          refreshToken: "",
+          expirationTime: "",
+        }),
+    }),
+    {
+      name: "auth-token",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
 // 프로필 사진 저장 (마이페이지)
 type UserProfile = {
   nickname: string;

@@ -21,6 +21,7 @@ export default function ArtistListCard({
   id,
   nameKr,
   imageUrl,
+  birthDate,
   createdAt,
   bookmarked,
   type,
@@ -30,6 +31,17 @@ export default function ArtistListCard({
 
   const handleCardClick = () => router.push(`/event-detail/${id}`);
 
+  const formatDate = (value?: string) => {
+    if (!value) return "";
+  
+    const d = new Date(value);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+  
+    return `${yyyy}.${mm}.${dd}`;
+  };
+  
   const handleLikeToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleLike(id, type);
@@ -55,9 +67,18 @@ export default function ArtistListCard({
         </div>
 
         <div className="flex flex-col">
-          <p className="text-[14px] font-[700] text-text-5">{nameKr}</p>
-          <p className="text-[12px] font-[500] text-text-4">{createdAt}</p>
+          <p className="text-[14px] font-[500] text-text-5">{nameKr}</p>
+          {birthDate ? (
+            <p className="text-[12px] font-[400] text-text-3">
+              {formatDate(birthDate)}
+            </p>
+          ) : createdAt ? (
+            <p className="text-[12px] font-[400] text-text-3">
+              {formatDate(createdAt)}
+            </p>
+          ) : null}
         </div>
+
       </div>
       <div onClick={handleLikeToggle}>
         {bookmarked ? <HeartFill /> : <HeartDefault />}

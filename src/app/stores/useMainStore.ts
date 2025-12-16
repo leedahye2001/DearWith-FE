@@ -15,7 +15,7 @@ type Event = {
   id: string;
   title: string;
   imageUrl: string;
-  artistNamesEn: string[];
+  groupNamesKr: string[];
   artistNamesKr: string[];
   startDate: string;
   endDate: string;

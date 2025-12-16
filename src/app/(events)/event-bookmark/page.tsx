@@ -48,7 +48,7 @@ export default function Page() {
   const [likedEventsIds, setLikedEventsIds] = useState<string[]>([]);
   const [likedArtistsIds, setLikedArtistsIds] = useState<string[]>([]);
   const [filterState, setFilterState] = useState<EventState>("IN_PROGRESS");
-  const [category, setCategory] = useState<CategoryType>("ARTIST");
+  const [category, setCategory] = useState<CategoryType>("EVENT");
 
   const toggleLike = async (id: string, type: CategoryType) => {
     if (type === "EVENT") return;
@@ -140,7 +140,7 @@ export default function Page() {
     <div className="flex flex-col w-full justify-center pt-[16px] px-[24px]">
       {/* Category Tabs */}
       <div className="flex w-full mt-[12px] border-b border-divider-1">
-        {(["ARTIST", "EVENT"] as CategoryType[]).map((type) => (
+        {(["EVENT", "ARTIST"] as CategoryType[]).map((type) => (
           <button
             key={type}
             className={`flex-1 py-[8px] text-center font-[600] ${
@@ -150,7 +150,7 @@ export default function Page() {
             }`}
             onClick={() => setCategory(type)}
           >
-            {type === "ARTIST" ? "아티스트" : "이벤트"}
+            {type === "EVENT" ? "이벤트" : "아티스트"}
           </button>
         ))}
       </div>

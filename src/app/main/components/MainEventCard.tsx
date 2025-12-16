@@ -21,6 +21,7 @@ export interface EventCardProps {
   image: EventImage | null;
   title: string;
   artistNamesKr: string[];
+  groupNamesKr: string[];
   bookmarked: boolean;
   onToggleLike: (id: string) => void;
 }
@@ -30,6 +31,7 @@ export default function MainEventCard({
   image,
   title,
   artistNamesKr,
+  groupNamesKr,
   bookmarked,
   onToggleLike,
 }: EventCardProps) {
@@ -89,9 +91,15 @@ export default function MainEventCard({
         className="flex justify-start w-full mb-[4px] cursor-pointer"
         onClick={handleCardClick}
       >
-        <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
-          {artistNamesKr.join(", ")}
-        </p>
+        {artistNamesKr?.length > 0 ? (
+          <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
+            {artistNamesKr.join(", ")}
+          </p>
+        ) : groupNamesKr?.length > 0 ? (
+          <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
+            {groupNamesKr.join(", ")}
+          </p>
+        ) : null}
       </div>
 
       <div

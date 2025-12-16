@@ -18,6 +18,7 @@ export interface Event {
   images?: EventImage[];
   title: string;
   artistNamesKr: string[];
+  groupNamesKr: string[];
 }
 
 interface EventSectionProps {
@@ -47,6 +48,7 @@ export default function EventSection({
             image={event.images?.[0] ?? null}
             title={event.title}
             artistNamesKr={event.artistNamesKr}
+            groupNamesKr={event.groupNamesKr}
             bookmarked={likedIds.includes(event.id)}
             onToggleLike={onToggleLike}
           />

@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { BASE_URL } from "@/app/routePath";
 import Router from "next/router";
-import useUserStore from "@/app/stores/userStore";
+import useUserStore, { useAuthStore } from "@/app/stores/userStore";
 import { getRefreshToken } from "./api";
 
 interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -46,18 +46,34 @@ api.interceptors.response.use(
 
     if (error.response.status === 401) {
       originalRequest._retry = true;
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => api(originalRequest));
+        }).then((token) => {
+          if (typeof token === "string") {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+          }
+          return api(originalRequest);
+        });
       }
 
       isRefreshing = true;
 
       try {
-        await getRefreshToken();
+        const res = await getRefreshToken();
 
-        processQueue(null);
+        useAuthStore.getState().setTokens({
+          accessToken: res.token,
+          refreshToken: res.refreshToken,
+          expirationTime: res.expirationTime,
+        });
+
+        api.defaults.headers.common.Authorization = `Bearer ${res.token}`;
+        originalRequest.headers.Authorization = `Bearer ${res.token}`;
+
+        processQueue(null, res.token);
+
         return api(originalRequest);
       } catch (refreshError) {
         console.error("Refresh Token Failed:", refreshError);

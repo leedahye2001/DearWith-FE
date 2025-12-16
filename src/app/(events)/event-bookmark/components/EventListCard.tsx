@@ -58,7 +58,7 @@ export default function EventListCard({
 
   return (
     <div className="flex flex-col items-center mb-[38px] relative">
-      <div className="relative rounded-[4px] w-[157px] h-[292px] overflow-hidden mb-[10px]">
+      <div className="relative rounded-[4px] w-full h-[292px] overflow-hidden mb-[10px]">
         {imageUrl ? (
           <Image
             src={imageUrl}
