@@ -62,12 +62,12 @@ const Page = () => {
     openConfirm("로그아웃 하시겠습니까?", async () => {
       try {
         await postLogout();
-      } catch (error) {
+      } catch {
         openAlert("로그아웃에 실패하였습니다.");
       } finally {
         useUserStore.getState().clearUser();
         router.replace("/login");
-      }
+      }      
     });
   };
   
