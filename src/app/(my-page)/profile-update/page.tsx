@@ -8,20 +8,22 @@ import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import ProfileUpdate from "@/svgs/ProfileUpdate.svg";
 import { useRouter } from "next/navigation";
-import { useProfileStore } from "@/app/stores/userStore";
+import { useProfileStore, useAuthStore } from "@/app/stores/userStore";
+import useUserStore from "@/app/stores/userStore";
 import Bottombar from "@/components/template/Bottombar";
 import useModalStore from "@/app/stores/useModalStore";
 import {
   deleteProfileImage,
   updateNickname,
   updateProfileImage,
+  deleteUserAccount,
 } from "@/apis/api";
 import api from "@/apis/instance";
 import Add from "@/svgs/Add.svg";
 
 const Page = () => {
   const router = useRouter();
-  const { openAlert } = useModalStore();
+  const { openAlert, openConfirm } = useModalStore();
   const { profile } = useProfileStore();
 
   const initialNickname = profile?.nickname ?? "";
@@ -139,6 +141,21 @@ const Page = () => {
     }
   };
 
+  const handleWithdraw = () => {
+    openConfirm("정말 탈퇴하시겠습니까?", async () => {
+      try {
+        await deleteUserAccount();
+        useUserStore.getState().clearUser();
+        useAuthStore.getState().clearTokens();
+        openAlert("탈퇴가 완료되었습니다.");
+        router.replace("/login");
+      } catch (error) {
+        console.error(error);
+        openAlert("탈퇴 처리 중 오류가 발생했습니다.");
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col justify-center w-full">
       <Topbar
@@ -184,7 +201,10 @@ const Page = () => {
         </div>
 
         {/* 탈퇴하기 */}
-        <p className="text-text-2 underline text-[14px] cursor-pointer">
+        <p
+          className="text-text-2 underline text-[14px] cursor-pointer"
+          onClick={handleWithdraw}
+        >
           탈퇴하기
         </p>
 

@@ -16,9 +16,9 @@ interface BasicInputProps {
 
 const inputWrapperClasses = {
   "textbox-basic":
-    "flex w-full h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center",
+    "flex w-full h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center overflow-hidden",
   "textbox-underline":
-    "flex w-full h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between",
+    "flex w-full h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between overflow-hidden",
 };
 
 const inputClasses = {
@@ -60,13 +60,17 @@ const Input = ({
       >
         <input
           {..._inputProps}
-          className={twMerge(inputClasses?.common, _inputProps?.className)}
+          className={twMerge(
+            inputClasses?.common,
+            _rightNode ? "flex-1 min-w-0" : "w-full",
+            _inputProps?.className
+          )}
           type={_inputProps?.type || "text"}
           value={_value}
           onChange={handleInputChange}
         />
 
-        {_rightNode && <div>{_rightNode}</div>}
+        {_rightNode && <div className="flex-shrink-0">{_rightNode}</div>}
       </div>
       {_bottomNode && (
         <p className="flex items-center font-[400] text-[12px] text-error pt-[4px]">

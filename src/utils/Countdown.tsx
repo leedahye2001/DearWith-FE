@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface CountdownTimerProps {
@@ -11,20 +11,37 @@ interface CountdownTimerProps {
 
 const Countdown = ({ minutes, className, _divProps }: CountdownTimerProps) => {
   const [secondsLeft, setSecondsLeft] = useState(minutes * 60);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setSecondsLeft(minutes * 60);
+    
+    // 기존 interval 정리
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    // 새로운 interval 시작
+    if (minutes * 60 > 0) {
+      intervalRef.current = setInterval(() => {
+        setSecondsLeft((prev) => {
+          if (prev <= 1) {
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [minutes]);
-
-  useEffect(() => {
-    if (secondsLeft <= 0) return;
-
-    const timer = setInterval(() => {
-      setSecondsLeft((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer); // 초기화
-  }, [secondsLeft]);
 
   const formatTime = (totalSeconds: number) => {
     const m = Math.floor(totalSeconds / 60);

@@ -8,6 +8,7 @@ import Checkbox from "@/components/Checkbox/Checkbox";
 import Bottombar from "@/components/template/Bottombar";
 import Topbar from "@/components/template/Topbar";
 import ProgressBar from "@/components/Progressbar/Progressbar";
+import { useAgreementStore } from "@/app/stores/userStore";
 
 const Page = () => {
   const router = useRouter();
@@ -15,12 +16,13 @@ const Page = () => {
   const totalSteps = 6;
   const [currentStep, setCurrentStep] = useState(1);
 
+  const agreementStore = useAgreementStore();
   const [checkedItems, setCheckedItems] = useState({
-    item1: false,
-    item2: false,
-    item3: false,
+    item1: agreementStore.item1,
+    item2: agreementStore.item2,
+    item3: agreementStore.item3,
     item4: false,
-    item5: false,
+    item5: agreementStore.item5,
   });
 
   const allChecked = Object.values(checkedItems).every(Boolean);
@@ -44,6 +46,13 @@ const Page = () => {
   };
 
   const fetchAgreeData = () => {
+    // agreement 체크 상태를 스토어에 저장
+    agreementStore.setAgreements({
+      item1: checkedItems.item1,
+      item2: checkedItems.item2,
+      item3: checkedItems.item3,
+      item5: checkedItems.item5,
+    });
     router.push("/mail-send");
     setCurrentStep((prev) => Math.min(prev + 1, 6));
   };

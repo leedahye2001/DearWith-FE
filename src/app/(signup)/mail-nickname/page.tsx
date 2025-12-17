@@ -11,19 +11,28 @@ import {
   useEmailStore,
   useNicknameStore,
   usePasswordStore,
+  useEmailTicketStore,
+  useAgreementStore,
 } from "@/app/stores/userStore";
 import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
 import ProgressBar from "@/components/Progressbar/Progressbar";
+import useModalStore from "@/app/stores/useModalStore";
 
 const Page = () => {
   const router = useRouter();
+  const { openAlert } = useModalStore();
 
   const totalSteps = 6;
   const [currentStep, setCurrentStep] = useState(5);
 
   const inputEmail = useEmailStore((state) => state.inputEmail);
   const password = usePasswordStore((state) => state.password);
+  const emailTicket = useEmailTicketStore((state) => state.emailTicket);
+  const item1 = useAgreementStore((state) => state.item1);
+  const item2 = useAgreementStore((state) => state.item2);
+  const item3 = useAgreementStore((state) => state.item3);
+  const item5 = useAgreementStore((state) => state.item5);
   const [inputNickname, setInputNickname] = useState<string>("");
 
   const setNickname = useNicknameStore((state) => state.setNickname);
@@ -55,16 +64,32 @@ const Page = () => {
         return;
       }
 
-      await getMailSignUp(inputEmail, password, inputNickname);
+      try {
+        await getMailSignUp(
+          inputEmail,
+          password,
+          inputNickname,
+          [
+            { type: "AGE_OVER_14", agreed: item1 },
+            { type: "TERMS_OF_SERVICE", agreed: item2 },
+            { type: "PERSONAL_INFORMATION", agreed: item3 },
+            { type: "PUSH_NOTIFICATION", agreed: item5 },
+          ],
+          emailTicket
+        );
 
-      setNickname(inputNickname);
+        setNickname(inputNickname);
 
-      setCurrentStep((prev) => Math.min(prev + 1, 6));
-      router.push("/signup-complete");
+        setCurrentStep((prev) => Math.min(prev + 1, 6));
+        router.push("/signup-complete");
+      } catch (signUpError) {
+        console.error("회원가입 에러:", signUpError);
+        openAlert("회원가입 요청에 실패했습니다. 다시 시도해주세요.");
+      }
     } catch (error) {
-      // 200이 아닌 경우에도 여기서 에러 메시지 띄움
+      // 닉네임 중복 체크 실패인 경우
+      console.error("닉네임 체크 에러:", error);
       setNicknameErrorMessage("이미 존재하는 닉네임입니다.");
-      console.error("Error fetching data:", error);
     }
   };
 

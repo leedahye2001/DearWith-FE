@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { getMailVerify, getMailSend } from "@/apis/api";
-import { useEmailStore } from "@/app/stores/userStore";
+import { useEmailStore, useEmailTicketStore } from "@/app/stores/userStore";
 import Button from "@/components/Button/Button";
 import Bottombar from "@/components/template/Bottombar";
 import Topbar from "@/components/template/Topbar";
@@ -19,7 +19,7 @@ const Page = () => {
   const [currentStep, setCurrentStep] = useState(3);
 
   const inputEmail = useEmailStore((state) => state.inputEmail);
-  // const setInputEmail = useEmailStore((state) => state.setInputEmail);
+  const setEmailTicket = useEmailTicketStore((state) => state.setEmailTicket);
 
   const [code, setCode] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -32,16 +32,20 @@ const Page = () => {
 
   const fetchMailData = async () => {
     try {
-      await getMailVerify(inputEmail, code);
+      const res = await getMailVerify(inputEmail, code);
+      // ticket을 스토어에 저장
+      if (res.ticket) {
+        setEmailTicket(res.ticket);
+      }
       setCurrentStep((prev) => Math.min(prev + 1, 6));
-      router.push("/mail-signup");
+      router.push("/password");
     } catch (error) {
       console.error("Error fetching data:", error);
       setErrorMessage("인증번호가 올바르지 않습니다");
     }
   };
 
-  const handleResend = async () => {
+  const handleResend = useCallback(async () => {
     try {
       if (!inputEmail) {
         // alert("이메일을 먼저 입력해주세요.");
@@ -54,7 +58,21 @@ const Page = () => {
       console.error("재전송 에러:", error);
       alert("이메일 재전송에 실패했습니다. 다시 시도해주세요.");
     }
-  };
+  }, [inputEmail]);
+
+  const rightNode = useMemo(
+    () => (
+      <div className="flex items-center gap-[8px] flex-shrink-0">
+        <div className="flex-shrink-0">
+          <Countdown key={resendKey} minutes={10} />
+        </div>
+        <div className="flex-shrink-0">
+          <Button _state="sub" _node="재전송" _onClick={handleResend} />
+        </div>
+      </div>
+    ),
+    [resendKey, handleResend]
+  );
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
@@ -82,18 +100,13 @@ const Page = () => {
           _state="textbox-basic"
           _title="인증코드"
           _bottomNode={errorMessage}
-          _rightNode={
-            <div className="flex items-center gap-[8px]">
-              <Countdown key={resendKey} minutes={10} />
-              <Button _state="sub" _node="재전송" _onClick={handleResend} />
-            </div>
-          }
+          _rightNode={rightNode}
           _onChange={handleCodeChange}
           _containerProps={{ className: "pt-[16px]" }}
         />
 
         <div className="h-[1px] wu-full bg-divider-1 mt-[16px] mb-[8px]" />
-        <p className="text-text-2 text-[12px] font-[600]">
+        <p className="text-text-2 text-[12px] font-[500]">
           입력하신 이메일로 인증 코드를 받지 못하셨다면
           <br /> 인증 코드 재전송 요청을 하거나 스팸 메일을 확인해주세요.
         </p>

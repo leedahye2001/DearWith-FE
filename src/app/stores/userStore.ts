@@ -130,4 +130,35 @@ export const useNicknameStore = create<nicknameState>((set) => ({
   setNickname: (nickname) => set({ nickname: nickname }),
 }));
 
+interface EmailTicketState {
+  emailTicket: string;
+  setEmailTicket: (ticket: string) => void;
+}
+
+export const useEmailTicketStore = create<EmailTicketState>((set) => ({
+  emailTicket: "",
+  setEmailTicket: (ticket) => set({ emailTicket: ticket }),
+}));
+
+interface AgreementState {
+  item1: boolean; // AGE_OVER_14
+  item2: boolean; // TERMS_OF_SERVICE
+  item3: boolean; // PERSONAL_INFORMATION
+  item5: boolean; // PUSH_NOTIFICATION
+  setAgreements: (agreements: {
+    item1: boolean;
+    item2: boolean;
+    item3: boolean;
+    item5: boolean;
+  }) => void;
+}
+
+export const useAgreementStore = create<AgreementState>((set) => ({
+  item1: false,
+  item2: false,
+  item3: false,
+  item5: false,
+  setAgreements: (agreements) => set(agreements),
+}));
+
 export default useUserStore;

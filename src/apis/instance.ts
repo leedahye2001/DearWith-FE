@@ -31,6 +31,13 @@ const api = axios.create({
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });
 
+// refresh token 요청용 별도 인스턴스 (interceptor 없음)
+export const refreshApi = axios.create({
+  baseURL: `https://${BASE_URL}`,
+  withCredentials: true,
+  headers: { "Content-Type": "application/json;charset=utf-8" },
+});
+
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -41,6 +48,11 @@ api.interceptors.response.use(
     }
 
     if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    // refresh token 요청 자체가 401이면 무한 루프 방지
+    if (originalRequest.url?.includes("/auth/refresh")) {
       return Promise.reject(error);
     }
 

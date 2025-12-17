@@ -25,7 +25,7 @@ const Page = () => {
       <div className="px-[24px] pt-[30px]">
         {nickname && nickname ? (
           <h1 className="font-[700] text-text-5 text-[20px]">
-            {nickname}
+            {nickname} 님,
             <br />
             회원가입이 완료되었어요
           </h1>
@@ -48,27 +48,27 @@ const Page = () => {
           id={1}
           question={"주최할 이벤트를 알리고 싶다면?"}
           answer={
-            <div>
+            <>
               이벤트를 주최하실 예정인가요? <br />
               디어위드에서 많은 사람들에게 주최하는 이벤트를 알려보세요.
-            </div>
+            </>
           }
         />
         <GuideSection
           id={2}
           question={"참여하고 싶은 이벤트가 있다면?"}
           answer={
-            <div>
+            <>
               다양한 이벤트 중 내가 참여하고 싶은 이벤트를
               <br /> 나만의 리스트에 추가하여 참여해 보세요.
-            </div>
+            </>
           }
         />
         <GuideSection
           id={3}
           question={"다양한 정보를 공유하고 싶다면?"}
           answer={
-            <div>커뮤니티를 통해 사람들에게 다양한 정보를 공유해 보세요.</div>
+            <>커뮤니티를 통해 사람들에게 다양한 정보를 공유해 보세요.</>
           }
         />
       </div>

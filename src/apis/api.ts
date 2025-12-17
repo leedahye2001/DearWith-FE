@@ -1,25 +1,33 @@
 import { ReviewDetail } from "@/app/(events)/event-detail/components/EventReviewWrite";
-import api from "./instance";
+import api, { refreshApi } from "./instance";
 
 // email 인증 코드 발송
 export const getMailSend = async (email: string) => {
-  const res = await api.post("/auth/signup/email/send", { email });
+  const res = await api.post("/auth/signup/email/send", { email, purpose: "SIGNUP" });
   return res.data.data;
 };
 
 // email 인증코드 확인
 export const getMailVerify = async (email: string, code: string) => {
-  const res = await api.post("/auth/signup/email/verify", { email, code });
-  return res.data.data;
+  const res = await api.post("/auth/signup/email/verify", { email, code, purpose: "SIGNUP" });
+  return res.data;
 };
 
 // 회원가입
 export const getMailSignUp = async (
   email: string,
   password: string,
-  nickname: string
+  nickname: string,
+  agreements: Array<{ type: string; agreed: boolean }>,
+  emailTicket: string
 ) => {
-  const res = await api.post("/users/signup", { email, password, nickname });
+  const res = await api.post("/users/signup", {
+    email,
+    password,
+    nickname,
+    agreements,
+    emailTicket,
+  });
   return res.data.data;
 };
 
@@ -51,7 +59,7 @@ export const getSignIn = async (email: string, password: string) => {
 
 // 토큰 재발급
 export const getRefreshToken = async () => {
-  const res = await api.post(
+  const res = await refreshApi.post(
     "/auth/refresh",
     {},
     {
@@ -350,6 +358,19 @@ export const getMyRegisterReview = async () => {
 export const getUserInfo = async () => {
   const res = await api.get(`/users/me`);
   console.log(res.data);
+  return res.data;
+};
+
+// 회원 탈퇴
+export const deleteUserAccount = async () => {
+  const res = await api.post(
+    "/users/me",
+    {"reason": "NO_LONGER_NEEDED",
+      "detail": "디어위드를 더 이상 사용하지 않아서 탈퇴합니다."},
+    {
+      withCredentials: true,
+    }
+  );
   return res.data;
 };
 

@@ -50,14 +50,9 @@ const Page = () => {
     setMatchPassword(value);
   };
 
-  const fetchMailData = async () => {
-    try {
-      // await getMailSignUp(inputEmail, password, nickname);
-      setCurrentStep((prev) => Math.min(prev + 1, 6));
-      router.push("/mail-nickname");
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const handleNext = () => {
+    setCurrentStep((prev) => Math.min(prev + 1, 6));
+    router.push("/mail-nickname");
   };
 
   // 유효성 체크
@@ -67,7 +62,12 @@ const Page = () => {
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
-      <Topbar _leftImage={<button onClick={() => router.back()}><Backward /></button>} _topNode="제목" />
+      <Topbar _leftImage={
+        <button onClick={() => router.back()}>
+          <Backward />
+          </button>
+        }
+        _topNode="제목" />
       <div className="px-[24px] pt-[30px]">
         <h1 className="font-[700] text-text-5 text-[20px] pb-[20px]">
           디어위드에서 사용할
@@ -135,7 +135,7 @@ const Page = () => {
               }`,
               disabled: !isFormValid,
             }}
-            _onClick={fetchMailData}
+            _onClick={handleNext}
           />
         }
       />
