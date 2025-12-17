@@ -20,7 +20,6 @@ import {
   // getEventNoticeList,
   postEventLike,
 } from "@/apis/api";
-import EventReview from "../components/EventReview";
 import NoticeList from "../components/NoticeList";
 import Spinner from "@/components/Spinner/Spinner";
 
@@ -92,9 +91,7 @@ export default function EventDetailPage() {
   const id = params?.id;
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"home" | "review">("home");
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [currentIndex] = useState(0);
 
   // 클릭 시 토글
   const toggleBookmark = async () => {
@@ -192,61 +189,53 @@ export default function EventDetailPage() {
       {/* 탭 */}
       <div className="flex justify-around border-b border-divider-1 mt-[4px]">
         <button
-          onClick={() => setActiveTab("home")}
+          onClick={() => router.push(`/event-detail/${event.id}`)}
           className={`w-1/2 py-[12px] text-[14px] font-[600] ${
-            activeTab === "home"
-              ? "text-primary border-b-[2px] border-primary"
-              : "text-text-3"
+            "text-primary border-b-[2px] border-primary"
           }`}
         >
           홈
         </button>
         <button
-          onClick={() => setActiveTab("review")}
+          onClick={() => router.push(`/event-detail/${event.id}/review`)}
           className={`w-1/2 py-[12px] text-[14px] font-[600] ${
-            activeTab === "review"
-              ? "text-primary border-b-[2px] border-primary"
-              : "text-text-3"
+            "text-text-3"
           }`}
         >
           리뷰
         </button>
       </div>
 
-      {/* 👇 탭에 따른 내용 */}
-      {activeTab === "home" ? (
-        <>
-          {event.images?.length > 0 && (
-            <div className="relative w-full h-[536px] overflow-hidden">
-              <div
-                className="flex h-full transition-transform duration-300"
-                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-              >
-                {event.images.map((img, idx) => {
-                  const url = img?.variants?.[0]?.url || null;
+      {event.images?.length > 0 && (
+            <div className="relative w-full h-[536px]">
+              <div className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide touch-pan-x">
+                <div className="flex h-full">
+                  {event.images.map((img, idx) => {
+                    const url = img?.variants?.[0]?.url || null;
 
-                  return (
-                    <div key={idx} className="relative min-w-full h-full">
-                      {url ? (
-                        <Image
-                          src={url}
-                          alt={`${event.title}-${idx}`}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                          <p className="text-text-3 text-[12px]">이미지 없음</p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                    return (
+                      <div key={idx} className="relative min-w-full h-full flex-shrink-0 snap-center">
+                        {url ? (
+                          <Image
+                            src={url}
+                            alt={`${event.title}-${idx}`}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                            <p className="text-text-3 text-[12px]">이미지 없음</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* 인덱스 표시 UI */}
-              <div className="absolute bottom-[12px] right-[12px] flex justify-center items-center px-[15px] py-[4px] rounded-[20px] bg-bg-1/80 text-text-5 text-[12px] font-[600]">
-                {currentIndex + 1}
+              {/* 인덱스 표시 UI - 고정 */}
+              <div className="absolute bottom-[12px] right-[12px] flex justify-center items-center px-[15px] py-[4px] rounded-[20px] bg-bg-1/80 text-text-5 text-[12px] font-[600] pointer-events-none z-10">
+                1
                 <p className="text-text-3 font-[400]">
                   &nbsp;|&nbsp;{event.images.length}
                 </p>
@@ -387,7 +376,7 @@ export default function EventDetailPage() {
                     >
                       {b.dayIndex !== undefined && (
                         <p className="text-[10px] font-[400] text-text-4 mb-[4px]">
-                          {b.dayIndex + 1}일차
+                          {b.dayIndex}일차
                         </p>
                       )}
                       <p className="text-[12px] font-[600] text-text-5">
@@ -402,10 +391,6 @@ export default function EventDetailPage() {
             {/* 공지사항 */}
             <NoticeList notices={event.notices} eventId={event.id} />
           </div>
-        </>
-      ) : (
-        <EventReview eventId={event.id} />
-      )}
     </div>
   );
 }

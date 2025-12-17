@@ -1,6 +1,31 @@
 "use client";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
+
+// 쿠키를 사용하는 커스텀 storage
+const cookieStorage: StateStorage = {
+  getItem: (name: string): string | null => {
+    if (typeof document === "undefined") return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      const cookieValue = parts.pop()?.split(";").shift();
+      return cookieValue ? decodeURIComponent(cookieValue) : null;
+    }
+    return null;
+  },
+  setItem: (name: string, value: string): void => {
+    if (typeof document === "undefined") return;
+    // 쿠키에 저장 (7일 만료, httpOnly는 서버에서만 설정 가능)
+    const expires = new Date();
+    expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000); // 7일
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  },
+  removeItem: (name: string): void => {
+    if (typeof document === "undefined") return;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  },
+};
 
 // 로그인 정보 저장
 type UserState = {
@@ -78,7 +103,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-token",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => cookieStorage),
     }
   )
 );

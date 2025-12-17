@@ -7,11 +7,12 @@ import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Spinner from "@/components/Spinner/Spinner";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import WriteTitle from "./WriteTitle";
 import TagCancel from "@/svgs/TagCancel.svg";
 import Close from "@/svgs/Close.svg";
 import Checker from "@/svgs/Checker.svg";
+import Bottombar from "@/components/template/Bottombar";
 
 interface UploadedImage {
   tmpKey: string;
@@ -53,10 +54,20 @@ export default function EventReviewWrite({
   const [newTag, setNewTag] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(
-    reviewData?.images.map((img) => img.url || "") || []
+    reviewData?.images?.map((img) => img.url || "") || []
   );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // reviewData가 변경될 때 state 업데이트
+  useEffect(() => {
+    if (reviewData) {
+      setContent(reviewData.content || "");
+      setTags(reviewData.tags || []);
+      setImagePreviews(reviewData.images?.map((img) => img.url || "") || []);
+      setImageFiles([]); // 기존 이미지는 URL이므로 파일은 비움
+    }
+  }, [reviewData]);
 
   // 태그 추가/삭제
   const handleAddTag = () => {
@@ -157,7 +168,7 @@ export default function EventReviewWrite({
   };
 
   return (
-    <div className="px-[20px] py-[24px] flex flex-col justify-center">
+    <div className="px-[24px] pt-[24px] pb-[80px] flex flex-col justify-center">
       <WriteTitle id={1} question={"내용 작성"} />
       <div className="w-full border border-divider-1 rounded-[4px] p-[12px] mb-[32px]">
         <textarea
@@ -277,16 +288,19 @@ export default function EventReviewWrite({
         />
       </div>
 
-      <Button
-        _state="main"
-        _node={
-          isSubmitting ? <Spinner /> : isEdit ? "수정하기" : "리뷰 등록하기"
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node={
+              isSubmitting ? <Spinner /> : isEdit ? "리뷰 수정하기" : "리뷰 등록하기"
+            }
+            _onClick={handleSubmit}
+            _buttonProps={{
+              disabled: isSubmitting,
+            }}
+          />
         }
-        _onClick={handleSubmit}
-        _buttonProps={{
-          className: "w-full my-[60px]",
-          disabled: isSubmitting,
-        }}
       />
     </div>
   );

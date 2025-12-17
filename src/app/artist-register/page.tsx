@@ -4,6 +4,7 @@ import api from "@/apis/instance";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
+import Bottombar from "@/components/template/Bottombar";
 import Backward from "@/svgs/Backward.svg";
 import ProfileArtist from "@/svgs/ProfileArtist.svg";
 import Add from "@/svgs/Add.svg";
@@ -125,7 +126,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full">
+    <div className="flex flex-col justify-center w-full pb-[120px]">
       <Topbar
         _leftImage={<Backward onClick={handleBackRouter} />}
         _topNode="아티스트 등록"
@@ -148,11 +149,10 @@ const Page = () => {
                 className="rounded-full flex justify-center items-center w-[72px] h-[72px] cursor-pointer overflow-hidden"
               >
                 {preview ? (
-                  <Image
+                  <img
                     src={preview}
                     alt="preview"
-                    fill
-                    className="object-cover rounded-full"
+                    className="w-full h-full object-cover rounded-full"
                   />
                 ) : (
                   <ProfileArtist />
@@ -285,14 +285,17 @@ const Page = () => {
             </p>
           </div>
         </div>
-
-        <Button
-          _state="main"
-          _node="아티스트 등록하기"
-          _onClick={handleSubmit}
-          _buttonProps={{ className: "mt-6", disabled: isSubmitting }}
-        />
       </div>
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node="아티스트 등록하기"
+            _onClick={handleSubmit}
+            _buttonProps={{ disabled: isSubmitting }}
+          />
+        }
+      />
     </div>
   );
 };

@@ -8,7 +8,13 @@ import { deleteEventLike, postEventLike } from "@/apis/api";
 
 export interface RegisterEventListCardProps {
   id: string;
-  imageUrl: string;
+  images: {
+    id: string;
+    variants: {
+      name: string;
+      url: string;
+    }[];
+  }[];
   title: string;
   artistNamesKr: string;
   bookmarked: boolean;
@@ -18,7 +24,7 @@ export interface RegisterEventListCardProps {
 
 export default function RegisterEventListCard({
   id,
-  imageUrl,
+  images,
   title,
   artistNamesKr,
   bookmarked,
@@ -46,6 +52,8 @@ export default function RegisterEventListCard({
   const isScheduled = eventState === "SCHEDULED";
   const isEnded = eventState === "ENDED";
 
+  const imageUrl = images?.[0]?.variants?.[1]?.url;
+
   return (
     <div className="flex flex-col items-center mb-[38px] relative">
       <div className="relative rounded-[4px] w-[157px] h-[292px] overflow-hidden mb-[10px]">
@@ -57,8 +65,13 @@ export default function RegisterEventListCard({
             height={220}
             className="w-full h-full cursor-pointer object-cover"
             onClick={handleCardClick}
+            unoptimized
           />
-        ) : null}
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center cursor-pointer" onClick={handleCardClick}>
+            <p className="text-text-3 text-[12px]">이미지 없음</p>
+          </div>
+        )}
 
         <div
           className="absolute top-[7px] right-[7.88px] z-30 cursor-pointer"

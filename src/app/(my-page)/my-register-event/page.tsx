@@ -51,12 +51,12 @@ const MyRegisteredEvents = () => {
         (item: MyRegisteredEvent) => ({
           id: item.id,
           title: item.title,
-          imageUrl: item.images?.[2]?.variants?.[2]?.url || null,
+          images: item.images || [],
           startDate: item.startDate,
           endDate: item.endDate,
           bookmarkCount: item.bookmarkCount,
           bookmarked: item.bookmarked,
-          artistNamesKr: item.artistNamesKr?.[2],
+          artistNamesKr: item.artistNamesKr?.[0] || "",
         })
       );
 

@@ -37,6 +37,7 @@ export default function NoticeListPage({
   const [notices, setNotices] = useState<NoticeItem[]>([]);
   const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isWritable, setIsWritable] = useState(false);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -45,6 +46,7 @@ export default function NoticeListPage({
 
         setNotices(res?.notices?.content ?? []);
         setTotalElements(res?.notices?.totalElements ?? 0);
+        setIsWritable(res?.writable ?? false);
       } catch (e) {
         console.error(e);
       } finally {
@@ -107,10 +109,12 @@ export default function NoticeListPage({
             </div>
           )}
 
-          <FAB
-            _icon={<Write />}
-            _onClick={() => router.push(`/notice-register/${id}`)}
-          />
+          {isWritable && (
+            <FAB
+              _icon={<Write />}
+              _onClick={() => router.push(`/notice-register/${id}`)}
+            />
+          )}
         </div>
       </div>
     </div>

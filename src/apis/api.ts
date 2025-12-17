@@ -57,6 +57,12 @@ export const getSignIn = async (email: string, password: string) => {
   return res.data;
 };
 
+// 토큰 유효성 검사
+export const validateToken = async () => {
+  const res = await refreshApi.post("/auth/validate", {});
+  return res.data;
+};
+
 // 토큰 재발급
 export const getRefreshToken = async () => {
   const res = await refreshApi.post(

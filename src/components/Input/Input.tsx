@@ -12,13 +12,14 @@ interface BasicInputProps {
   _value?: string;
   _title?: string;
   _rightNode?: React.ReactNode;
+  _leftNode?: React.ReactNode;
 }
 
 const inputWrapperClasses = {
   "textbox-basic":
-    "flex w-full h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center overflow-hidden",
+    "flex w-full h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center overflow-hidden relative",
   "textbox-underline":
-    "flex w-full h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between overflow-hidden",
+    "flex w-full h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between overflow-hidden relative",
 };
 
 const inputClasses = {
@@ -36,6 +37,7 @@ const Input = ({
   _value,
   _title,
   _rightNode,
+  _leftNode,
 }: BasicInputProps & { _value: string }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -58,11 +60,17 @@ const Input = ({
           _wrapperProps?.className
         )}
       >
+        {_leftNode && (
+          <div className="absolute left-[10px] top-1/2 -translate-y-1/2 flex-shrink-0 z-10 pointer-events-none">
+            {_leftNode}
+          </div>
+        )}
         <input
           {..._inputProps}
           className={twMerge(
             inputClasses?.common,
             _rightNode ? "flex-1 min-w-0" : "w-full",
+            _leftNode ? "pl-[20px]" : "",
             _inputProps?.className
           )}
           type={_inputProps?.type || "text"}

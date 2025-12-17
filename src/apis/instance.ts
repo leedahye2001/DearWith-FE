@@ -73,18 +73,17 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        // 401 발생 시 바로 refresh token 재발급
         const res = await getRefreshToken();
 
-        useAuthStore.getState().setTokens({
-          accessToken: res.token,
-          refreshToken: res.refreshToken,
-          expirationTime: res.expirationTime,
-        });
+        // refresh token 호출 시 서버가 쿠키를 자동으로 업데이트
+        // 응답에서 받은 토큰으로 Authorization 헤더 설정
+        if (res.token) {
+          api.defaults.headers.common.Authorization = `Bearer ${res.token}`;
+          originalRequest.headers.Authorization = `Bearer ${res.token}`;
+        }
 
-        api.defaults.headers.common.Authorization = `Bearer ${res.token}`;
-        originalRequest.headers.Authorization = `Bearer ${res.token}`;
-
-        processQueue(null, res.token);
+        processQueue(null, res.token || null);
 
         return api(originalRequest);
       } catch (refreshError) {

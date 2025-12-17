@@ -9,7 +9,7 @@ import { postReviewLike, deleteReviewLike, getReviewDetail } from "@/apis/api";
 import Image from "next/image";
 import Spinner from "@/components/Spinner/Spinner";
 import Topbar from "@/components/template/Topbar";
-import Backward from "@/svgs/Backward.svg";
+import Cancel from "@/svgs/Cancel.svg";
 
 /* ===================== types ===================== */
 
@@ -132,12 +132,12 @@ const ReviewDetail = () => {
   return (
     <div className="bg-bg-1">
       <Topbar
-        _leftImage={
+        _topNode="포토리뷰"
+        _rightImage={
           <button onClick={() => router.back()}>
-            <Backward />
+            <Cancel />
           </button>
         }
-        _topNode="포토리뷰"
       />
 
       {/* header */}
@@ -172,7 +172,7 @@ const ReviewDetail = () => {
 
       {/* images */}
       {Array.isArray(post.images) && post.images.length > 0 && (
-        <div className="flex gap-[6px] my-[12px] overflow-x-auto px-[24px]">
+        <div className="flex flex-col gap-[6px] my-[12px]">
           {post.images.map((img, idx) => {
             if (!img || !img.variants) return null;
 
@@ -182,14 +182,15 @@ const ReviewDetail = () => {
             return (
               <div
                 key={`image-${post.id}-${idx}`}
-                className="flex-1 min-w-[160px] aspect-square overflow-hidden relative rounded-[4px]"
+                className="w-full overflow-hidden relative"
               >
                 <Image
                   src={url}
                   alt={`review-${idx}`}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  className="object-cover"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  className="w-full h-auto object-contain"
                   priority={idx === 0}
                 />
               </div>
@@ -219,7 +220,7 @@ const ReviewDetail = () => {
         {/* like */}
         <button
           onClick={handleLikeToggle}
-          className="flex items-center gap-[4px] my-[16px]"
+          className="flex items-center gap-[4px] my-[16px] text-text-3 text-[12px] font-[600]"
         >
           {post.liked ? <HeartFill /> : <HeartDefault />}
           {post.likeCount || 0}

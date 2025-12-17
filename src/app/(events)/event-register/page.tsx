@@ -20,6 +20,7 @@ import TagCancel from "@/svgs/TagCancel.svg";
 import SearchProfileBasic from "@/svgs/SearchProfileBasic.svg";
 import Forward from "@/svgs/Forward.svg";
 import Check from "@/svgs/Check.svg";
+import Spinner from "@/components/Spinner/Spinner";
 
 interface Benefit {
   name: string;
@@ -369,6 +370,10 @@ const Page = () => {
     if (!selectedArtist || !selectedPlace)
       return openAlert("아티스트와 장소를 선택해주세요.");
     if (isOrganizer === null) return openAlert("주최자 여부를 선택해주세요.");
+    // 주최자일 때는 X 계정 인증 필수
+    if (isOrganizer === true && !isVerified) {
+      return openAlert("주최자는 X 계정 인증이 필수입니다.");
+    }
 
     try {
       setIsSubmitting(true);
@@ -383,7 +388,7 @@ const Page = () => {
         endDate: normalizeDate(endDate),
         openTime: normalizeTime(openTime),
         closeTime: normalizeTime(closeTime),
-        xLink: isOrganizer === false && isValidXLink ? xLink : "",
+        xLink: isOrganizer === false && isValidXLink ? xLink : null,
         artistIds: [selectedArtist.id],
         place: {
           kakaoPlaceId: selectedPlace.id,
@@ -408,8 +413,15 @@ const Page = () => {
         },
       };
 
-      await api.post("/api/events", body);
-      openAlert("이벤트 등록이 완료되었습니다.");
+      const res = await api.post("/api/events", body);
+      const eventId = res.data?.id;
+      if (eventId) {
+        openAlert("이벤트 등록이 완료되었습니다.");
+        router.push(`/event-detail/${eventId}`);
+      } else {
+        openAlert("이벤트 등록이 완료되었습니다.");
+        router.push("/main");
+      }
     } catch (err) {
       console.error(err);
       openAlert("이벤트 등록 중 오류가 발생했습니다.");
@@ -419,12 +431,12 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full">
+    <div className="flex flex-col justify-center w-full overflow-x-hidden">
       <Topbar
         _leftImage={<Backward onClick={handleBackRouter} />}
         _topNode="이벤트 등록"
       />
-      <div className="px-[24px] pt-[36px]">
+      <div className="px-[24px] pt-[36px] w-full max-w-full overflow-x-hidden">
         <div className="flex flex-col justity-center items-start mb-[24px]">
           <div className="flex justify-center items-center gap-[6px] mb-[20px]">
             <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 font-[600] text-[12px]">
@@ -469,6 +481,9 @@ const Page = () => {
           <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               주최자 X 계정
+              {isOrganizer === true && (
+                <span className="text-text-5 ml-[4px]">*</span>
+              )}
             </p>
             <div className="flex gap-[8px] w-full">
               <Input
@@ -476,9 +491,12 @@ const Page = () => {
                 _state="textbox-basic"
                 _containerProps={{ className: "flex-1 min-w-0" }}
                 _wrapperProps={{ className: "w-full" }}
+                _leftNode={<span className="text-text-3 text-[14px] font-[400]">@</span>}
                 _bottomNode={
                   isVerified
                     ? ""
+                    : isOrganizer === true
+                    ? "주최자는 X 계정 인증이 필수입니다."
                     : "X 계정을 인증해주세요."
                 }
               />
@@ -500,7 +518,7 @@ const Page = () => {
             {isOrganizer === false && (
               <div className="mt-[12px] w-full">
                 <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-                  X 링크
+                  X 링크 <span className="text-text-3 text-[12px] font-[400]">(선택)</span>
                 </p>
                 <Input
                   _value={xLink}
@@ -695,7 +713,7 @@ const Page = () => {
           </div>
 
           {/* 이미지 업로드 */}
-          <div className="mt-4 mb-[12px]">
+          <div className="mt-4 mb-[12px] w-full overflow-hidden">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이미지
             </p>
@@ -867,7 +885,7 @@ const Page = () => {
 
         <Button
           _state="main"
-          _node={isSubmitting ? "등록 중..." : "이벤트 등록하기"}
+          _node="이벤트 등록하기"
           _onClick={handleSubmit}
           _buttonProps={{
             className: "mt-6 mb-[50px] hover:cursor-pointer",
@@ -875,6 +893,7 @@ const Page = () => {
           }}
         />
       </div>
+      {isSubmitting && <Spinner />}
     </div>
   );
 };

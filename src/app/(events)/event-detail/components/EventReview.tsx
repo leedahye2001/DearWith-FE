@@ -7,7 +7,6 @@ import HeartFill from "@/svgs/HeartFill.svg";
 import Etc from "@/svgs/Etc.svg";
 import { FAB } from "@/components/FAB/FAB";
 import Write from "@/svgs/Write.svg";
-import EventReviewWrite, { ReviewDetail } from "./EventReviewWrite";
 import {
   getEventReviewDetail,
   getEventPhotoReviews,
@@ -60,8 +59,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
   const [photoReviews, setPhotoReviews] = useState<PostImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [isWriting, setIsWriting] = useState(false);
-  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -115,36 +112,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
       </div>
     );
 
-  const editingReview = editingReviewId
-    ? (() => {
-        const post = posts?.content.find((p) => p.id === editingReviewId);
-        if (!post) return undefined;
-        return {
-          id: post.id,
-          content: post.content,
-          tags: post.tags,
-          images: post.images.map((img, idx) => ({
-            url: img.variants[2]?.url,
-            displayOrder: idx,
-          })),
-        } as ReviewDetail;
-      })()
-    : undefined;
-
-  if (isWriting) {
-    return (
-      <EventReviewWrite
-        eventId={eventId}
-        reviewData={editingReview}
-        onClose={() => {
-          setIsWriting(false);
-          setEditingReviewId(null);
-          getEventReviewDetail(eventId).then((data) => setPosts(data));
-        }}
-      />
-    );
-  }
-
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       {/* 상단: 사진 리뷰 */}
@@ -165,11 +132,19 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                   : null;
 
               const isLast = idx === arr.length - 1 && photoReviews.length > 4;
+              const hasImage = url !== null;
 
               return (
                 <div
                   key={idx}
-                  className="relative w-[78px] h-[78px] rounded-[4px] overflow-hidden flex-shrink-0"
+                  className={`relative w-[78px] h-[78px] rounded-[4px] overflow-hidden flex-shrink-0 ${
+                    hasImage ? "cursor-pointer" : ""
+                  }`}
+                  onClick={() => {
+                    if (hasImage && !isLast) {
+                      router.push(`/review-detail/${img.reviewId}/${img.image.id}`);
+                    }
+                  }}
                 >
                   <div
                     className="absolute inset-0 bg-center bg-cover"
@@ -250,16 +225,15 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                 <Etc />
                 {openMenuId === post.id && (
                   <div
-                    className="absolute right-0 mt-[8px] bg-white shadow-md rounded-[8px] py-[8px] z-50 w-[120px]"
+                    className="text-[12px] font-[400px] absolute right-0 mt-[8px] bg-white shadow-md rounded-[8px] py-[8px] z-50 w-[120px]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {post.editable ? (
                       <>
                         <button
-                          className="w-full text-left px-[12px] py-[8px] hover:bg-gray-100"
+                          className="w-full text-left px-[12px] py-[8px] hover:bg-gray-100 "
                           onClick={() => {
-                            setEditingReviewId(post.id);
-                            setIsWriting(true);
+                            router.push(`/event-detail/${eventId}/review/write?edit=${post.id}`);
                             setOpenMenuId(null);
                           }}
                         >
@@ -349,7 +323,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
       )}
 
       {/* 글쓰기 FAB */}
-      <FAB _icon={<Write />} _onClick={() => setIsWriting(true)} />
+      <FAB _icon={<Write />} _onClick={() => router.push(`/event-detail/${eventId}/review/write`)} />
     </div>
   );
 };

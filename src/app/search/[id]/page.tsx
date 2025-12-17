@@ -32,33 +32,33 @@ const Page = () => {
   const [filterState, setFilterState] = useState<EventState>("LATEST");
   const [likedIds, setLikedIds] = useState<string[]>([]);
 
-  const toggleLike = useCallback(
-    async (id: string) => {
-      const isLiked = likedIds.includes(id);
-
-      setLikedIds((prev) =>
-        isLiked ? prev.filter((v) => v !== id) : [...prev, id]
-      );
-      setEvents((prev) =>
-        prev.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
+  const toggleLike = useCallback(async (id: string) => {
+    setLikedIds((prev) => {
+      const isLiked = prev.includes(id);
+      
+      // UI 즉시 업데이트
+      setEvents((prevEvents) =>
+        prevEvents.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
       );
 
-      try {
-        if (isLiked) await deleteEventLike(id);
-        else await postEventLike(id);
-      } catch (err) {
-        console.error("좋아요 토글 실패:", err);
+      (async () => {
+        try {
+          if (isLiked) await deleteEventLike(id);
+          else await postEventLike(id);
+        } catch (err) {
+          console.error("좋아요 토글 실패:", err);
+          setLikedIds((prevLiked) =>
+            isLiked ? [...prevLiked, id] : prevLiked.filter((v) => v !== id)
+          );
+          setEvents((prevEvents) =>
+            prevEvents.map((e) => (e.id === id ? { ...e, isLiked } : e))
+          );
+        }
+      })();
 
-        setLikedIds((prev) =>
-          isLiked ? [...prev, id] : prev.filter((v) => v !== id)
-        );
-        setEvents((prev) =>
-          prev.map((e) => (e.id === id ? { ...e, isLiked } : e))
-        );
-      }
-    },
-    [likedIds]
-  );
+      return isLiked ? prev.filter((v) => v !== id) : [...prev, id];
+    });
+  }, []);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -99,7 +99,7 @@ const Page = () => {
       console.error("이벤트 조회 실패:", err);
       setEvents([]);
     }
-  }, [type, artistId, groupId, filterState, toggleLike]);
+  }, [type, artistId, groupId, filterState]);
 
   useEffect(() => {
     fetchEvents();
