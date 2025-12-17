@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { BASE_URL } from "@/app/routePath";
 import Router from "next/router";
-import useUserStore, { useAuthStore } from "@/app/stores/userStore";
+import useUserStore from "@/app/stores/userStore";
 import { getRefreshToken } from "./api";
 
 interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {

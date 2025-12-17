@@ -242,6 +242,20 @@ export const deleteGroupLike = async (groupId: string) => {
   return await api.delete(`/api/groups/${groupId}/bookmark`);
 };
 
+//시스템 공지사항 목록 조회
+export const getSystemNotices = async () => {
+  const res = await api.get(`/api/notices`, {});
+  console.log(res.data);
+  return res.data;
+};
+
+//시스템 공지사항 상세 조회
+export const getSystemNoticeDetail = async (id: string) => {
+  const res = await api.get(`/api/notices/${id}`, {});
+  console.log(res.data);
+  return res.data;
+};
+
 //이벤트 공지 등록 /api/events/{eventId}/notices
 export const eventNoticePost = async (
   title: string,

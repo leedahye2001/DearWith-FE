@@ -10,7 +10,6 @@ import ProfileArtist from "@/svgs/ProfileArtist.svg";
 import Add from "@/svgs/Add.svg";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import useModalStore from "../stores/useModalStore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

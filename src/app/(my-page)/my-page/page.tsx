@@ -150,7 +150,7 @@ const Page = () => {
       <Divider />
 
       <Section title="고객지원">
-        <MenuItem text="공지사항" rightNode={<Forward />} hasData />
+        <MenuItem text="공지사항" path="/system-notices" rightNode={<Forward />} hasData />
         <MenuItem
           text="1:1 문의하기"
           rightNode={<Forward />}

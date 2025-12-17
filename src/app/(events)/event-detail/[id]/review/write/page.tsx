@@ -3,8 +3,6 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
-import Bottombar from "@/components/template/Bottombar";
-import Button from "@/components/Button/Button";
 import { getEventDetail, getEventReviewDetail } from "@/apis/api";
 import EventReviewWrite, { ReviewDetail } from "@/app/(events)/event-detail/components/EventReviewWrite";
 import Spinner from "@/components/Spinner/Spinner";
@@ -35,8 +33,21 @@ export default function ReviewWritePage() {
         if (editReviewId && reviewListData) {
           console.log("editReviewId:", editReviewId);
           console.log("reviewListData:", reviewListData);
+          interface ReviewItem {
+            id: number;
+            content?: string;
+            tags?: string[];
+            images?: Array<{
+              id: number;
+              variants?: Array<{ url: string }>;
+            }>;
+          }
+          interface ReviewImage {
+            id: number;
+            variants?: Array<{ url: string }>;
+          }
           const review = reviewListData.content?.find(
-            (r: any) => String(r.id) === String(editReviewId)
+            (r: ReviewItem) => String(r.id) === String(editReviewId)
           );
           console.log("found review:", review);
           if (review) {
@@ -44,7 +55,7 @@ export default function ReviewWritePage() {
               id: String(review.id),
               content: review.content || "",
               tags: review.tags || [],
-              images: review.images?.map((img: any, idx: number) => ({
+              images: review.images?.map((img: ReviewImage, idx: number) => ({
                 id: img.id,
                 url: img.variants?.[2]?.url || img.variants?.[1]?.url || img.variants?.[0]?.url,
                 displayOrder: idx,

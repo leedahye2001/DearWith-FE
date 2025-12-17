@@ -23,6 +23,7 @@ export interface EventCardProps {
   artistNamesKr: string[];
   groupNamesKr: string[];
   bookmarked: boolean;
+  isLiked?: boolean;
   onToggleLike: (id: string) => void;
 }
 

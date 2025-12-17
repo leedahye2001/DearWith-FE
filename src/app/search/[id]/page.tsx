@@ -30,35 +30,28 @@ const Page = () => {
 
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const [filterState, setFilterState] = useState<EventState>("LATEST");
-  const [likedIds, setLikedIds] = useState<string[]>([]);
 
   const toggleLike = useCallback(async (id: string) => {
-    setLikedIds((prev) => {
-      const isLiked = prev.includes(id);
-      
-      // UI 즉시 업데이트
+    // 현재 상태 확인
+    const currentEvent = events.find((e) => e.id === id);
+    const isLiked = currentEvent?.isLiked ?? currentEvent?.bookmarked ?? false;
+    
+    // UI 즉시 업데이트
+    setEvents((prevEvents) =>
+      prevEvents.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
+    );
+
+    try {
+      if (isLiked) await deleteEventLike(id);
+      else await postEventLike(id);
+    } catch (err) {
+      console.error("좋아요 토글 실패:", err);
+      // 실패 시 원래 상태로 복구
       setEvents((prevEvents) =>
-        prevEvents.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
+        prevEvents.map((e) => (e.id === id ? { ...e, isLiked } : e))
       );
-
-      (async () => {
-        try {
-          if (isLiked) await deleteEventLike(id);
-          else await postEventLike(id);
-        } catch (err) {
-          console.error("좋아요 토글 실패:", err);
-          setLikedIds((prevLiked) =>
-            isLiked ? [...prevLiked, id] : prevLiked.filter((v) => v !== id)
-          );
-          setEvents((prevEvents) =>
-            prevEvents.map((e) => (e.id === id ? { ...e, isLiked } : e))
-          );
-        }
-      })();
-
-      return isLiked ? prev.filter((v) => v !== id) : [...prev, id];
-    });
-  }, []);
+    }
+  }, [events]);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -86,8 +79,6 @@ const Page = () => {
         .filter((e) => e.bookmarked)
         .map((e) => e.id);
 
-      setLikedIds(bookmarkedIds);
-
       setEvents(
         eventList.map((e) => ({
           ...e,
@@ -99,7 +90,7 @@ const Page = () => {
       console.error("이벤트 조회 실패:", err);
       setEvents([]);
     }
-  }, [type, artistId, groupId, filterState]);
+  }, [type, artistId, groupId, filterState, toggleLike]);
 
   useEffect(() => {
     fetchEvents();
