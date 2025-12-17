@@ -15,7 +15,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "디어위드(DearWith)",
   description:
-    "함께 만드는 소중한 하루, 아이돌 생일카페 정보 공유 플랫폼 ‘디어위드’ 입니다.",
+    "함께 만드는 소중한 하루, 아이돌 생일카페 정보 공유 플랫폼 '디어위드' 입니다.",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

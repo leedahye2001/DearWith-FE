@@ -20,9 +20,9 @@ export default function LayoutClient({ children }: Props) {
   );
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-[428px] mx-auto min-h-screen">
       <div
-        className={`w-full max-w-[428px] mx-auto ${
+        className={`w-full ${
           showNavbar ? "pb-[80px]" : ""
         }`}
       >
