@@ -12,7 +12,7 @@ export default function AlertModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-[24px]">
       <div className="w-full h-[160px] bg-bg-1 rounded-[12px] flex flex-col justify-between p-[20px] shadow-lg">
         <p className="text-text-5 text-[16px] font-[600] text-center mt-[20px]">
           {message}
