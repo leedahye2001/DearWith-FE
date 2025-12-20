@@ -382,16 +382,25 @@ export const getUserInfo = async () => {
 };
 
 // 회원 탈퇴
-export const deleteUserAccount = async () => {
+export type WithdrawReason = "NO_LONGER_NEEDED" | "LACK_OF_INFO" | "TOO_COMMERCIAL" | "OTHER";
+
+export const withdrawUser = async (reason: WithdrawReason, detail: string) => {
   const res = await api.post(
     "/users/me",
-    {"reason": "NO_LONGER_NEEDED",
-      "detail": "디어위드를 더 이상 사용하지 않아서 탈퇴합니다."},
+    {
+      reason,
+      detail,
+    },
     {
       withCredentials: true,
     }
   );
   return res.data;
+};
+
+// 기존 함수명 유지 (하위 호환성)
+export const deleteUserAccount = async () => {
+  return await withdrawUser("NO_LONGER_NEEDED", "디어위드를 더 이상 사용하지 않아서 탈퇴합니다.");
 };
 
 // 프로필 사진 삭제

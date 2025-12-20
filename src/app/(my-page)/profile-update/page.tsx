@@ -16,15 +16,16 @@ import {
   deleteProfileImage,
   updateNickname,
   updateProfileImage,
-  deleteUserAccount,
 } from "@/apis/api";
+import WithdrawModal from "@/components/Modal/WithdrawModal/WithdrawModal";
 import api from "@/apis/instance";
 import Add from "@/svgs/Add.svg";
 
 const Page = () => {
   const router = useRouter();
-  const { openAlert, openConfirm } = useModalStore();
+  const { openAlert } = useModalStore();
   const { profile } = useProfileStore();
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
   const initialNickname = profile?.nickname ?? "";
   const initialProfileImage = profile?.profileImageUrl || null;
@@ -142,18 +143,13 @@ const Page = () => {
   };
 
   const handleWithdraw = () => {
-    openConfirm("정말 탈퇴하시겠습니까?", async () => {
-      try {
-        await deleteUserAccount();
-        useUserStore.getState().clearUser();
-        useAuthStore.getState().clearTokens();
-        openAlert("탈퇴가 완료되었습니다.");
-        router.replace("/login");
-      } catch (error) {
-        console.error(error);
-        openAlert("탈퇴 처리 중 오류가 발생했습니다.");
-      }
-    });
+    setShowWithdrawModal(true);
+  };
+
+  const handleWithdrawComplete = () => {
+    useUserStore.getState().clearUser();
+    useAuthStore.getState().clearTokens();
+    router.replace("/login");
   };
 
   return (
@@ -246,6 +242,15 @@ const Page = () => {
             />
           </div>
         </div>
+      )}
+
+      {showWithdrawModal && (
+        <WithdrawModal
+          onClose={() => {
+            setShowWithdrawModal(false);
+          }}
+          onSuccess={handleWithdrawComplete}
+        />
       )}
     </div>
   );
