@@ -40,7 +40,10 @@ export default function EventSection({
         {title}
       </h1>
 
-      <div className="flex gap-[12px] overflow-x-auto scrollbar-hide touch-pan-x px-[24px]">
+      <div 
+        className="flex gap-[12px] overflow-x-auto scrollbar-hide px-[24px]"
+        style={{ touchAction: 'pan-x pan-y' }}
+      >
         {events.map((event) => (
           <EventCard
             key={event.id}

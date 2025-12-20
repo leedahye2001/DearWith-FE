@@ -208,7 +208,10 @@ export default function EventDetailPage() {
 
       {event.images?.length > 0 && (
             <div className="relative w-full h-[536px]">
-              <div className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide touch-pan-x">
+              <div 
+                className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide"
+                style={{ touchAction: 'pan-x pan-y' }}
+              >
                 <div className="flex h-full">
                   {event.images.map((img, idx) => {
                     const url = img?.variants?.[0]?.url || null;
@@ -221,6 +224,7 @@ export default function EventDetailPage() {
                             alt={`${event.title}-${idx}`}
                             fill
                             className="object-cover"
+                            style={{ touchAction: 'pan-x pan-y' }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-200">

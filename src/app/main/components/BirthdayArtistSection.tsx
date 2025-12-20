@@ -21,7 +21,10 @@ export default function BirthdayArtistsSection({
       <h1 className="font-[700] text-text-5 text-[16px] pb-[8px] pl-[24px]">
         {currentMonth} 생일 아티스트
       </h1>
-      <div className="flex gap-[8px] overflow-x-auto scrollbar-hide touch-pan-x px-[24px]">
+      <div 
+        className="flex gap-[8px] overflow-x-auto scrollbar-hide px-[24px]"
+        style={{ touchAction: 'pan-x pan-y' }}
+      >
         {birthdayArtists.map((artist) => (
           <BirthdayArtistCard
             key={artist.id}
