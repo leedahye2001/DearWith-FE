@@ -1,5 +1,6 @@
 import { ReviewDetail } from "@/app/(events)/event-detail/components/EventReviewWrite";
 import api, { refreshApi } from "./instance";
+import { isNativeApp, nativeLogout } from "@/lib/native/bridge";
 
 // email 인증 코드 발송
 export const getMailSend = async (email: string) => {
@@ -45,7 +46,7 @@ export const updateNickname = async (nickname: string) => {
   return res.data;
 };
 
-// 로그인
+// 로그인 
 export const getSignIn = async (email: string, password: string) => {
   const res = await api.post(
     "/auth/signin",
@@ -59,7 +60,9 @@ export const getSignIn = async (email: string, password: string) => {
 
 // 토큰 유효성 검사
 export const validateToken = async () => {
-  const res = await refreshApi.post("/auth/validate", {});
+  const url = isNativeApp() ? "/auth/validate/native" : "/auth/validate";
+  const apiInstance = isNativeApp() ? api : refreshApi;
+  const res = await apiInstance.post(url, {});
   return res.data;
 };
 
@@ -77,14 +80,11 @@ export const getRefreshToken = async () => {
 
 // 로그아웃
 export const postLogout = async () => {
-  const res = await api.post(
-    "/auth/logout",
-    {},
-    {
-      withCredentials: true,
-    }
-  );
-  return res.data;
+  if (isNativeApp()) {
+    await nativeLogout();
+    return;
+  }
+  await api.post("/auth/logout", {}, { withCredentials: true });
 };
 
 // 메인 화면
@@ -391,9 +391,7 @@ export const withdrawUser = async (reason: WithdrawReason, detail: string) => {
       reason,
       detail,
     },
-    {
-      withCredentials: true,
-    }
+    { withCredentials: !isNativeApp() }
   );
   return res.data;
 };
@@ -485,22 +483,6 @@ export const answerSatisfaction = async (
   return res.data;
 };
 
-
-// 푸시 기기 등록/갱신 
-export type PlatformType = "IOS" | "ANDROID";
-
-export const postPushDevice = async (payload: {
-  deviceId: string;
-  fcmToken: string;
-  platform: PlatformType;
-  phoneModel?: string;
-  osVersion?: string;
-}) => {
-  const res = await api.post("/api/push/devices", payload, {
-    withCredentials: true,
-  });
-  return res.data;
-};
 
 // 리뷰 신고
 export type ReportReason = "OFF_TOPIC" | "HATE" | "SPAM" | "OTHER";

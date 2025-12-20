@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
@@ -8,6 +8,9 @@ import { getAlertMessage } from "@/apis/api";
 import { formatDate } from "../(events)/event-detail/components/NoticeList";
 import Image from "next/image";
 import Spinner from "@/components/Spinner/Spinner";
+
+import { isNativeApp, requestPushPermissionStatus, requestPushPermission } from "@/lib/native/bridge";
+import { loadPushPermission } from "@/lib/native/NativeBridgeProvider";
 
 interface AlertItem {
   id: number;
@@ -21,10 +24,7 @@ interface AlertItem {
   createdAt: string;
   coverImage?: Array<{
     id: string | null;
-    variants: Array<{
-      name: string;
-      url: string;
-    }>;
+    variants: Array<{ name: string; url: string }>;
   }>;
 }
 
@@ -33,9 +33,27 @@ export default function Page() {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [permEnabled, setPermEnabled] = useState<boolean | null>(null);
+
   useEffect(() => {
     fetchAlerts();
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    setPermEnabled(loadPushPermission());
+
+    if (isNativeApp()) {
+      requestPushPermissionStatus();
+    }
+  }, []);
+
+  const showBanner = useMemo(() => {
+    if (!isNativeApp()) return false;
+    if (permEnabled === null) return false;
+    return permEnabled === false;
+  }, [permEnabled]);
 
   const fetchAlerts = async () => {
     try {
@@ -48,6 +66,18 @@ export default function Page() {
     }
   };
 
+  const onClickEnable = () => {
+    if (!isNativeApp()) {
+      alert("앱에서만 알림 설정을 열 수 있어요.");
+      return;
+    }
+
+    const ok = requestPushPermission();
+    if (!ok) {
+      alert("앱에서만 알림을 켤 수 있어요.");
+    }
+  };
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-white">
       {/* Topbar */}
@@ -56,13 +86,18 @@ export default function Page() {
         _topNode="알림"
       />
 
-      {/* 알림 켜기 배너 */}
-      <div className="bg-secondary-200 mx-[24px] px-[12px] py-[16px] flex justify-between items-center rounded-[4px]">
-        <p className="text-text-5 text-[12px] font-[500]">기기 알림을 켜고 소식을 받아보세요!</p>
-        <button className="bg-red-400 text-white px-[4px] py-[2px] rounded-[4px] text-[12px] font-[500]">
-          알림 켜기
-        </button>
-      </div>
+      {/* 앱에서만 + enabled=false일 때만 배너 */}
+      {showBanner && (
+        <div className="bg-secondary-200 mx-[24px] px-[12px] py-[16px] flex justify-between items-center rounded-[4px] mt-[12px]">
+          <p className="text-text-5 text-[12px] font-[500]">기기 알림을 켜고 소식을 받아보세요!</p>
+          <button
+            onClick={onClickEnable}
+            className="bg-red-400 text-white px-[8px] py-[6px] rounded-[4px] text-[12px] font-[600]"
+          >
+            알림 켜기
+          </button>
+        </div>
+      )}
 
       <div className="px-[24px] py-[20px] flex flex-col gap-[16px]">
         {loading ? (
@@ -74,23 +109,17 @@ export default function Page() {
         ) : (
           alerts.map((alert) => {
             const imageUrl = alert.coverImage?.[0]?.variants?.[0]?.url;
-            
+
             return (
               <div
                 key={alert.id}
                 className="flex justify-between items-start border-b pb-[16px] border-divider-1 cursor-pointer"
                 onClick={() => {
-                  if (alert.linkUrl) {
-                    // linkUrl이 전체 URL인 경우와 상대 경로인 경우 처리
-                    if (alert.linkUrl.startsWith('http')) {
-                      window.location.href = alert.linkUrl;
-                    } else {
-                      router.push(alert.linkUrl);
-                    }
-                  }
+                  if (!alert.linkUrl) return;
+                  if (alert.linkUrl.startsWith("http")) window.location.href = alert.linkUrl;
+                  else router.push(alert.linkUrl);
                 }}
               >
-                {/* 좌측 아이콘 + 텍스트 영역 */}
                 <div className="flex gap-[10px] flex-1 min-w-0">
                   {imageUrl ? (
                     <div className="w-[16px] h-[16px] rounded-full overflow-hidden flex-shrink-0">
@@ -106,7 +135,7 @@ export default function Page() {
                     <div className="w-[16px] h-[16px] bg-gray-200 rounded-full flex-shrink-0" />
                   )}
 
-                  <div className="flex flex-col items-start gap-[4px] items-center min-w-0">
+                  <div className="flex flex-col items-start gap-[4px] min-w-0">
                     <p className="text-[12px] text-text-3 font-[500] whitespace-nowrap">
                       {alert.title}
                     </p>
@@ -116,7 +145,6 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* 날짜 */}
                 <p className="text-[11px] text-text-3 whitespace-nowrap mt-[4px]">
                   {formatDate(alert.createdAt).slice(0, 8)}
                 </p>

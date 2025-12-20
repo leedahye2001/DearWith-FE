@@ -148,6 +148,7 @@ const Page = () => {
                 className="rounded-full flex justify-center items-center w-[72px] h-[72px] cursor-pointer overflow-hidden"
               >
                 {preview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={preview}
                     alt="preview"

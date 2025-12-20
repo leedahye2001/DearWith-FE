@@ -3,14 +3,24 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  loadDeviceInfo,
-  saveDeviceInfo,
-  shouldRegisterPushDevice,
-  markRegistered,
-} from "@/lib/native/bridge";
-import { postPushDevice } from "@/apis/api";
-import { installNativeCallbacks, NATIVE_EVENTS, uninstallNativeCallbacks } from "./event";
+import { installNativeCallbacks, uninstallNativeCallbacks, NATIVE_EVENTS } from "@/lib/native/event";
+
+const PERM_KEY = "dearwith:pushPermissionEnabled";
+
+export function savePushPermission(enabled: boolean) {
+  try {
+    localStorage.setItem(PERM_KEY, enabled ? "1" : "0");
+  } catch {}
+}
+export function loadPushPermission(): boolean | null {
+  try {
+    const v = localStorage.getItem(PERM_KEY);
+    if (v === null) return null;
+    return v === "1";
+  } catch {
+    return null;
+  }
+}
 
 export default function NativeBridgeProvider() {
   const router = useRouter();
@@ -18,88 +28,88 @@ export default function NativeBridgeProvider() {
   useEffect(() => {
     installNativeCallbacks();
 
-    // ------------------------------
-    // Apple login complete (Native -> Web)
-    // ------------------------------
-    const onApple = async (e: Event) => {
-        const payload = (e as CustomEvent<AppleLoginNativeResult>).detail;
-      
-        // error case
-        if ("error" in payload && payload.error) {
-          alert(payload.message ?? "애플 로그인 실패");
-          return;
-        }
-      
-        // 여기부터는 성공 타입으로 안전하게 좁혀짐
-        if (payload.needSignUp) {
-          router.push(
-            `/signup?provider=${encodeURIComponent(
-              payload.provider ?? "APPLE"
-            )}&socialId=${encodeURIComponent(payload.socialId ?? "")}`
-          );
-          return;
-        }
-      
-        router.replace("/main");
-      };
-      
+    window.dearwithAuth = window.dearwithAuth || {};
 
-    // ------------------------------
-    // Push device info (Native -> Web)
-    // ------------------------------
-    const onPushDevice = async (e: Event) => {
-      const deviceInfo = (e as CustomEvent<PushDeviceNativePayload>).detail;
+    const prevApple = window.dearwithAuth.onAppleLoginComplete;
+    const prevKakao = window.dearwithAuth.onKakaoLoginComplete;
+    const prevEmail = window.dearwithAuth.onEmailLoginComplete;
 
-      // persist device info
-      saveDeviceInfo(deviceInfo);
+    window.dearwithAuth.onAppleLoginComplete = (payload: NativeSocialLoginPayload) => {
+      if ("error" in payload && payload.error) {
+        alert(payload.message ?? "애플 로그인 실패");
+        return;
+      }
+      if (payload.needSignUp) {
+        router.push(
+          `/signup?provider=${encodeURIComponent(payload.provider ?? "APPLE")}&socialId=${encodeURIComponent(
+            payload.socialId ?? ""
+          )}`
+        );
+        return;
+      }
+      router.replace("/main");
+    };
 
-      // cache rule (fingerprint change => immediate / same => TTL)
-      if (!shouldRegisterPushDevice(deviceInfo)) return;
+    window.dearwithAuth.onKakaoLoginComplete = (payload: NativeSocialLoginPayload) => {
+      if ("error" in payload && payload.error) {
+        alert(payload.message ?? "카카오 로그인 실패");
+        return;
+      }
+      if (payload.needSignUp) {
+        router.push(
+          `/signup?provider=${encodeURIComponent(payload.provider ?? "KAKAO")}&socialId=${encodeURIComponent(
+            payload.socialId ?? ""
+          )}`
+        );
+        return;
+      }
+      router.replace("/main");
+    };
+
+    window.dearwithAuth.onEmailLoginComplete = (payload: NativeEmailLoginPayload) => {
+      if ("error" in payload && payload.error) {
+        alert(payload.message ?? "이메일 로그인 실패");
+        return;
+      }
+      router.replace("/main");
+    };
+
+    // ✅ Push permission event
+    const onPushPerm = (e: Event) => {
+      const { enabled } = (e as CustomEvent<PushPermissionNativePayload>).detail;
+      savePushPermission(!!enabled);
+    };
+
+    // ✅ Deep link event (푸시 탭도 여기로 들어옴)
+    const onDeepLink = (e: Event) => {
+      const { url } = (e as CustomEvent<{ url: string }>).detail || {};
+      if (!url) return;
+
+      console.log("[deepLink] received:", url);
 
       try {
-        await postPushDevice({
-          deviceId: deviceInfo.deviceId,
-          fcmToken: deviceInfo.fcmToken,
-          platform: deviceInfo.platform,
-          phoneModel: deviceInfo.phoneModel,
-          osVersion: deviceInfo.osVersion,
-        });
-
-        // ✅ mark cache ONLY on success
-        markRegistered(deviceInfo);
-      } catch (err) {
-        // ✅ on failure => do not mark cache, retry next opportunity
-        console.warn("⚠️ push device register failed, will retry later", err);
+        // 절대 URL이면 path만 뽑아서 Next 라우팅
+        const u = new URL(url);
+        router.push(u.pathname + u.search + u.hash);
+      } catch {
+        // 상대경로면 그대로 push
+        router.push(url);
       }
     };
 
-    window.addEventListener(NATIVE_EVENTS.APPLE_LOGIN, onApple as EventListener);
-    window.addEventListener(NATIVE_EVENTS.PUSH_DEVICE, onPushDevice as EventListener);
-
-    // ------------------------------
-    // (Optional) startup retry if saved deviceInfo exists
-    // ------------------------------
-    const saved = loadDeviceInfo();
-    if (saved && shouldRegisterPushDevice(saved)) {
-      (async () => {
-        try {
-          await postPushDevice({
-            deviceId: saved.deviceId,
-            fcmToken: saved.fcmToken,
-            platform: saved.platform,
-            phoneModel: saved.phoneModel,
-            osVersion: saved.osVersion,
-          });
-          markRegistered(saved);
-        } catch {
-          // ignore: will retry on next event/foreground/login
-        }
-      })();
-    }
+    window.addEventListener(NATIVE_EVENTS.PUSH_PERMISSION, onPushPerm as EventListener);
+    window.addEventListener(NATIVE_EVENTS.DEEP_LINK, onDeepLink as EventListener);
 
     return () => {
-      window.removeEventListener(NATIVE_EVENTS.APPLE_LOGIN, onApple as EventListener);
-      window.removeEventListener(NATIVE_EVENTS.PUSH_DEVICE, onPushDevice as EventListener);
+      window.removeEventListener(NATIVE_EVENTS.PUSH_PERMISSION, onPushPerm as EventListener);
+      window.removeEventListener(NATIVE_EVENTS.DEEP_LINK, onDeepLink as EventListener);
+
+      if (window.dearwithAuth) {
+        window.dearwithAuth.onAppleLoginComplete = prevApple;
+        window.dearwithAuth.onKakaoLoginComplete = prevKakao;
+        window.dearwithAuth.onEmailLoginComplete = prevEmail;
+      }
+
       uninstallNativeCallbacks();
     };
   }, [router]);

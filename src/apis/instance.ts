@@ -1,8 +1,13 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+// src/apis/instance.ts
+import axios, { AxiosError, AxiosRequestHeaders, InternalAxiosRequestConfig } from "axios";
 import { BASE_URL } from "@/app/routePath";
-import Router from "next/router";
 import useUserStore from "@/app/stores/userStore";
-import { getRefreshToken } from "./api";
+import {
+  isNativeApp,
+  nativeGetAccessToken,
+  nativeRefreshAccessToken,
+  nativeLogout,
+} from "@/lib/native/bridge";
 
 interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -13,123 +18,180 @@ interface FailedRequestQueueItem {
   reject: (reason?: unknown) => void;
 }
 
-let isRefreshing = false;
-let failedQueue: FailedRequestQueueItem[] = [];
+/** =========================
+ * Web refresh queue
+ * ========================= */
+let isRefreshingWeb = false;
+let failedQueueWeb: FailedRequestQueueItem[] = [];
 
-const processQueue = (error: unknown, token: string | null = null) => {
-  failedQueue.forEach((queued) => {
-    if (error) queued.reject(error);
-    else queued.resolve(token);
-  });
-
-  failedQueue = [];
+const processWebQueue = (error: unknown) => {
+  failedQueueWeb.forEach((q) => (error ? q.reject(error) : q.resolve()));
+  failedQueueWeb = [];
 };
 
+/** =========================
+ * Native refresh queue
+ * ========================= */
+let isRefreshingNative = false;
+let failedQueueNative: FailedRequestQueueItem[] = [];
+
+const processNativeQueue = (error: unknown, accessToken: string | null) => {
+  failedQueueNative.forEach((q) => (error ? q.reject(error) : q.resolve(accessToken)));
+  failedQueueNative = [];
+};
+
+/** =========================
+ * Axios instances
+ * ========================= */
 const api = axios.create({
   baseURL: `https://${BASE_URL}`,
-  withCredentials: true,
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });
 
-// refresh token 요청용 별도 인스턴스 (interceptor 없음)
+// web refresh 전용(쿠키)
 export const refreshApi = axios.create({
   baseURL: `https://${BASE_URL}`,
-  withCredentials: true,
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });
 
+/** =========================
+ * Request interceptor
+ * - Native: Bearer
+ * - Web: cookie
+ * ========================= */
+api.interceptors.request.use(async (config) => {
+  const native = isNativeApp();
+  config.withCredentials = !native;
+
+  if (native) {
+    const token = await nativeGetAccessToken();
+    if (token) {
+      config.headers = config.headers ?? {};
+      (config.headers as AxiosRequestHeaders).Authorization = `Bearer ${token}`;
+    } else {
+      // 토큰이 없으면 Authorization 없이 나가서 401 날 수 있음(정상)
+    }
+  }
+
+  return config;
+});
+
+// web refresh는 항상 쿠키
+refreshApi.interceptors.request.use((config) => {
+  config.withCredentials = true;
+  return config;
+});
+
+/** =========================
+ * Response interceptor (401 handling)
+ * ========================= */
 api.interceptors.response.use(
-  (response) => response,
+  (r) => r,
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryAxiosRequestConfig;
 
-    if (!error.response) {
-      return Promise.reject(error);
-    }
+    if (!error.response) return Promise.reject(error);
+    if (error.response.status !== 401) return Promise.reject(error);
 
-    // refresh token 요청 자체가 401이면 무한 루프 방지 (즉시 실패 처리)
-    if (originalRequest.url?.includes("/auth/refresh")) {
-      // refresh 요청 자체가 401이면 세션 만료
-      if (error.response.status === 401) {
-        useUserStore.getState().clearUser();
-        Router.push("/login");
-      }
-      return Promise.reject(error);
-    }
+    // 이미 재시도 했는데 또 401이면 더 이상 반복 X
+    if (originalRequest._retry) return Promise.reject(error);
+    originalRequest._retry = true;
 
-    // 401 에러 처리
-    if (error.response.status === 401) {
-      // 이미 재시도한 요청이면 실패 처리
-      if (originalRequest._retry) {
-        return Promise.reject(error);
-      }
+    const native = isNativeApp();
 
-      // 로그인 상태 확인: userId가 있으면 로그인 상태로 간주
-      const userId = useUserStore.getState().userId;
-
-      // 비로그인 상태: refresh 시도하지 않고 바로 로그인 화면으로
-      if (!userId) {
-        useUserStore.getState().clearUser();
-        Router.push("/login");
-        return Promise.reject(error);
-      }
-
-      // 로그인 상태: refresh 1회 시도
-      originalRequest._retry = true;
-
-      // 동시에 여러 요청이 401이면 refresh는 한 번만 실행
-      if (isRefreshing) {
+    /** =========================================================
+     * (A) Native: refresh 1번 + queue
+     * ========================================================= */
+    if (native) {
+      // 이미 refresh 중이면 큐에 대기 → refresh 끝나면 받은 토큰으로 재시도
+      if (isRefreshingNative) {
         return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            if (typeof token === "string") {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            // 원 요청 1회 재시도
-            return api(originalRequest);
-          })
-          .catch((err) => {
-            return Promise.reject(err);
+          failedQueueNative.push({
+            resolve: (newToken?: unknown) => {
+              const at = typeof newToken === "string" ? newToken : null;
+              originalRequest.headers = originalRequest.headers ?? {};
+              if (at) (originalRequest.headers as AxiosRequestHeaders).Authorization = `Bearer ${at}`;
+              resolve(api(originalRequest));
+            },
+            reject,
           });
+        });
       }
 
-      isRefreshing = true;
+      isRefreshingNative = true;
 
       try {
-        // refresh token 재발급 시도
-        const res = await getRefreshToken();
+        const newAccessToken = await nativeRefreshAccessToken();
 
-        // refresh 성공: 서버가 Set-Cookie로 새 ACCESS/REFRESH 쿠키를 내려줌
-        // 프론트는 토큰을 저장하지 않음 (HttpOnly 쿠키)
-        if (res.token) {
-          api.defaults.headers.common.Authorization = `Bearer ${res.token}`;
-          originalRequest.headers.Authorization = `Bearer ${res.token}`;
+        if (!newAccessToken) {
+          await nativeLogout();
+          useUserStore.getState().clearUser();
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+            window.location.href = "/login";
+          }
+
+          processNativeQueue(new Error("NATIVE_REFRESH_FAILED"), null);
+          return Promise.reject(error);
         }
 
-        // 대기 중인 요청들에 성공 결과 전달
-        processQueue(null, res.token || null);
+        processNativeQueue(null, newAccessToken);
 
-        // 원 요청 1회 재시도
+        originalRequest.headers = originalRequest.headers ?? {};
+        (originalRequest.headers as AxiosRequestHeaders).Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-      } catch (refreshError) {
-        console.error("Refresh Token Failed:", refreshError);
-
-        // refresh 실패: 서버 세션이 없거나 refresh 만료/무효
-        // 대기 중인 요청들에 실패 결과 전달
-        processQueue(refreshError, null);
-
-        // store 비우고 로그인 화면으로 이동
+      } catch (e) {
+        processNativeQueue(e, null);
+        await nativeLogout();
         useUserStore.getState().clearUser();
-        Router.push("/login");
-
-        return Promise.reject(refreshError);
+        if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+          window.location.href = "/login";
+        }
+        return Promise.reject(e);
       } finally {
-        isRefreshing = false;
+        isRefreshingNative = false;
       }
     }
 
-    return Promise.reject(error);
+    /** =========================================================
+     * (B) Web: cookie refresh + queue
+     * ========================================================= */
+    // 로그인 상태 확인: userId가 있으면 로그인 상태로 간주
+    const userId = useUserStore.getState().userId;
+
+    // 비로그인 상태: refresh 시도하지 않고 바로 로그인 화면으로
+    if (!userId) {
+      useUserStore.getState().clearUser();
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
+      }
+      return Promise.reject(error);
+    }
+
+    if (isRefreshingWeb) {
+      return new Promise((resolve, reject) => {
+        failedQueueWeb.push({
+          resolve: () => resolve(api(originalRequest)),
+          reject,
+        });
+      });
+    }
+
+    isRefreshingWeb = true;
+
+    try {
+      await refreshApi.post("/auth/refresh", {}, { withCredentials: true });
+      processWebQueue(null);
+      return api(originalRequest);
+    } catch (refreshError) {
+      processWebQueue(refreshError);
+      useUserStore.getState().clearUser();
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
+      }
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshingWeb = false;
+    }
   }
 );
 
