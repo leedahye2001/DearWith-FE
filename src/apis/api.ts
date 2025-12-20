@@ -492,3 +492,18 @@ export const postPushDevice = async (payload: {
   });
   return res.data;
 };
+
+// 리뷰 신고
+export type ReportReason = "OFF_TOPIC" | "HATE" | "SPAM" | "OTHER";
+
+export const reportReview = async (
+  reviewId: string,
+  reason: ReportReason,
+  content: string
+) => {
+  const res = await api.post(`/api/reviews/${reviewId}/report`, {
+    reason,
+    content,
+  });
+  return res.data;
+};

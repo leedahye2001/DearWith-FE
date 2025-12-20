@@ -83,7 +83,7 @@ const SystemNoticeDetailPage = () => {
           <h1 className="text-[16px] font-[700] text-text-5">{notice.title}</h1>
 
           <div className="flex items-center gap-[4px] mt-[4px] text-[12px] text-text-4">
-            <span>{formatDate(notice.updatedAt)}</span>
+            <span>{formatDate(notice.createdAt)}</span>
           </div>
 
           <div className="mt-[20px] mb-[28px] py-[32px] text-[15px] text-text-5 leading-[1.6] whitespace-pre-line border-y border-divider-1">

@@ -15,6 +15,7 @@ import {
 } from "@/apis/api";
 import Image from "next/image";
 import Spinner from "@/components/Spinner/Spinner";
+import ReportModal from "@/components/Modal/ReportModal/ReportModal";
 
 interface PostImage {
   reviewId: string;
@@ -60,6 +61,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [reportReviewId, setReportReviewId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!eventId) return;
@@ -244,7 +246,13 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                         </button>
                       </>
                     ) : (
-                      <button className="w-full text-left px-[12px] py-[8px] hover:bg-gray-100">
+                      <button
+                        className="w-full text-left px-[12px] py-[8px] hover:bg-gray-100"
+                        onClick={() => {
+                          setReportReviewId(post.id);
+                          setOpenMenuId(null);
+                        }}
+                      >
                         신고하기
                       </button>
                     )}
@@ -324,6 +332,14 @@ const EventReview = ({ eventId }: EventReviewProps) => {
 
       {/* 글쓰기 FAB */}
       <FAB _icon={<Write />} _onClick={() => router.push(`/event-detail/${eventId}/review/write`)} />
+
+      {/* 신고 모달 */}
+      {reportReviewId && (
+        <ReportModal
+          reviewId={reportReviewId}
+          onClose={() => setReportReviewId(null)}
+        />
+      )}
     </div>
   );
 };

@@ -21,7 +21,14 @@ export default function AlertModal() {
         <div className="mb-[10px]">
           {type === "alert" && (
             <div className="flex justify-center ">
-              <Button _state="main" _node="확인" _onClick={closeModal} />
+              <Button
+                _state="main"
+                _node="확인"
+                _onClick={() => {
+                  if (onConfirm) onConfirm();
+                  closeModal();
+                }}
+              />
             </div>
           )}
 

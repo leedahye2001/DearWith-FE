@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/template/Navbar";
-import AlertModalClient from "@/components/AlertModal/AlertModalClient";
+import AlertModalClient from "../Modal/AlertModal/AlertModalClient";
 
 type Props = {
   children: React.ReactNode;
