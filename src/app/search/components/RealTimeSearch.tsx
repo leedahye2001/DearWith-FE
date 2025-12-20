@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import SearchProfileBasic from "@/svgs/SearchProfileBasic.svg";
 import Image from "next/image";
 import { Artist } from "../page";
@@ -11,8 +14,23 @@ const RealTimeSearch = ({
   index: number;
   showRank?: boolean;
 }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    const type = artist.type === "GROUP" ? "GROUP" : "ARTIST";
+    const idParam = artist.type === "GROUP" ? "groupId" : "artistId";
+    const nameParam = artist.type === "GROUP" ? "groupName" : "artistName";
+    
+    router.push(
+      `/search/${artist.id}?type=${encodeURIComponent(type)}&${idParam}=${artist.id}&${nameParam}=${encodeURIComponent(artist.nameKr)}`
+    );
+  };
+
   return (
-    <div className="flex justify-between w-full items-center">
+    <div 
+      className="flex justify-between w-full items-center cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="flex items-center gap-[12px]">
         {showRank && (
           <span className="w-[20px] text-[14px] font-[700] text-primary">

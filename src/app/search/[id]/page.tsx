@@ -32,26 +32,32 @@ const Page = () => {
   const [filterState, setFilterState] = useState<EventState>("LATEST");
 
   const toggleLike = useCallback(async (id: string) => {
-    // 현재 상태 확인
-    const currentEvent = events.find((e) => e.id === id);
-    const isLiked = currentEvent?.isLiked ?? currentEvent?.bookmarked ?? false;
-    
-    // UI 즉시 업데이트
-    setEvents((prevEvents) =>
-      prevEvents.map((e) => (e.id === id ? { ...e, isLiked: !isLiked } : e))
-    );
-
-    try {
-      if (isLiked) await deleteEventLike(id);
-      else await postEventLike(id);
-    } catch (err) {
-      console.error("좋아요 토글 실패:", err);
-      // 실패 시 원래 상태로 복구
-      setEvents((prevEvents) =>
-        prevEvents.map((e) => (e.id === id ? { ...e, isLiked } : e))
+    // 함수형 업데이트로 현재 상태 확인
+    setEvents((prevEvents) => {
+      const currentEvent = prevEvents.find((e) => e.id === id);
+      const isLiked = currentEvent?.isLiked ?? currentEvent?.bookmarked ?? false;
+      
+      // UI 즉시 업데이트
+      const updatedEvents = prevEvents.map((e) => 
+        e.id === id ? { ...e, isLiked: !isLiked } : e
       );
-    }
-  }, [events]);
+
+      (async () => {
+        try {
+          if (isLiked) await deleteEventLike(id);
+          else await postEventLike(id);
+        } catch (err) {
+          console.error("좋아요 토글 실패:", err);
+          // 실패 시 원래 상태로 복구
+          setEvents((prevEvents) =>
+            prevEvents.map((e) => (e.id === id ? { ...e, isLiked } : e))
+          );
+        }
+      })();
+
+      return updatedEvents;
+    });
+  }, []);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -79,18 +85,44 @@ const Page = () => {
         .filter((e) => e.bookmarked)
         .map((e) => e.id);
 
+      // toggleLike를 직접 참조하지 않고 함수로 전달
+      const handleToggleLike = async (eventId: string) => {
+        setEvents((prevEvents) => {
+          const currentEvent = prevEvents.find((e) => e.id === eventId);
+          const isLiked = currentEvent?.isLiked ?? currentEvent?.bookmarked ?? false;
+          
+          const updatedEvents = prevEvents.map((e) => 
+            e.id === eventId ? { ...e, isLiked: !isLiked } : e
+          );
+
+          (async () => {
+            try {
+              if (isLiked) await deleteEventLike(eventId);
+              else await postEventLike(eventId);
+            } catch (err) {
+              console.error("좋아요 토글 실패:", err);
+              setEvents((prevEvents) =>
+                prevEvents.map((e) => (e.id === eventId ? { ...e, isLiked } : e))
+              );
+            }
+          })();
+
+          return updatedEvents;
+        });
+      };
+
       setEvents(
         eventList.map((e) => ({
           ...e,
           isLiked: bookmarkedIds.includes(e.id),
-          onToggleLike: toggleLike,
+          onToggleLike: handleToggleLike,
         }))
       );
     } catch (err) {
       console.error("이벤트 조회 실패:", err);
       setEvents([]);
     }
-  }, [type, artistId, groupId, filterState, toggleLike]);
+  }, [type, artistId, groupId, filterState]);
 
   useEffect(() => {
     fetchEvents();
