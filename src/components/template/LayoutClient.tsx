@@ -15,7 +15,7 @@ export default function LayoutClient({ children }: Props) {
   const pathname = usePathname() ?? "";
 
   const showNavbar = useMemo(
-    () => NAVBAR_PATHS.includes(pathname),
+    () => NAVBAR_PATHS.includes(pathname) || pathname?.startsWith("/event-bookmark"),
     [pathname],
   );
 

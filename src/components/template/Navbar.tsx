@@ -51,16 +51,16 @@ export default function Navbar() {
       {/* 찜 */}
       <button
         className="flex flex-col justify-center items-center"
-        onClick={() => router.push("/event-bookmark")}
+        onClick={() => router.push("/event-bookmark/event")}
       >
         <HeartDefault
           className={
-            pathname === "/event-bookmark" ? "text-primary" : "text-icon-2"
+            pathname?.startsWith("/event-bookmark") ? "text-primary" : "text-icon-2"
           }
         />
         <span
           className={`text-[12px] mt-[4px] ${
-            pathname === "/event-bookmark" ? "text-primary" : "text-icon-2"
+            pathname?.startsWith("/event-bookmark") ? "text-primary" : "text-icon-2"
           }`}
         >
           찜
