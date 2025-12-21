@@ -24,17 +24,19 @@ const SystemNoticeDetailPage = () => {
   const [notice, setNotice] = useState<SystemNoticeDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const formatDate = (isoString: string) => {
+  const formatDate = (isoString: string | null | undefined) => {
+    if (!isoString) return "";
+    
     const date = new Date(isoString);
+    
+    // Invalid Date 체크
+    if (isNaN(date.getTime())) return "";
 
     const yy = String(date.getFullYear()).slice(2);
     const mm = String(date.getMonth() + 1).padStart(2, "0");
     const dd = String(date.getDate()).padStart(2, "0");
 
-    const hh = String(date.getHours()).padStart(2, "0");
-    const min = String(date.getMinutes()).padStart(2, "0");
-
-    return `${yy}.${mm}.${dd} ${hh}:${min}`;
+    return `${yy}.${mm}.${dd}`;
   };
 
   useEffect(() => {
@@ -83,6 +85,7 @@ const SystemNoticeDetailPage = () => {
           <h1 className="text-[16px] font-[700] text-text-5">{notice.title}</h1>
 
           <div className="flex items-center gap-[4px] mt-[4px] text-[12px] text-text-4">
+             <p>디어위드 | </p>
             <span>{formatDate(notice.createdAt)}</span>
           </div>
 

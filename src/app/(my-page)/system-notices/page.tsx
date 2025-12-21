@@ -15,11 +15,18 @@ interface SystemNoticeItem {
   updatedAt: string;
 }
 
-const formatDate = (isoString: string) => {
-  const d = new Date(isoString);
-  const yy = String(d.getFullYear()).slice(2);
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
+const formatDate = (isoString: string | null | undefined) => {
+  if (!isoString) return "";
+  
+  const date = new Date(isoString);
+  
+  // Invalid Date 체크
+  if (isNaN(date.getTime())) return "";
+
+  const yy = String(date.getFullYear()).slice(2);
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+
   return `${yy}.${mm}.${dd}`;
 };
 
@@ -84,7 +91,8 @@ export default function SystemNoticesPage() {
                     {notice.title}
                   </h1>
                   <div className="flex items-center gap-[4px] mt-[4px] text-[12px] text-text-4">
-                    <span>{formatDate(notice.updatedAt)}</span>
+                    <p>디어위드 | </p>
+                    <span>{formatDate(notice.createdAt)}</span>
                   </div>
                 </div>
 
