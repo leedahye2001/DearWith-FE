@@ -20,11 +20,18 @@ export default function LayoutClient({ children }: Props) {
   );
 
   return (
-    <div className="relative w-full max-w-[428px] mx-auto min-h-screen">
+    <div 
+      className="relative w-full max-w-[428px] mx-auto"
+      style={{
+        height: '100vh',
+        overflow: 'hidden',
+      }}
+    >
       <div
-        className={`w-full ${
-          showNavbar ? "pb-[80px]" : ""
-        }`}
+        className="w-full h-full overflow-y-auto"
+        style={{
+          paddingBottom: showNavbar ? 'calc(80px + env(safe-area-inset-bottom))' : '0',
+        }}
       >
         {children}
       </div>
