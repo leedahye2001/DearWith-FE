@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { isNativeApp } from "@/lib/native/bridge";
+import { useEffect, useState } from "react";
 import Home from "@/svgs/Home.svg";
 import Search from "@/svgs/Search.svg";
 import HeartDefault from "@/svgs/HeartDefault.svg";
@@ -9,12 +11,21 @@ import Person from "@/svgs/Person.svg";
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname() ?? "";
+  const [isNative, setIsNative] = useState(false);
+
+  useEffect(() => {
+    setIsNative(isNativeApp());
+  }, []);
+
+  const navbarHeight = isNative 
+    ? 'calc(60px + env(safe-area-inset-bottom))' 
+    : 'calc(80px + env(safe-area-inset-bottom))';
 
   return (
     <div
       className="fixed bottom-0 left-0 right-0 w-full max-w-[428px] mx-auto bg-white flex justify-between items-center px-[24px] z-50 shadow-[0_-32px_32px_rgba(0,0,0,0.03)]"
       style={{
-        height: 'calc(80px + env(safe-area-inset-bottom))',
+        height: navbarHeight,
         paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
