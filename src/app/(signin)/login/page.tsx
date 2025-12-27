@@ -227,9 +227,9 @@ const Page = () => {
       <Button _state="main" _node="로그인" _buttonProps={{ className: "hover:cursor-pointer mb-[12px]" }} _onClick={fetchSignInData} />
 
       <div className="flex text-[12px] font-[400] gap-[16px]">
-        <p>비밀번호 찾기</p>
+        <p onClick={() => router.push("/find-password")} className="hover:cursor-pointer">비밀번호 찾기</p>
         <p>|</p>
-        <p onClick={handleSignup}>회원가입</p>
+        <p onClick={handleSignup} className="hover:cursor-pointer">회원가입</p>
       </div>
 
       <div className="flex items-center pt-[40px] pb-[12px] w-full">

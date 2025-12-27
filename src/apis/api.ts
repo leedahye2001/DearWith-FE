@@ -15,6 +15,18 @@ export const getMailVerify = async (email: string, code: string) => {
   return res.data;
 };
 
+// 비밀번호 찾기 이메일 인증 코드 발송
+export const getPasswordFindMailSend = async (email: string) => {
+  const res = await api.post("/auth/signup/email/send", { email, purpose: "RESET_PASSWORD" });
+  return res.data.data;
+};
+
+// 비밀번호 찾기 이메일 인증코드 확인
+export const getPasswordFindMailVerify = async (email: string, code: string) => {
+  const res = await api.post("/auth/signup/email/verify", { email, code, purpose: "RESET_PASSWORD" });
+  return res.data;
+};
+
 // 회원가입
 export const getMailSignUp = async (
   email: string,
@@ -459,9 +471,19 @@ export const getPasswordVerify = async (currentPassword: string) => {
   return res.data;
 };
 
-// 비밀번호 변경
+// 비밀번호 변경 (로그인 후)
 export const getPasswordConfirm = async (newPassword: string) => {
   const res = await api.post("/users/password/change", {newPassword});
+  return res.data;
+};
+
+// 비밀번호 찾기 - 비밀번호 재설정
+export const resetPassword = async (email: string, ticket: string, newPassword: string) => {
+  const res = await api.post("/users/password/reset", {
+    email,
+    ticket,
+    newPassword,
+  });
   return res.data;
 };
 
