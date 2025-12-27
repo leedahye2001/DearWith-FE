@@ -52,7 +52,7 @@ export default function RegisterEventListCard({
   const isScheduled = eventState === "SCHEDULED";
   const isEnded = eventState === "ENDED";
 
-  const imageUrl = images?.[0]?.variants?.[1]?.url;
+  const imageUrl = images?.[0]?.variants?.[0]?.url || images?.[0]?.variants?.[1]?.url;
 
   return (
     <div className="flex flex-col items-center mb-[38px] relative">

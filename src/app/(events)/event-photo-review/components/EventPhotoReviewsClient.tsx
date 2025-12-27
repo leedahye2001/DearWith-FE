@@ -50,13 +50,15 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
 
         const formatted: PhotoReview[] = list.map(
           (item: ApiPhotoReviewItem) => {
-            const large = item.image?.variants?.[2];
+            const photo1x = item.image?.variants?.[0];
+            const photo2x = item.image?.variants?.[1];
+            const selectedVariant = photo1x || photo2x;
 
             return {
               reviewId: Number(item.reviewId),
               image: {
                 id: item.image.id,
-                variants: large ? [large] : [],
+                variants: selectedVariant ? [selectedVariant] : [],
               },
             };
           }

@@ -100,10 +100,10 @@ export default function Home() {
       )}
 
       {/* 당월 생일 아티스트 */}
-      <BirthdayArtistsSection
+      {/* <BirthdayArtistsSection
         currentMonth={currentMonth}
         birthdayArtists={birthdayArtists}
-      />
+      /> */}
 
       <EventSection
         title={
@@ -161,9 +161,9 @@ export default function Home() {
                 }
               >
                 <div className="relative w-[40px] h-[40px] overflow-hidden rounded-[4px] shrink-0">
-                  {review.images?.[0]?.variants?.[1]?.url ? (
+                  {review.images?.[0]?.variants?.[0]?.url || review.images?.[0]?.variants?.[1]?.url ? (
                     <Image
-                      src={review.images?.[0]?.variants?.[1]?.url}
+                      src={review.images?.[0]?.variants?.[0]?.url || review.images?.[0]?.variants?.[1]?.url}
                       alt={review.title}
                       fill
                       sizes="40px"

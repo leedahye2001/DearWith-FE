@@ -130,7 +130,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
               const url =
                 Array.isArray(img?.image?.variants) &&
                 img.image.variants.length > 0
-                  ? img.image.variants[2].url
+                  ? img.image.variants[0]?.url || img.image.variants[1]?.url
                   : null;
 
               const isLast = idx === arr.length - 1 && photoReviews.length > 4;
@@ -266,7 +266,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             {post.images.length > 0 && (
               <div className="flex justify-between my-[12px] ">
                 {post.images.map((img, idx) => {
-                  const url = img.variants[2]?.url;
+                  const url = img.variants[0]?.url || img.variants[1]?.url;
                   return (
                     <div
                       key={idx}
