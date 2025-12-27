@@ -5,7 +5,7 @@ import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { BASE_URL } from "@/app/routePath";
 import Image from "next/image";
 import dayjs from "dayjs";
@@ -21,6 +21,7 @@ import SearchProfileBasic from "@/svgs/SearchProfileBasic.svg";
 import Forward from "@/svgs/Forward.svg";
 import Check from "@/svgs/Check.svg";
 import Spinner from "@/components/Spinner/Spinner";
+import type { EventDetail } from "@/app/(events)/event-detail/[id]/page";
 
 interface Benefit {
   name: string;
@@ -54,7 +55,7 @@ interface UploadedImage {
   displayOrder: number;
 }
 
-const Page = () => {
+const EventRegisterContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editEventId = searchParams?.get("edit");
@@ -228,7 +229,7 @@ const Page = () => {
     const loadEventData = async () => {
       try {
         setIsLoadingEvent(true);
-        const eventData = await getEventDetail(editEventId);
+        const eventData: EventDetail = await getEventDetail(editEventId);
 
         // 기본 정보
         setTitle(eventData.title || "");
@@ -270,24 +271,24 @@ const Page = () => {
         // 특전 설정
         if (eventData.benefits) {
           const included = eventData.benefits
-            .filter((b) => b.benefitType === "INCLUDED")
-            .map((b) => b.name);
+            .filter((b: EventDetail["benefits"][0]) => b.benefitType === "INCLUDED")
+            .map((b: EventDetail["benefits"][0]) => b.name);
           const limited = eventData.benefits
-            .filter((b) => b.benefitType === "LIMITED")
-            .map((b) => b.name);
+            .filter((b: EventDetail["benefits"][0]) => b.benefitType === "LIMITED")
+            .map((b: EventDetail["benefits"][0]) => b.name);
           setBasicTags(included);
           setFirstTags(limited);
         }
 
         // 이미지 설정
         if (eventData.images && eventData.images.length > 0) {
-          const imageData = eventData.images.map((img, idx) => ({
+          const imageData = eventData.images.map((img: EventDetail["images"][0], idx: number) => ({
             id: img.id,
             url: img.variants?.[0]?.url || "",
             displayOrder: idx,
           }));
           setExistingImages(imageData);
-          setImagePreviews(imageData.map((img) => img.url));
+          setImagePreviews(imageData.map((img: { url: string }) => img.url));
         }
 
         // 주최자 정보
@@ -1046,4 +1047,56 @@ const Page = () => {
   );
 };
 
+
+const Page = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col justify-center w-full overflow-x-hidden">
+        <Topbar
+          _leftImage={<Backward onClick={() => {}} />}
+          _topNode="이벤트 등록"
+        />
+        <div className="flex justify-center items-center h-screen">
+          <Spinner />
+        </div>
+      </div>
+    }>
+      <EventRegisterContent />
+    </Suspense>
+  );
+};
 export default Page;
+
+// 이벤트 수정 요청 타입
+export interface PatchEventData {
+  title?: string;
+  startDate?: string;
+  endDate?: string;
+  openTime?: string;
+  closeTime?: string;
+  xLink?: string | null;
+  artistIds?: number[];
+  artistGroupIds?: number[];
+  place?: {
+    kakaoPlaceId: string;
+    name: string;
+    roadAddress: string;
+    jibunAddress: string;
+    lon: number;
+    lat: number;
+    phone?: string;
+    placeUrl?: string;
+  };
+  images?: Array<{
+    id?: string;
+    tmpKey?: string;
+    displayOrder: number;
+  }>;
+  benefits?: Array<{
+    name: string;
+    benefitType: "INCLUDED" | "LIMITED" | "LUCKY_DRAW";
+    dayIndex?: number | null;
+    displayOrder: number;
+    visibleFrom?: string;
+  }>;
+}

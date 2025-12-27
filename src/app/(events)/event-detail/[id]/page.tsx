@@ -26,7 +26,7 @@ import NoticeList from "../components/NoticeList";
 import Spinner from "@/components/Spinner/Spinner";
 import useModalStore from "@/app/stores/useModalStore";
 
-interface EventDetail {
+export interface EventDetail {
   id: string;
   title: string;
   description: string;

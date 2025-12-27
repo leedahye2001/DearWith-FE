@@ -1,6 +1,7 @@
 import { ReviewDetail } from "@/app/(events)/event-detail/components/EventReviewWrite";
 import api, { refreshApi } from "./instance";
 import { isNativeApp, nativeLogout } from "@/lib/native/bridge";
+import type { PatchEventData } from "@/app/(events)/event-register/page";
 
 // email 인증 코드 발송
 export const getMailSend = async (email: string) => {
@@ -223,7 +224,7 @@ export const deleteEventLike = async (reviewId: string) => {
 };
 
 //이벤트 수정
-export const patchEvent = async (eventId: string, data: any) => {
+export const patchEvent = async (eventId: string, data: PatchEventData) => {
   const res = await api.patch(`/api/events/${eventId}`, data);
   return res.data;
 };
