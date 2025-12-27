@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
+import { AxiosError } from "axios";
 import Input from "@/components/Input/Input";
 import Button from "@/components/Button/Button";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -79,9 +80,10 @@ const ChangePasswordContent = () => {
       openAlert("비밀번호가 변경되었어요. 다시 로그인 해주세요.");
 
       router.push("/login");
-    } catch (error: any) {
+    } catch (error) {
       console.error("비밀번호 변경 에러:", error);
-      const errorMessage = error?.response?.data?.message || error?.response?.data?.detail || error?.data?.message || error?.data?.detail || "비밀번호 변경에 실패했습니다. 다시 시도해주세요.";
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "비밀번호 변경에 실패했습니다. 다시 시도해주세요.";
       setConfirmPasswordError(errorMessage);
       openAlert(errorMessage);
     }

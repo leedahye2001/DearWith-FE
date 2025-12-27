@@ -314,7 +314,7 @@ const EventRegisterContent = () => {
     };
 
     loadEventData();
-  }, [editEventId, openAlert]);
+  }, [editEventId, openAlert, setAuthData, setVerified]);
 
   const handleXLogin = () => {
     router.push(`http://${BASE_URL}/oauth2/x/authorize`);

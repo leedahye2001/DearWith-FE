@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 import { getPasswordFindMailSend } from "@/apis/api";
 import Check from "@/svgs/Check.svg";
 import Input from "@/components/Input/Input";
@@ -33,9 +34,10 @@ const Page = () => {
       await getPasswordFindMailSend(inputEmail);
       openAlert("인증 메일이 발송되었습니다.");
       router.push(`/find-password/verify?email=${encodeURIComponent(inputEmail)}`);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error fetching data:", error);
-      const errorMessage = error?.response?.data?.message;
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || "이메일 발송에 실패했습니다.";
       openAlert(errorMessage);
     }
   };

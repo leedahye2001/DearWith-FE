@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useMemo, useCallback, Suspense } from "react";
+import { AxiosError } from "axios";
 import { getPasswordFindMailVerify, getPasswordFindMailSend } from "@/apis/api";
 import { useEmailTicketStore } from "@/app/stores/userStore";
 import Button from "@/components/Button/Button";
@@ -37,9 +38,10 @@ const VerifyContent = () => {
       }
       openAlert("이메일 인증이 완료되었습니다.");
       router.push(`/find-password/change?email=${encodeURIComponent(email)}`);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error fetching data:", error);
-      const errorMessage = error?.response?.data?.message;
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || "인증에 실패했습니다.";
       setErrorMessage(errorMessage);
       openAlert(errorMessage);
     }
@@ -54,9 +56,10 @@ const VerifyContent = () => {
       await getPasswordFindMailSend(email);
       openAlert("인증 메일이 재전송되었습니다.");
       setResendKey((prev) => prev + 1);
-    } catch (error: any) {
+    } catch (error) {
       console.error("재전송 에러:", error);
-      const errorMessage = error?.response?.data?.message || error?.response?.data?.detail || error?.data?.message || error?.data?.detail || "이메일 재전송에 실패했습니다. 다시 시도해주세요.";
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "이메일 재전송에 실패했습니다. 다시 시도해주세요.";
       openAlert(errorMessage);
     }
   }, [email, openAlert]);

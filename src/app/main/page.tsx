@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { getHotArtistGroupTopTwenty, getMain } from "@/apis/api";
 import useMainStore from "../stores/useMainStore";
-import BirthdayArtistsSection from "./components/BirthdayArtistSection";
+// import BirthdayArtistsSection from "./components/BirthdayArtistSection";
 import EventSection from "./components/EventSection";
 import Topbar from "@/components/template/Topbar";
 import DearwithLogo from "@/svgs/DearwithLogo.svg";
@@ -23,11 +23,11 @@ interface hotArtistGroup {
 
 export default function Home() {
   const router = useRouter();
-  const currentMonth = new Date().toLocaleString("ko-KR", { month: "numeric" });
+  // const currentMonth = new Date().toLocaleString("ko-KR", { month: "numeric" });
 
   const setMainData = useMainStore((state) => state.setMainData);
   const [bannerImages, setBannerImages] = useState<string[]>([]);
-  const birthdayArtists = useMainStore((state) => state.birthdayArtists);
+  // const birthdayArtists = useMainStore((state) => state.birthdayArtists);
   const recommendedEvents = useMainStore((state) => state.recommendedEvents);
   const hotEvents = useMainStore((state) => state.hotEvents);
   const newEvents = useMainStore((state) => state.newEvents);
