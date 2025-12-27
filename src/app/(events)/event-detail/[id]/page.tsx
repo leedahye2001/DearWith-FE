@@ -7,6 +7,7 @@ import Backward from "@/svgs/Backward.svg";
 import Share from "@/svgs/Share.svg";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
+import Etc from "@/svgs/Etc.svg";
 import Twitter from "@/svgs/Twitter.svg";
 import Clock from "@/svgs/Clock.svg";
 import Place from "@/svgs/Place.svg";
@@ -19,9 +20,11 @@ import {
   getEventDetail,
   // getEventNoticeList,
   postEventLike,
+  deleteEvent,
 } from "@/apis/api";
 import NoticeList from "../components/NoticeList";
 import Spinner from "@/components/Spinner/Spinner";
+import useModalStore from "@/app/stores/useModalStore";
 
 interface EventDetail {
   id: string;
@@ -34,6 +37,7 @@ interface EventDetail {
   place: {
     name: string;
     roadAddress: string;
+    jibunAddress?: string;
     kakaoPlaceId: string;
     lon: number;
     lat: number;
@@ -61,8 +65,11 @@ interface EventDetail {
   organizer: {
     verified: boolean;
     xHandle: string;
+    xId?: string;
+    xName?: string;
   };
   bookmarked: boolean;
+  editable?: boolean;
   notices: {
     id: number;
     eventId: string;
@@ -92,6 +99,8 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { openConfirmWithCustomButtons, openAlert } = useModalStore();
 
   // 클릭 시 토글
   const toggleBookmark = async () => {
@@ -134,6 +143,18 @@ export default function EventDetailPage() {
     }
   }, [event]);
 
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIsMenuOpen(false);
+    };
+    if (isMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
+  }, [isMenuOpen]);
+
   const isOpenNow = (openTime: string, closeTime: string) => {
     const _open = openTime ?? "10:00";
     const _close = closeTime ?? "23:00";
@@ -148,6 +169,34 @@ export default function EventDetailPage() {
     const closeMinutes = closeH * 60 + closeM;
 
     return nowMinutes >= openMinutes && nowMinutes <= closeMinutes;
+  };
+
+  const handleEdit = () => {
+    setIsMenuOpen(false);
+    router.push(`/event-register?edit=${id}`);
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    try {
+      await deleteEvent(id);
+      openAlert("이벤트가 삭제되었습니다.", () => {
+        router.push("/main");
+      });
+    } catch (err) {
+      console.error(err);
+      openAlert("이벤트 삭제에 실패했습니다.");
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setIsMenuOpen(false);
+    openConfirmWithCustomButtons(
+      "이벤트를 삭제하시겠어요?",
+      handleDelete,
+      "삭제하기",
+      "다음에 하기"
+    );
   };
 
   if (isLoading) return <Spinner />;
@@ -183,7 +232,6 @@ export default function EventDetailPage() {
           </button>
         }
         _topNode={event.title}
-        _rightImage={<Share />}
       />
 
       {/* 탭 */}
@@ -270,9 +318,46 @@ export default function EventDetailPage() {
                     ))
                   : null}
               </div>
-              <button onClick={toggleBookmark}>
-                {isBookmarked ? <HeartFill /> : <HeartDefault />}
-              </button>
+              <div className="flex items-center gap-[8px]">
+                <button>
+                  <Share />
+                </button>
+                <button onClick={toggleBookmark}>
+                  {isBookmarked ? <HeartFill /> : <HeartDefault />}
+                </button>
+                {event.editable && (
+                  <div
+                    className="relative flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(!isMenuOpen);
+                    }}
+                  >
+                    <button>
+                      <Etc />
+                    </button>
+                    {isMenuOpen && (
+                      <div
+                        className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[70px] border border-divider-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
+                          onClick={handleEdit}
+                        >
+                          수정하기
+                        </button>
+                        <button
+                          className="w-full text-left px-[8px] py-[4px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]"
+                          onClick={handleDeleteClick}
+                        >
+                          삭제하기
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <h1 className="font-[700] text-[24px] text-text-5 pb-[16px]">
@@ -339,7 +424,7 @@ export default function EventDetailPage() {
                 위치
               </h3>
               <KakaoMap
-                address={event.place.roadAddress}
+                address={event.place.roadAddress || event.place.jibunAddress || ""}
                 lat={event.place.lat}
                 lng={event.place.lon}
               />

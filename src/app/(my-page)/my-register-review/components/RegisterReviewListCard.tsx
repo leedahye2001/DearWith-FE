@@ -39,8 +39,11 @@ export default function RegisterReviewListCard({
         <p className="text-[14px] text-text-5 font-[500] line-clamp-1 break-words">
           {reviewContent}
         </p>
-        <p className="text-[12px] text-text-2 font-[600]">
-          {new Date(createdAt).toLocaleDateString("ko-KR")}
+        <p className="text-[12px] text-text-2 font-[400]">
+          {(() => {
+            const date = new Date(createdAt);
+            return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+          })()}
         </p>
       </div>
     </div>

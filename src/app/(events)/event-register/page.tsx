@@ -1,10 +1,10 @@
 "use client";
-import { getArtist, getRoadName } from "@/apis/api";
+import { getArtist, getRoadName, getEventDetail, patchEvent } from "@/apis/api";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "@/app/routePath";
 import Image from "next/image";
@@ -56,7 +56,9 @@ interface UploadedImage {
 
 const Page = () => {
   const router = useRouter();
-  const { handle, isVerified, ticket } = useXAuthStore();
+  const searchParams = useSearchParams();
+  const editEventId = searchParams?.get("edit");
+  const { handle, isVerified, ticket, setAuthData, setVerified } = useXAuthStore();
   const { openAlert } = useModalStore();
   const handleBackRouter = () => router.back();
 
@@ -88,6 +90,8 @@ const Page = () => {
 
   const [basicTags, setBasicTags] = useState<string[]>([]);
   const [firstTags, setFirstTags] = useState<string[]>([]);
+  const [isLoadingEvent, setIsLoadingEvent] = useState(false);
+  const [existingImages, setExistingImages] = useState<{ id: string; url: string; displayOrder: number }[]>([]);
 
   const getAllBenefits = (
     basicTags: string[],
@@ -217,13 +221,108 @@ const Page = () => {
     if (handle) console.log("인증된 핸들:", handle);
   }, [handle]);
 
+  // 수정 모드: 기존 이벤트 데이터 불러오기
+  useEffect(() => {
+    if (!editEventId) return;
+
+    const loadEventData = async () => {
+      try {
+        setIsLoadingEvent(true);
+        const eventData = await getEventDetail(editEventId);
+
+        // 기본 정보
+        setTitle(eventData.title || "");
+        setStartDate(eventData.startDate ? eventData.startDate.replace(/-/g, ".") : "");
+        setEndDate(eventData.endDate ? eventData.endDate.replace(/-/g, ".") : "");
+        setOpenTime(eventData.openTime || "");
+        setCloseTime(eventData.closeTime || "");
+
+        // 아티스트 설정
+        if (eventData.artists && eventData.artists.length > 0) {
+          const artist = eventData.artists[0];
+          setSelectedArtist({
+            id: artist.id,
+            nameKr: artist.nameKr,
+            groupName: "",
+            imageUrl: artist.profileImageUrl || "",
+          });
+          setInputArtist(artist.nameKr);
+        } else if (eventData.artistGroups && eventData.artistGroups.length > 0) {
+          // 그룹이 있는 경우 처리 (필요시)
+        }
+
+        // 장소 설정
+        if (eventData.place) {
+          const address = eventData.place.roadAddress || eventData.place.jibunAddress || "";
+          const place: Place = {
+            id: eventData.place.kakaoPlaceId,
+            place_name: eventData.place.name,
+            address_name: address,
+            road_address_name: eventData.place.roadAddress || undefined,
+            x: eventData.place.lon,
+            y: eventData.place.lat,
+          };
+          setSelectedPlace(place);
+          setInputRoadName(address);
+          setCafeName(eventData.place.name);
+        }
+
+        // 특전 설정
+        if (eventData.benefits) {
+          const included = eventData.benefits
+            .filter((b) => b.benefitType === "INCLUDED")
+            .map((b) => b.name);
+          const limited = eventData.benefits
+            .filter((b) => b.benefitType === "LIMITED")
+            .map((b) => b.name);
+          setBasicTags(included);
+          setFirstTags(limited);
+        }
+
+        // 이미지 설정
+        if (eventData.images && eventData.images.length > 0) {
+          const imageData = eventData.images.map((img, idx) => ({
+            id: img.id,
+            url: img.variants?.[0]?.url || "",
+            displayOrder: idx,
+          }));
+          setExistingImages(imageData);
+          setImagePreviews(imageData.map((img) => img.url));
+        }
+
+        // 주최자 정보
+        if (eventData.organizer) {
+          setIsOrganizer(eventData.organizer.verified);
+          
+          // X 인증 정보가 있으면 인증 상태 설정
+          if (eventData.organizer.verified && eventData.organizer.xHandle) {
+            setAuthData({
+              result: "success",
+              ticket: "", // 수정 모드에서는 ticket이 없을 수 있음
+              handle: eventData.organizer.xHandle,
+            });
+            setVerified(true);
+          }
+        }
+      } catch (err) {
+        console.error("이벤트 데이터 로드 실패:", err);
+        openAlert("이벤트 데이터를 불러오는데 실패했습니다.");
+      } finally {
+        setIsLoadingEvent(false);
+      }
+    };
+
+    loadEventData();
+  }, [editEventId, openAlert]);
+
   const handleXLogin = () => {
     router.push(`http://${BASE_URL}/oauth2/x/authorize`);
   };
 
   // 파일 선택 버튼 클릭 시 input 트리거
   const handleGalleryClick = () => {
-    if (imageFiles.length >= 5) {
+    const totalImages = existingImages.length + imageFiles.length;
+    if (totalImages >= 5) {
       openAlert("최대 5개의 이미지만 업로드할 수 있습니다.");
       return;
     }
@@ -236,7 +335,7 @@ const Page = () => {
     if (!files) return;
 
     const selected = Array.from(files);
-    const totalCount = imageFiles.length + selected.length;
+    const totalCount = existingImages.length + imageFiles.length + selected.length;
 
     if (totalCount > 5) {
       openAlert("최대 5개의 이미지만 등록할 수 있습니다.");
@@ -260,8 +359,21 @@ const Page = () => {
 
   // 이미지 삭제
   const handleRemoveImage = (idx: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
+    // 기존 이미지인지 새 이미지인지 확인
+    if (idx < existingImages.length) {
+      // 기존 이미지 삭제
+      setExistingImages((prev) => prev.filter((_, i) => i !== idx));
+      setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
+    } else {
+      // 새 이미지 삭제
+      const newIdx = idx - existingImages.length;
+      setImageFiles((prev) => prev.filter((_, i) => i !== newIdx));
+      setImagePreviews((prev) => {
+        const existing = prev.slice(0, existingImages.length);
+        const newPreviews = prev.slice(existingImages.length);
+        return [...existing, ...newPreviews.filter((_, i) => i !== newIdx)];
+      });
+    }
   };
 
   const putToS3 = async (url: string, file: File, contentType: string) => {
@@ -285,6 +397,7 @@ const Page = () => {
     if (!images.length) return [];
 
     const uploaded: UploadedImage[] = [];
+    const startOrder = existingImages.length;
 
     for (let idx = 0; idx < images.length; idx++) {
       const file = images[idx];
@@ -305,7 +418,7 @@ const Page = () => {
         uploaded.push({
           tmpKey: key,
           url,
-          displayOrder: idx,
+          displayOrder: startOrder + idx,
         });
 
         console.log(`PUT 완료: ${file.name}`);
@@ -364,9 +477,12 @@ const Page = () => {
 
   const isValidXLink = xLink.startsWith("https://x.com/");
 
-  // 이벤트 등록
+  // 이벤트 등록/수정
   const handleSubmit = async () => {
-    if (isVerified === true && !ticket) return openAlert("X 인증이 필요합니다.");
+    // 수정 모드가 아닐 때만 ticket 체크 (수정 모드에서는 organizer 정보가 이미 있으므로 ticket이 없어도 됨)
+    if (!editEventId && isVerified === true && !ticket) {
+      return openAlert("X 인증이 필요합니다.");
+    }
     if (!selectedArtist || !selectedPlace)
       return openAlert("아티스트와 장소를 선택해주세요.");
     if (isOrganizer === null) return openAlert("주최자 여부를 선택해주세요.");
@@ -377,10 +493,22 @@ const Page = () => {
 
     try {
       setIsSubmitting(true);
-      const imgs = await uploadImages(imageFiles);
+      const newImgs = await uploadImages(imageFiles);
 
       const normalizeDate = (date: string) => date.replace(/\./g, "-");
       const normalizeTime = (time: string) => time.replace(/\./g, ":");
+
+      // 이미지 구성: 기존 이미지 + 새 이미지
+      const imagePayload = [
+        ...existingImages.map((img) => ({
+          id: img.id,
+          displayOrder: img.displayOrder,
+        })),
+        ...newImgs.map((img, idx) => ({
+          tmpKey: img.tmpKey,
+          displayOrder: existingImages.length + idx,
+        })),
+      ];
 
       const body = {
         title,
@@ -393,48 +521,68 @@ const Page = () => {
         place: {
           kakaoPlaceId: selectedPlace.id,
           name: selectedPlace.place_name,
-          roadAddress:
-            selectedPlace.road_address_name ?? selectedPlace.address_name,
+          roadAddress: selectedPlace.road_address_name || "",
           jibunAddress: selectedPlace.address_name,
           lon: selectedPlace.x ?? 0,
           lat: selectedPlace.y ?? 0,
           phone: selectedPlace.phone ?? "",
           placeUrl: selectedPlace.place_url ?? "",
         },
-        images: imgs.map((img) => ({
-          tmpKey: img.tmpKey,
-          displayOrder: img.displayOrder,
-        })),
-        benefits: getAllBenefits(basicTags, firstTags, startDate),
-        organizer: {
-          verified: isOrganizer,
-          xHandle: handle,
-          xTicket: ticket,
-        },
+        images: imagePayload,
+        benefits: getAllBenefits(basicTags, firstTags, normalizeDate(startDate)),
       };
 
-      const res = await api.post("/api/events", body);
-      const eventId = res.data?.id;
-      if (eventId) {
-        openAlert("이벤트 등록이 완료되었습니다.");
-        router.push(`/event-detail/${eventId}`);
+      if (editEventId) {
+        // 수정 모드
+        await patchEvent(editEventId, body);
+        openAlert("이벤트 수정이 완료되었습니다.");
+        router.push(`/event-detail/${editEventId}`);
       } else {
-        openAlert("이벤트 등록이 완료되었습니다.");
-        router.push("/main");
+        // 등록 모드
+        const res = await api.post("/api/events", {
+          ...body,
+          organizer: {
+            verified: isOrganizer,
+            xHandle: handle,
+            xTicket: ticket,
+          },
+        });
+        const eventId = res.data?.id;
+        if (eventId) {
+          openAlert("이벤트 등록이 완료되었습니다.");
+          router.push(`/event-detail/${eventId}`);
+        } else {
+          openAlert("이벤트 등록이 완료되었습니다.");
+          router.push("/main");
+        }
       }
     } catch (err) {
       console.error(err);
-      openAlert("이벤트 등록 중 오류가 발생했습니다.");
+      openAlert(editEventId ? "이벤트 수정 중 오류가 발생했습니다." : "이벤트 등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (isLoadingEvent) {
+    return (
+      <div className="flex flex-col justify-center w-full overflow-x-hidden">
+        <Topbar
+          _leftImage={<Backward onClick={handleBackRouter} />}
+          _topNode={editEventId ? "이벤트 수정" : "이벤트 등록"}
+        />
+        <div className="flex justify-center items-center h-screen">
+          <Spinner />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col justify-center w-full overflow-x-hidden">
       <Topbar
         _leftImage={<Backward onClick={handleBackRouter} />}
-        _topNode="이벤트 등록"
+        _topNode={editEventId ? "이벤트 수정" : "이벤트 등록"}
       />
       <div className="px-[24px] pt-[36px] w-full max-w-full overflow-x-hidden">
         <div className="flex flex-col justity-center items-start mb-[24px]">
@@ -885,7 +1033,7 @@ const Page = () => {
 
         <Button
           _state="main"
-          _node="이벤트 등록하기"
+          _node={editEventId ? "이벤트 수정하기" : "이벤트 등록하기"}
           _onClick={handleSubmit}
           _buttonProps={{
             className: "mt-6 mb-[50px] hover:cursor-pointer",

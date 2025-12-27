@@ -227,13 +227,13 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                 <Etc />
                 {openMenuId === post.id && (
                   <div
-                    className="text-[12px] font-[400px] absolute right-0 mt-[8px] bg-white shadow-md rounded-[8px] py-[8px] z-50 w-[120px]"
-                    onClick={(e) => e.stopPropagation()}
+                   className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[70px] border border-divider-1"
+                   onClick={(e) => e.stopPropagation()}
                   >
                     {post.editable ? (
                       <>
                         <button
-                          className="w-full text-left px-[12px] py-[8px] hover:bg-gray-100 "
+                          className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
                           onClick={() => {
                             router.push(`/event-detail/${eventId}/review/write?edit=${post.id}`);
                             setOpenMenuId(null);
@@ -241,13 +241,14 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                         >
                           수정하기
                         </button>
-                        <button className="w-full text-left px-[12px] py-[8px] text-red-500 hover:bg-gray-100">
+                        <button
+                        className="w-full text-left px-[8px] py-[4px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]">
                           삭제하기
                         </button>
                       </>
                     ) : (
                       <button
-                        className="w-full text-left px-[12px] py-[8px] hover:bg-gray-100"
+                          className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400]"
                         onClick={() => {
                           setReportReviewId(post.id);
                           setOpenMenuId(null);

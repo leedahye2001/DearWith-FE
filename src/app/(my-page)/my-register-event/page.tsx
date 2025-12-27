@@ -20,6 +20,7 @@ export interface MyRegisteredEvent {
     }[];
   }[];
   artistNamesKr: string[];
+  groupNamesKr?: string[];
   openTime: string;
   closeTime: string;
   startDate: string;
@@ -56,7 +57,7 @@ const MyRegisteredEvents = () => {
           endDate: item.endDate,
           bookmarkCount: item.bookmarkCount,
           bookmarked: item.bookmarked,
-          artistNamesKr: item.artistNamesKr?.[0] || "",
+          artistNamesKr: item.artistNamesKr?.[0] || item.groupNamesKr?.[0] || "",
         })
       );
 

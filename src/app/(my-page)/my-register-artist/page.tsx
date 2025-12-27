@@ -86,7 +86,12 @@ function ArtistCard({ id, nameKr, imageUrl, createdAt }: ArtistItem) {
 
         <div className="flex flex-col">
           <p className="text-[14px] font-[700] text-text-5">{nameKr}</p>
-          <p className="text-[12px] font-[500] text-text-4">{createdAt}</p>
+          <p className="text-[12px] text-text-2 font-[400]">
+            {(() => {
+              const date = new Date(createdAt);
+              return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+            })()}
+          </p>
         </div>
       </div>
 

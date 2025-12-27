@@ -222,6 +222,18 @@ export const deleteEventLike = async (reviewId: string) => {
   return await api.delete(`/api/events/${reviewId}/bookmark`);
 };
 
+//이벤트 수정
+export const patchEvent = async (eventId: string, data: any) => {
+  const res = await api.patch(`/api/events/${eventId}`, data);
+  return res.data;
+};
+
+//이벤트 삭제
+export const deleteEvent = async (eventId: string) => {
+  const res = await api.delete(`/api/events/${eventId}`);
+  return res.data;
+};
+
 //아티스트 찜 하기
 export const postArtistLike = async (artistId: string) => {
   return await api.post(`/api/artists/${artistId}/bookmark`);

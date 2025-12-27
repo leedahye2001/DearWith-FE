@@ -2,7 +2,7 @@ import useModalStore from "@/app/stores/useModalStore";
 import Button from "@/components/Button/Button";
 
 export default function AlertModal() {
-  const { showModal, message, closeModal, onConfirm, type } = useModalStore();
+  const { showModal, message, closeModal, onConfirm, type, confirmButtonText, cancelButtonText } = useModalStore();
 
   if (!showModal) return null;
 
@@ -37,10 +37,10 @@ export default function AlertModal() {
               <Button
                 _state="main"
                 _buttonProps={{ className: "bg-bg-2" }}
-                _node="아니오"
+                _node={cancelButtonText || "아니오"}
                 _onClick={closeModal}
               />
-              <Button _state="main" _node="네" _onClick={handleConfirm} />
+              <Button _state="main" _node={confirmButtonText || "네"} _onClick={handleConfirm} />
             </div>
           )}
         </div>
