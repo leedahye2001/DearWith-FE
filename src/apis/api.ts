@@ -204,9 +204,19 @@ export const deleteReviewLike = async (reviewId: string) => {
   return await api.delete(`/api/reviews/${reviewId}/like`);
 };
 
+export interface PatchReviewData {
+  content?: string | null;
+  tags?: string[] | null;
+  images?: Array<{
+    id?: number;
+    tmpKey?: string;
+    displayOrder: number;
+  }> | null;
+}
+
 export const patchEventReviewDetail = async (
   reviewId: string,
-  data: Partial<ReviewDetail>
+  data: PatchReviewData
 ) => {
   const res = await api.patch(`/api/reviews/${reviewId}`, data);
   return res.data;

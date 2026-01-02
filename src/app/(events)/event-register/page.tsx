@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { useXAuthStore } from "../../stores/useXAuthStore";
 import useModalStore from "../../stores/useModalStore";
 import api from "@/apis/instance";
+import { AxiosError } from "axios";
 import Reference from "@/svgs/Reference.svg";
 import Gallery from "@/svgs/Gallery.svg";
 import Checker from "@/svgs/Checker.svg";
@@ -560,7 +561,11 @@ const EventRegisterContent = () => {
       }
     } catch (err) {
       console.error(err);
-      openAlert(editEventId ? "이벤트 수정 중 오류가 발생했습니다." : "이벤트 등록 중 오류가 발생했습니다.");
+      const axiosError = err as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || 
+                          axiosError?.response?.data?.detail || 
+                          (editEventId ? "이벤트 수정 중 오류가 발생했습니다." : "이벤트 등록 중 오류가 발생했습니다.");
+      openAlert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

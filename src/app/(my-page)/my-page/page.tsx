@@ -107,8 +107,8 @@ const Page = () => {
       </div>
 
       <div className="flex gap-5 mt-5">
-        <Stat label="찜한 이벤트" value={stats.eventBookmarkCount} />
-        <Stat label="찜한 아티스트" value={stats.artistBookmarkCount} />
+        <Stat label="찜한 이벤트" value={stats.eventBookmarkCount} path="/event-bookmark/event" />
+        <Stat label="찜한 아티스트" value={stats.artistBookmarkCount} path="/event-bookmark/artist" />
       </div>
 
       <Divider />
@@ -187,11 +187,18 @@ const Page = () => {
 };
 export default Page;
 
-function Stat({ value, label }: { value: number; label: string }) {
+function Stat({ value, label, path }: { value: number; label: string; path?: string }) {
+  const router = useRouter();
   const valueClass = value === 0 ? "text-text-3" : "text-text-5";
 
+  const handleClick = () => {
+    if (path) {
+      router.push(path);
+    }
+  };
+
   return (
-    <div className="text-center">
+    <div className="text-center cursor-pointer" onClick={handleClick}>
       <p className={`text-[16px] font-[500] ${valueClass}`}>{value}</p>
       <p className="text-[12px] font-[500] text-text-2">{label}</p>
     </div>

@@ -1,7 +1,7 @@
  "use client";
 
 import { useMemo, useRef, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { isNativeApp } from "@/lib/native/bridge";
 import Navbar from "@/components/template/Navbar";
 import AlertModalClient from "../Modal/AlertModal/AlertModalClient";
@@ -17,13 +17,67 @@ const FULL_SCREEN_PATHS = ["/login"];
 
 export default function LayoutClient({ children }: Props) {
   const pathname = usePathname() ?? "";
+  const router = useRouter();
   const contentRef = useRef<HTMLDivElement>(null);
   const [needsScroll, setNeedsScroll] = useState(false);
   const [isNative, setIsNative] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const touchStartTimeRef = useRef<number>(0);
 
   useEffect(() => {
     setIsNative(isNativeApp());
   }, []);
+
+  // 스와이프 제스처로 뒤로가기
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      // 왼쪽 가장자리 50px 이내에서 시작해야 함
+      if (touch.clientX <= 50) {
+        touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+        touchStartTimeRef.current = Date.now();
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      // 스와이프 중에는 기본 동작 허용 (스크롤 등)
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
+      const deltaTime = Date.now() - touchStartTimeRef.current;
+
+      // 수평 스와이프가 수직보다 크고, 최소 50px 이상, 300ms 이내
+      if (
+        deltaX > 50 &&
+        deltaX > deltaY &&
+        deltaTime < 300 &&
+        touchStartRef.current.x <= 50
+      ) {
+        // 뒤로가기
+        router.back();
+      }
+
+      touchStartRef.current = null;
+    };
+
+    const container = contentRef.current;
+    if (container) {
+      container.addEventListener("touchstart", handleTouchStart, { passive: true });
+      container.addEventListener("touchmove", handleTouchMove, { passive: true });
+      container.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+      return () => {
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
+        container.removeEventListener("touchend", handleTouchEnd);
+      };
+    }
+  }, [router]);
 
   const showNavbar = useMemo(
     () => NAVBAR_PATHS.includes(pathname) || pathname?.startsWith("/event-bookmark"),

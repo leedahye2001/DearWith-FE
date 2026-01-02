@@ -1,6 +1,6 @@
 "use client";
 
-import { patchEventReviewDetail } from "@/apis/api";
+import { patchEventReviewDetail, type PatchReviewData } from "@/apis/api";
 import api from "@/apis/instance";
 import useModalStore from "@/app/stores/useModalStore";
 import Button from "@/components/Button/Button";
@@ -27,6 +27,13 @@ interface ReviewImage {
   displayOrder: number;
 }
 
+interface ImageItem {
+  id?: number; // 기존 이미지 ID
+  file?: File; // 새 이미지 파일
+  preview?: string; // 미리보기 URL
+  displayOrder: number;
+}
+
 export interface ReviewDetail {
   id: string;
   content: string;
@@ -38,12 +45,16 @@ interface EventReviewWriteProps {
   eventId: string;
   reviewData?: ReviewDetail;
   onClose?: () => void;
+  reviewId?: string;
+  photoId?: string;
 }
 
 export default function EventReviewWrite({
   eventId,
   reviewData,
   onClose,
+  reviewId,
+  photoId,
 }: EventReviewWriteProps) {
   const isEdit = Boolean(reviewData);
 
@@ -52,9 +63,12 @@ export default function EventReviewWrite({
   const [content, setContent] = useState(reviewData?.content || "");
   const [tags, setTags] = useState<string[]>(reviewData?.tags || []);
   const [newTag, setNewTag] = useState("");
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>(
-    reviewData?.images?.map((img) => img.url || "") || []
+  const [images, setImages] = useState<ImageItem[]>(
+    reviewData?.images?.map((img, idx) => ({
+      id: img.id,
+      preview: img.url,
+      displayOrder: idx,
+    })) || []
   );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,8 +78,13 @@ export default function EventReviewWrite({
     if (reviewData) {
       setContent(reviewData.content || "");
       setTags(reviewData.tags || []);
-      setImagePreviews(reviewData.images?.map((img) => img.url || "") || []);
-      setImageFiles([]); // 기존 이미지는 URL이므로 파일은 비움
+      setImages(
+        reviewData.images?.map((img, idx) => ({
+          id: img.id,
+          preview: img.url,
+          displayOrder: idx,
+        })) || []
+      );
     }
   }, [reviewData]);
 
@@ -87,17 +106,31 @@ export default function EventReviewWrite({
     const files = e.target.files;
     if (!files) return;
     const selected = Array.from(files);
-    const totalCount = imageFiles.length + selected.length;
+    const totalCount = images.length + selected.length;
     if (totalCount > 2)
       return openAlert("최대 2개의 이미지만 등록할 수 있어요.");
-    const newPreviews = selected.map((file) => URL.createObjectURL(file));
-    setImageFiles((prev) => [...prev, ...selected]);
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
+    
+    const newImages: ImageItem[] = selected.map((file, idx) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      displayOrder: images.length + idx,
+    }));
+    
+    setImages((prev) => [...prev, ...newImages]);
+    e.target.value = ""; // 같은 파일 다시 선택 가능하도록
   };
 
   const handleRemoveImage = (idx: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
+    const imageToRemove = images[idx];
+    if (imageToRemove.preview && !imageToRemove.id) {
+      // 새로 추가한 이미지의 preview URL 해제
+      URL.revokeObjectURL(imageToRemove.preview);
+    }
+    setImages((prev) => {
+      const newImages = prev.filter((_, i) => i !== idx);
+      // displayOrder 재정렬
+      return newImages.map((img, i) => ({ ...img, displayOrder: i }));
+    });
   };
 
   // 이미지 업로드 (S3 Presigned URL)
@@ -112,11 +145,14 @@ export default function EventReviewWrite({
     if (!res.ok) throw new Error(`S3 PUT 실패: ${file.name}`);
   };
 
-  const uploadImages = async (images: File[]): Promise<UploadedImage[]> => {
-    if (!images.length) return [];
-    const uploaded: UploadedImage[] = [];
-    for (let i = 0; i < images.length; i++) {
-      const file = images[i];
+  const uploadNewImages = async (imageItems: ImageItem[]): Promise<{ tmpKey: string; displayOrder: number }[]> => {
+    const newImageItems = imageItems.filter((img) => img.file && !img.id);
+    if (!newImageItems.length) return [];
+    
+    const uploaded: { tmpKey: string; displayOrder: number }[] = [];
+    for (const imageItem of newImageItems) {
+      if (!imageItem.file) continue;
+      const file = imageItem.file;
       const presignRes = await api.post("/api/uploads/presign", {
         filename: file.name,
         contentType: file.type || "application/octet-stream",
@@ -124,33 +160,60 @@ export default function EventReviewWrite({
       });
       const { url, key } = presignRes.data as { url: string; key: string };
       await putToS3(url, file, file.type || "application/octet-stream");
-      uploaded.push({ tmpKey: key, url, displayOrder: i });
+      uploaded.push({ tmpKey: key, displayOrder: imageItem.displayOrder });
     }
     return uploaded;
   };
 
   // 수정/등록 처리
   const handleSubmit = async () => {
-    if (!content.trim()) return openAlert("리뷰를 작성해주세요.");
+    if (!content.trim() && !isEdit) return openAlert("리뷰를 작성해주세요.");
     try {
       setIsSubmitting(true);
-      const uploadedImages = await uploadImages(imageFiles);
 
       if (isEdit && reviewData) {
-        await patchEventReviewDetail(reviewData.id, {
-          content,
-          tags,
-          images: uploadedImages.map((img) => ({
-            tmpKey: img.tmpKey,
-            displayOrder: img.displayOrder,
-          })),
-        });
+        // 새 이미지 업로드
+        const newImageUploads = await uploadNewImages(images);
+        
+        // 최종 이미지 배열 구성 (기존 이미지 유지 + 새 이미지 추가)
+        const finalImages = images.map((img) => {
+          if (img.id) {
+            // 기존 이미지 유지
+            return {
+              id: img.id,
+              displayOrder: img.displayOrder,
+            };
+          } else {
+            // 새 이미지 (업로드된 것 찾기)
+            const uploaded = newImageUploads.find(
+              (upload) => upload.displayOrder === img.displayOrder
+            );
+            return uploaded
+              ? {
+                  tmpKey: uploaded.tmpKey,
+                  displayOrder: uploaded.displayOrder,
+                }
+              : null;
+          }
+        }).filter((img): img is { id: number; displayOrder: number } | { tmpKey: string; displayOrder: number } => img !== null);
+
+        // API 요청 데이터 구성
+        const requestData: PatchReviewData = {
+          content: content.trim() === "" ? "" : content.trim() || null,
+          tags: tags.length === 0 ? [] : tags,
+          images: finalImages.length === 0 ? [] : finalImages,
+        };
+
+        await patchEventReviewDetail(reviewData.id, requestData);
         openAlert("리뷰 수정이 완료되었어요.");
       } else {
+        // 신규 등록
+        const newImageUploads = await uploadNewImages(images);
+        
         await api.post(`/api/events/${eventId}/reviews`, {
           content,
           tags,
-          images: uploadedImages.map((img) => ({
+          images: newImageUploads.map((img) => ({
             tmpKey: img.tmpKey,
             displayOrder: img.displayOrder,
           })),
@@ -230,18 +293,18 @@ export default function EventReviewWrite({
       <div className="flex gap-[8px]">
         {/* 선택된 이미지 2칸 슬롯 */}
         {Array.from({ length: 2 }).map((_, idx) => {
-          const image = imagePreviews[idx];
+          const image = images[idx];
           return (
             <div
               key={idx}
               className="relative w-[60px] h-[60px] rounded-[4px] border border-divider-1 flex justify-center items-center overflow-hidden bg-[#F9F9F9]"
             >
-              {image ? (
+              {image?.preview ? (
                 <>
                   <Image
                     width={60}
                     height={60}
-                    src={image}
+                    src={image.preview}
                     alt={`uploaded-${idx}`}
                     className="object-cover"
                   />
@@ -278,7 +341,7 @@ export default function EventReviewWrite({
           _state="main"
           _node="+ 추가하기"
           _onClick={() => {
-            if (imagePreviews.length >= 2)
+            if (images.length >= 2)
               return openAlert("최대 2개의 이미지만 등록할 수 있어요.");
             fileInputRef.current?.click();
           }}

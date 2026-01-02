@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
+import BookmarkArtistProfile from "@/svgs/BookmarkArtistProfile.svg";
 
 export interface ArtistListCardProps {
   id: string;
@@ -53,8 +54,8 @@ export default function ArtistListCard({
       className="flex justify-between items-center py-[12px] border-b border-divider-1 cursor-pointer"
     >
       <div className="flex items-center gap-4">
-        <div className="w-[52px] h-[52px] rounded-full overflow-hidden bg-gray-200">
-          {imageUrl && (
+        <div className="w-[52px] h-[52px] rounded-full overflow-hidden">
+          {imageUrl ? (
             <Image
               src={imageUrl}
               width={52}
@@ -63,6 +64,8 @@ export default function ArtistListCard({
               className="w-full h-full object-cover"
               unoptimized
             />
+          ) : (
+            <BookmarkArtistProfile className="w-full h-full" />
           )}
         </div>
 

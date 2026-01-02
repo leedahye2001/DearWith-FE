@@ -93,7 +93,11 @@ const Kakao = () => {
     }
   }, [kakaoCode, handleSocial]);
 
-  return loading ? <Spinner /> : null;
+  return loading ? (
+    <div className="fixed inset-0 flex items-center justify-center">
+      <Spinner />
+    </div>
+  ) : null;
 };
 
 export default Kakao;

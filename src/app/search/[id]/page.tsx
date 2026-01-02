@@ -7,12 +7,17 @@ import {
   getGroupEvents,
   postEventLike,
   deleteEventLike,
+  postArtistLike,
+  deleteArtistLike,
+  getArtistBookmark,
 } from "@/apis/api";
 import { useEffect, useState, useCallback } from "react";
 import { EventCardProps } from "@/app/main/components/MainEventCard";
 import { EventState } from "../page";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
+import HeartDefault from "@/svgs/HeartDefault.svg";
+import HeartFill from "@/svgs/HeartFill.svg";
 
 const Page = () => {
   const router = useRouter();
@@ -30,6 +35,7 @@ const Page = () => {
 
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const [filterState, setFilterState] = useState<EventState>("LATEST");
+  const [isArtistBookmarked, setIsArtistBookmarked] = useState(false);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -100,11 +106,56 @@ const Page = () => {
     fetchEvents();
   }, [fetchEvents]);
 
+  // 아티스트 찜 상태 확인
+  useEffect(() => {
+    const fetchArtistBookmarkStatus = async () => {
+      if (type === "ARTIST" && artistId) {
+        try {
+          const bookmarkedArtists = await getArtistBookmark();
+          const isBookmarked = bookmarkedArtists?.some(
+            (artist: { id: number | string }) => String(artist.id) === String(artistId)
+          );
+          setIsArtistBookmarked(isBookmarked || false);
+        } catch (err) {
+          console.error("아티스트 찜 상태 확인 실패:", err);
+        }
+      }
+    };
+
+    fetchArtistBookmarkStatus();
+  }, [type, artistId]);
+
+  // 아티스트 찜 토글
+  const toggleArtistBookmark = async () => {
+    if (type !== "ARTIST" || !artistId) return;
+
+    const prevState = isArtistBookmarked;
+    setIsArtistBookmarked(!prevState);
+
+    try {
+      if (prevState) {
+        await deleteArtistLike(artistId);
+      } else {
+        await postArtistLike(artistId);
+      }
+    } catch (err) {
+      console.error("아티스트 찜 토글 실패:", err);
+      setIsArtistBookmarked(prevState); // 실패 시 롤백
+    }
+  };
+
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       <Topbar
         _leftImage={<Backward onClick={() => router.back()} />}
         _topNode={title}
+        _rightImage={
+          type === "ARTIST" && artistId ? (
+            <button onClick={toggleArtistBookmark}>
+              {isArtistBookmarked ? <HeartFill /> : <HeartDefault />}
+            </button>
+          ) : undefined
+        }
       />
 
       <EventSearchResult

@@ -20,6 +20,7 @@ export interface EventBookmarkProps {
   endDate: string;
   bookmarkCount: string;
   bookmarked: boolean;
+  eventState?: EventState;
 }
 
 type EventState = "SCHEDULED" | "IN_PROGRESS" | "ENDED";
@@ -61,11 +62,20 @@ export default function EventBookmarkPage() {
           if (filterState === "ENDED") return end < now;
           return true;
         })
-        .map((e) => ({
-          ...e,
-          startDate: e.startDate.replace(/-/g, "."),
-          endDate: e.endDate.replace(/-/g, "."),
-        }));
+        .map((e) => {
+          const start = new Date(e.startDate);
+          const end = new Date(e.endDate);
+          let eventState: EventState = "IN_PROGRESS";
+          if (start > now) eventState = "SCHEDULED";
+          else if (end < now) eventState = "ENDED";
+
+          return {
+            ...e,
+            startDate: e.startDate.replace(/-/g, "."),
+            endDate: e.endDate.replace(/-/g, "."),
+            eventState,
+          };
+        });
 
       setEvents(filtered);
       setLikedEventsIds(filtered.filter((e) => e.bookmarked).map((e) => e.id));

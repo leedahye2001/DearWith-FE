@@ -7,6 +7,7 @@ import HeartFill from "@/svgs/HeartFill.svg";
 import Etc from "@/svgs/Etc.svg";
 import { FAB } from "@/components/FAB/FAB";
 import Write from "@/svgs/Write.svg";
+import ReviewProfile from "@/svgs/ReviewProfile.svg";
 import {
   getEventReviewDetail,
   getEventPhotoReviews,
@@ -196,22 +197,22 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-[36px] h-[36px] flex items-center justify-center bg-gray-200 rounded-full text-[10px] text-text-3">
-                      No Img
-                    </div>
+                    <ReviewProfile className="w-full h-full" />
                   )}
                 </div>
                 <div className="flex flex-col pl-[12px]">
                   <p className="text-text-5 font-[600] text-[14px]">
                     {post.nickname}
                   </p>
-                  <p className="text-text-2 font-[600] text-[12px]">
-                    {new Date(post.createdAt).toLocaleString("ko-KR", {
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <p className="text-text-2 font-[400] text-[10px]">
+                    {(() => {
+                      const d = new Date(post.createdAt);
+                      const month = String(d.getMonth() + 1).padStart(2, "0");
+                      const day = String(d.getDate()).padStart(2, "0");
+                      const hour = String(d.getHours()).padStart(2, "0");
+                      const minute = String(d.getMinutes()).padStart(2, "0");
+                      return `${month}.${day} ${hour}:${minute}`;
+                    })()}
                   </p>
                 </div>
               </div>

@@ -78,7 +78,7 @@ export default function EventListCard({
         </div>
 
         {statusBadge && (
-          <div className="absolute bottom-0 left-0 bg-black/40 px-[10px] py-[6px] z-30">
+          <div className="absolute bottom-0 left-0 bg-black/40 px-[10px] py-[6px] z-30 flex items-center justify-center">
             <span className="text-[10px] text-white font-[600]">
               {statusBadge}
             </span>
@@ -96,15 +96,21 @@ export default function EventListCard({
         }`}
         onClick={handleCardClick}
       >
-        {artistNamesKr?.length > 0 ? (
-          <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
-            {artistNamesKr.join(", ")}
-          </p>
-        ) : groupNamesKr?.length > 0 ? (
-          <p className="flex rounded-[4px] bg-red-400 text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]">
-            {groupNamesKr.join(", ")}
-          </p>
-        ) : null}
+        {(() => {
+          let badgeColor = "bg-red-400"; // 진행 중 (기본값)
+          if (eventState === "SCHEDULED") badgeColor = "bg-red-200"; // 진행 예정
+          else if (eventState === "ENDED") badgeColor = "bg-red-200"; // 진행 종료
+
+          return artistNamesKr?.length > 0 ? (
+            <p className={`flex rounded-[4px] ${badgeColor} text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]`}>
+              {artistNamesKr.join(", ")}
+            </p>
+          ) : groupNamesKr?.length > 0 ? (
+            <p className={`flex rounded-[4px] ${badgeColor} text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]`}>
+              {groupNamesKr.join(", ")}
+            </p>
+          ) : null;
+        })()}
       </div>
 
       <div
@@ -113,7 +119,11 @@ export default function EventListCard({
         }`}
         onClick={handleCardClick}
       >
-        <p className="text-text-5 text-[14px] font-[600] leading-[20px]">
+        <p className={`text-[14px] font-[600] leading-[20px] ${
+          eventState === "ENDED" ? "text-text-2" : 
+          eventState === "SCHEDULED" ? "text-text-4" : 
+          "text-text-5"
+        }`}>
           {title}
         </p>
       </div>

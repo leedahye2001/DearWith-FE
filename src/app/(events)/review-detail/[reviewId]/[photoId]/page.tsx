@@ -10,6 +10,8 @@ import Image from "next/image";
 import Spinner from "@/components/Spinner/Spinner";
 import Topbar from "@/components/template/Topbar";
 import Cancel from "@/svgs/Cancel.svg";
+import ReportModal from "@/components/Modal/ReportModal/ReportModal";
+import ReviewProfile from "@/svgs/ReviewProfile.svg";
 
 /* ===================== types ===================== */
 
@@ -30,13 +32,14 @@ interface ReviewDetail {
 
 /* ===================== utils ===================== */
 
-const formatDateTime = (date: string) =>
-  new Date(date).toLocaleString("ko-KR", {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+const formatDateTime = (date: string) => {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hour = String(d.getHours()).padStart(2, "0");
+  const minute = String(d.getMinutes()).padStart(2, "0");
+  return `${month}.${day} ${hour}:${minute}`;
+};
 
 const getImageUrl = (variants?: { name: string; url: string }[]) =>
   variants?.[2]?.url || variants?.[1]?.url || variants?.[0]?.url || null;
@@ -53,6 +56,7 @@ const ReviewDetail = () => {
   const [post, setPost] = useState<ReviewDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [reportReviewId, setReportReviewId] = useState<string | null>(null);
 
   // params에서 값 추출 (params가 null일 수 있음)
   const reviewId = params?.reviewId;
@@ -143,8 +147,8 @@ const ReviewDetail = () => {
       {/* header */}
       <div className="flex justify-between items-center my-[20px] px-[24px]">
         <div className="flex">
-          <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-divider-1">
-            {post.profileImageUrl && (
+          <div className="w-[36px] h-[36px] rounded-full overflow-hidden">
+            {post.profileImageUrl ? (
               <Image
                 src={post.profileImageUrl}
                 alt={post.nickname}
@@ -152,22 +156,69 @@ const ReviewDetail = () => {
                 height={36}
                 className="object-cover"
               />
+            ) : (
+              <ReviewProfile className="w-full h-full" />
             )}
           </div>
 
           <div className="pl-[12px]">
             <p className="font-[600]">{post.nickname || "익명"}</p>
-            <p className="text-[12px] text-text-2">
+            <p className="text-[10px] text-text-2 font-[400]">
               {formatDateTime(post.createdAt)}
             </p>
           </div>
         </div>
 
-        <button
-          onClick={() => setOpenMenuId(openMenuId === post.id ? null : post.id)}
-        >
-          <Etc />
-        </button>
+        <div className="relative">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenMenuId(openMenuId === post.id ? null : post.id);
+            }}
+            className="cursor-pointer z-10"
+          >
+            <Etc />
+          </button>
+          {openMenuId === post.id && (
+            <div
+              className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[70px] border border-divider-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {post.editable ? (
+                <>
+                  <button
+                    className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
+                    onClick={() => {
+                      router.push(`/review-detail/${reviewId}/${photoId}/write`);
+                      setOpenMenuId(null);
+                    }}
+                  >
+                    수정하기
+                  </button>
+                  <button
+                    className="w-full text-left px-[8px] py-[4px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]"
+                    onClick={() => {
+                      // TODO: 삭제 기능 구현
+                      setOpenMenuId(null);
+                    }}
+                  >
+                    삭제하기
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400]"
+                  onClick={() => {
+                    setReportReviewId(post.id);
+                    setOpenMenuId(null);
+                  }}
+                >
+                  신고하기
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* images */}
@@ -226,6 +277,14 @@ const ReviewDetail = () => {
           {post.likeCount || 0}
         </button>
       </div>
+
+      {/* 신고 모달 */}
+      {reportReviewId && (
+        <ReportModal
+          reviewId={reportReviewId}
+          onClose={() => setReportReviewId(null)}
+        />
+      )}
     </div>
   );
 };
