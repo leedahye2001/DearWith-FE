@@ -128,9 +128,15 @@ const Page = () => {
 
     if (payload.needSignUp) {
       try {
+        // 애플/카카오에서 받아온 닉네임 정보도 함께 저장
+        const nickname = payload.signIn?.nickname || "";
         sessionStorage.setItem(
           SOCIAL_SIGNUP_KEY,
-          JSON.stringify({ provider: payload.provider, socialId: payload.socialId })
+          JSON.stringify({ 
+            provider: payload.provider, 
+            socialId: payload.socialId,
+            nickname: nickname
+          })
         );
       } catch {}
       router.push("/agreement");

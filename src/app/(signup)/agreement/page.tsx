@@ -93,7 +93,7 @@ const AgreementContent = () => {
         setIsSubmitting(true);
         
         // sessionStorage에서 소셜 회원가입 정보 가져오기
-        let socialSignUpData: { provider: "KAKAO" | "APPLE"; socialId: string } | null = null;
+        let socialSignUpData: { provider: "KAKAO" | "APPLE"; socialId: string; nickname?: string } | null = null;
         try {
           const stored = sessionStorage.getItem(SOCIAL_SIGNUP_KEY);
           if (stored) {
@@ -101,6 +101,7 @@ const AgreementContent = () => {
             socialSignUpData = {
               provider: data.provider === "APPLE" ? "APPLE" : "KAKAO",
               socialId: data.socialId,
+              nickname: data.nickname || "",
             };
           }
         } catch {}
@@ -110,11 +111,11 @@ const AgreementContent = () => {
           return;
         }
 
-        // 소셜 회원가입 API 호출 (닉네임은 빈 문자열)
+        // 소셜 회원가입 API 호출 (애플/카카오에서 받아온 닉네임 사용, 없으면 빈 문자열)
         const signupResponse = await postSocialSignUp(
           socialSignUpData.provider,
           socialSignUpData.socialId,
-          "", // 닉네임은 빈 문자열로 전달
+          socialSignUpData.nickname || "", // 애플/카카오에서 받아온 닉네임 사용
           [
             { type: "AGE_OVER_14", agreed: checkedItems.item1 },
             { type: "TERMS_OF_SERVICE", agreed: checkedItems.item2 },
