@@ -75,9 +75,17 @@ const Page = () => {
       return;
     }
 
+    // 닉네임 유효성 검사
+    if (!inputNickname || !inputNickname.trim() || !isNicknameValid) {
+      setNicknameErrorMessage("닉네임을 올바르게 입력해주세요.");
+      return;
+    }
+
+    const trimmedNickname = inputNickname.trim();
+
     try {
       // 닉네임 중복 확인
-      const checkData = await getNicknameCheck(inputNickname);
+      const checkData = await getNicknameCheck(trimmedNickname);
       if (checkData.isAvailable === false) {
         setNicknameErrorMessage("이미 존재하는 닉네임입니다.");
         return;
@@ -87,7 +95,7 @@ const Page = () => {
       const signupResponse = await postSocialSignUp(
         socialSignUpData.provider,
         socialSignUpData.socialId,
-        inputNickname,
+        trimmedNickname,
         [
           { type: "AGE_OVER_14", agreed: item1 },
           { type: "TERMS_OF_SERVICE", agreed: item2 },
@@ -106,11 +114,11 @@ const Page = () => {
       useUserStore.getState().setUser({
         message: "",
         userId,
-        nickname: nickname || inputNickname,
+        nickname: nickname || trimmedNickname,
         role,
       });
 
-      setNickname(inputNickname);
+      setNickname(trimmedNickname);
       setCurrentStep((prev) => Math.min(prev + 1, 6));
       router.push("/signup-complete");
     } catch (error) {
