@@ -9,18 +9,13 @@ import Bottombar from "@/components/template/Bottombar";
 import Topbar from "@/components/template/Topbar";
 import ProgressBar from "@/components/Progressbar/Progressbar";
 import { useAgreementStore } from "@/app/stores/userStore";
-import { postSocialSignUp } from "@/apis/api";
-import useUserStore from "@/app/stores/userStore";
-import useModalStore from "@/app/stores/useModalStore";
 
 const SOCIAL_SIGNUP_KEY = "dearwith:socialSignUp";
 
 const AgreementContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { openAlert } = useModalStore();
   const [isSocialSignUp, setIsSocialSignUp] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const totalSteps = 6;
   const [currentStep, setCurrentStep] = useState(1);
@@ -78,7 +73,7 @@ const AgreementContent = () => {
     setCheckedItems(newState);
   };
 
-  const fetchAgreeData = async () => {
+  const fetchAgreeData = () => {
     // agreement 체크 상태를 스토어에 저장
     agreementStore.setAgreements({
       item1: checkedItems.item1,
@@ -88,75 +83,13 @@ const AgreementContent = () => {
     });
     
     if (isSocialSignUp) {
-      // 소셜 회원가입이면 바로 회원가입 API 호출
-      try {
-        setIsSubmitting(true);
-        
-        // sessionStorage에서 소셜 회원가입 정보 가져오기
-        let socialSignUpData: { provider: "KAKAO" | "APPLE"; socialId: string; nickname?: string } | null = null;
-        try {
-          const stored = sessionStorage.getItem(SOCIAL_SIGNUP_KEY);
-          if (stored) {
-            const data = JSON.parse(stored);
-            socialSignUpData = {
-              provider: data.provider === "APPLE" ? "APPLE" : "KAKAO",
-              socialId: data.socialId,
-              nickname: data.nickname || "",
-            };
-          }
-        } catch {}
-
-        if (!socialSignUpData) {
-          openAlert("소셜 회원가입 정보를 찾을 수 없습니다.");
-          return;
-        }
-
-        // 소셜 회원가입 API 호출 (애플/카카오에서 받아온 닉네임 사용, 없으면 빈 문자열)
-        const signupResponse = await postSocialSignUp(
-          socialSignUpData.provider,
-          socialSignUpData.socialId,
-          socialSignUpData.nickname || "", // 애플/카카오에서 받아온 닉네임 사용
-          [
-            { type: "AGE_OVER_14", agreed: checkedItems.item1 },
-            { type: "TERMS_OF_SERVICE", agreed: checkedItems.item2 },
-            { type: "PERSONAL_INFORMATION", agreed: checkedItems.item3 },
-            { type: "PUSH_NOTIFICATION", agreed: checkedItems.item5 },
-          ]
-        );
-
-        // sessionStorage에서 소셜 회원가입 정보 제거
-        try {
-          sessionStorage.removeItem(SOCIAL_SIGNUP_KEY);
-        } catch {}
-
-        // 사용자 정보 저장
-        const { userId, role, nickname } = signupResponse;
-        useUserStore.getState().setUser({
-          message: "",
-          userId,
-          nickname: nickname || "",
-          role,
-        });
-
-        setCurrentStep((prev) => Math.min(prev + 1, 6));
-        
-        // 닉네임이 없으면 set-nickname으로, 있으면 signup-complete로
-        if (!nickname) {
-          router.push("/set-nickname");
-        } else {
-          router.push("/signup-complete");
-        }
-      } catch (error) {
-        console.error("소셜 회원가입 에러:", error);
-        openAlert("회원가입 요청에 실패했습니다. 다시 시도해주세요.");
-      } finally {
-        setIsSubmitting(false);
-      }
+      // 소셜 회원가입이면 닉네임 설정 페이지로 이동
+      router.push("/social-nickname");
     } else {
       // 일반 회원가입이면 이메일 발송 페이지로 이동
       router.push("/mail-send");
-      setCurrentStep((prev) => Math.min(prev + 1, 6));
     }
+    setCurrentStep((prev) => Math.min(prev + 1, 6));
   };
 
   return (
@@ -238,7 +171,7 @@ const AgreementContent = () => {
                 checkedItems.item1 &&
                 checkedItems.item2 &&
                 checkedItems.item3
-              ) || isSubmitting,
+              ),
             }}
             _onClick={fetchAgreeData}
           />
