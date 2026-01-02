@@ -104,6 +104,7 @@ const Page = () => {
       // 사용자 정보 저장
       const { userId, role, nickname } = signupResponse;
       useUserStore.getState().setUser({
+        message: "",
         userId,
         nickname: nickname || inputNickname,
         role,
