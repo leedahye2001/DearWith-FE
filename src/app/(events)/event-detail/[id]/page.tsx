@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Share from "@/svgs/Share.svg";
@@ -93,7 +93,16 @@ export interface EventNotice {
 
 export default function EventDetailPage() {
   const router = useRouter();
-  const handleBackRouter = () => router.back();
+  const searchParams = useSearchParams();
+  const fromMain = searchParams?.get("from") === "main";
+  
+  const handleBackRouter = () => {
+    if (fromMain) {
+      router.push("/main");
+    } else {
+      router.back();
+    }
+  };
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const [event, setEvent] = useState<EventDetail | null>(null);

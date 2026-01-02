@@ -494,10 +494,10 @@ export const getPasswordConfirm = async (newPassword: string) => {
 };
 
 // 비밀번호 찾기 - 비밀번호 재설정
-export const resetPassword = async (email: string, ticket: string, newPassword: string) => {
+export const resetPassword = async (email: string, emailTicket: string, newPassword: string) => {
   const res = await api.post("/users/password/reset", {
     email,
-    ticket,
+    emailTicket,
     newPassword,
   });
   return res.data;

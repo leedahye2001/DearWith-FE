@@ -23,7 +23,7 @@ export default function Navbar() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 w-full max-w-[428px] mx-auto bg-white flex justify-between items-center px-[24px] z-50 shadow-[0_-32px_32px_rgba(0,0,0,0.03)]"
+      className="fixed bottom-0 left-0 right-0 w-full max-w-[428px] mx-auto bg-white flex justify-center items-center gap-[48px] z-50 shadow-[0_-32px_32px_rgba(0,0,0,0.03)]"
       style={{
         height: navbarHeight,
         paddingBottom: 'env(safe-area-inset-bottom)',

@@ -6,6 +6,7 @@ import { registerInquiry } from "@/apis/api";
 import useModalStore from "@/app/stores/useModalStore";
 import Button from "@/components/Button/Button";
 import Topbar from "@/components/template/Topbar";
+import Bottombar from "@/components/template/Bottombar";
 import Backward from "@/svgs/Backward.svg";
 import Input from "@/components/Input/Input";
 
@@ -82,17 +83,19 @@ const InquiryRegisterPage = () => {
             {content.length}/{maxLength}
           </span>
         </div>
-
-        {/* 버튼 */}
-        <Button
-          _state="main"
-          _node="등록하기"
-          _buttonProps={{
-            className: "hover:cursor-pointer mt-[52px]",
-          }}
-          _onClick={handleSubmit}
-        />
       </div>
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node="등록하기"
+            _buttonProps={{
+              className: "hover:cursor-pointer w-full",
+            }}
+            _onClick={handleSubmit}
+          />
+        }
+      />
     </div>
   );
 };

@@ -188,8 +188,8 @@ const Page = () => {
   }, [router, handleNativeSocialResult, handleNativeEmailResult]);
 
   return (
-    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center items-center px-[24px] pt-[34px]">
-      <h1 className="w-full text-left font-[700] text-text-5 text-[20px] pb-[40px] pt-[58px]">
+    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center items-center px-[24px] min-h-screen">
+      <h1 className="w-full text-left font-[700] text-text-5 text-[20px] pb-[40px]">
         반가워요👋
         <br />
         디어위드와 함께

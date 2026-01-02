@@ -3,6 +3,7 @@ import { getArtist, getRoadName, getEventDetail, patchEvent } from "@/apis/api";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import Topbar from "@/components/template/Topbar";
+import Bottombar from "@/components/template/Bottombar";
 import Backward from "@/svgs/Backward.svg";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, Suspense } from "react";
@@ -1031,18 +1032,21 @@ const EventRegisterContent = () => {
             책임지지 않습니다.
           </p>
         </div>
-
-        <Button
-          _state="main"
-          _node={editEventId ? "이벤트 수정하기" : "이벤트 등록하기"}
-          _onClick={handleSubmit}
-          _buttonProps={{
-            className: "mt-6 mb-[50px] hover:cursor-pointer",
-            disabled: isSubmitting,
-          }}
-        />
       </div>
       {isSubmitting && <Spinner />}
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node={editEventId ? "이벤트 수정하기" : "이벤트 등록하기"}
+            _onClick={handleSubmit}
+            _buttonProps={{
+              className: "hover:cursor-pointer w-full",
+              disabled: isSubmitting,
+            }}
+          />
+        }
+      />
     </div>
   );
 };

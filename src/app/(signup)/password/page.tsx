@@ -67,7 +67,7 @@ const Page = () => {
           <Backward />
           </button>
         }
-        _topNode="제목" />
+        _topNode="" />
       <div className="px-[24px] pt-[30px]">
         <h1 className="font-[700] text-text-5 text-[20px] pb-[20px]">
           디어위드에서 사용할

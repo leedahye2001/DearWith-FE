@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Forward from "@/svgs/Forward.svg";
-import Settings from "@/svgs/Settings.svg";
 import ProfileBasic from "@/svgs/ProfileBasic.svg";
 import {
   getMyPage,
@@ -28,6 +27,7 @@ export interface MyPageResponse {
   profile: {
     nickname: string;
     profileImageUrl: string;
+    passwordChangeAvailable: boolean;
   };
   stats: {
     eventBookmarkCount: number;
@@ -57,6 +57,9 @@ const Page = () => {
   if (!data) return <Spinner />;
 
   const { profile, stats, notifications } = data;
+  
+  // 디버깅: passwordChangeAvailable 값 확인
+  console.log("passwordChangeAvailable:", profile?.passwordChangeAvailable, typeof profile?.passwordChangeAvailable);
 
   const handleLogout = () => {
     openConfirm("로그아웃 하시겠습니까?", async () => {
@@ -81,7 +84,7 @@ const Page = () => {
     <div className="px-[24px] mt-[54px] pb-10">
       <div className="flex justify-between items-center gap-3">
         <div className="flex items-center gap-[12px]">
-          <div className="w-[48px] h-[48px] rounded-full overflow-hidden">
+          <div className="w-[48px] h-[48px] rounded-full overflow-hidden" onClick={handleProfileUpdate}>
             {profile?.profileImageUrl ? (
               <Image
                 src={profile?.profileImageUrl}
@@ -101,10 +104,6 @@ const Page = () => {
             <p className="text-[12px] text-text-2">@{profile?.nickname}</p>
           </div>
         </div>
-
-        <button onClick={handleProfileUpdate}>
-          <Settings />
-        </button>
       </div>
 
       <div className="flex gap-5 mt-5">
@@ -157,12 +156,14 @@ const Page = () => {
           path="/my-inquiry-list"
           hasData
         />
-        <MenuItem
-          text="비밀번호 변경"
-          rightNode={<Forward />}
-          path="/verify-password"
-          hasData
-        />
+        {profile?.passwordChangeAvailable === true && (
+          <MenuItem
+            text="비밀번호 변경"
+            rightNode={<Forward />}
+            path="/verify-password"
+            hasData
+          />
+        )}
         <MenuItem
           text="앱 버전"
           rightNode={
@@ -226,6 +227,8 @@ function MenuItem({ text, path, rightNode, hasData }: MenuItemProps) {
         openAlert("등록한 이벤트가 없습니다.");
       } else if (text.includes("아티스트")) {
         openAlert("등록한 아티스트가 없습니다.");
+      } else if (text.includes("리뷰")) {
+        openAlert("작성한 리뷰가 없습니다.");
       }
       return;
     }

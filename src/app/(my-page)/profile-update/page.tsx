@@ -153,7 +153,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full">
+    <div className="flex flex-col w-full min-h-screen">
       <Topbar
         _leftImage={<Backward onClick={() => router.back()} />}
         _topNode="프로필 수정"
@@ -195,26 +195,30 @@ const Page = () => {
             _onChange={handleNicknameChange}
           />
         </div>
+      </div>
 
-        {/* 탈퇴하기 */}
+      <div className="flex-1" />
+
+      {/* 변경하기 */}
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node="변경하기"
+            _buttonProps={{ disabled: !canSubmit || isSubmitting, className: "w-full" }}
+            _onClick={handleSubmit}
+          />
+        }
+      />
+
+      {/* 탈퇴하기 */}
+      <div className="px-[24px] pb-[100px]">
         <p
-          className="text-text-2 underline text-[14px] cursor-pointer"
+          className="text-text-2 underline text-[14px] cursor-pointer text-center"
           onClick={handleWithdraw}
         >
           탈퇴하기
         </p>
-
-        {/* 변경하기 */}
-        <Bottombar
-          _bottomNode={
-            <Button
-              _state="main"
-              _node="변경하기"
-              _buttonProps={{ disabled: !canSubmit || isSubmitting }}
-              _onClick={handleSubmit}
-            />
-          }
-        />
       </div>
 
       {showSheet && (

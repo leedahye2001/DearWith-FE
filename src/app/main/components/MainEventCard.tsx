@@ -41,7 +41,7 @@ export default function MainEventCard({
   const imageUrl = image?.variants?.[0]?.url || image?.variants?.[1]?.url || "";
 
   const handleCardClick = () => {
-    router.push(`/event-detail/${id}`);
+    router.push(`/event-detail/${id}?from=main`);
   };
 
   const handleLikeToggle = async (e: React.MouseEvent) => {

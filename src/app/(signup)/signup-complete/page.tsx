@@ -21,7 +21,7 @@ const Page = () => {
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
-      <Topbar _leftImage={<button onClick={() => router.back()}><Backward /></button>} _topNode="제목" />
+      <Topbar _leftImage={<button onClick={() => router.back()}><Backward /></button>} _topNode="" />
       <div className="px-[24px] pt-[30px]">
         {nickname && nickname ? (
           <h1 className="font-[700] text-text-5 text-[20px]">
