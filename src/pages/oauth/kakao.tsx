@@ -23,22 +23,16 @@ const Kakao = () => {
         }
       );
 
-      const { needSignUp, signIn } = loginResponse.data;
+      const { needSignUp, signIn, socialId } = loginResponse.data;
 
       if (needSignUp) {
-        // 2️⃣ 신규 회원 -> 닉네임 필요
-        const nickname = prompt("닉네임을 입력해주세요.");
-        if (!nickname) {
-          setLoading(false);
-          return;
-        }
-
+        // 2️⃣ 신규 회원 -> 소셜 회원가입
         const signupResponse = await axios.post(
           `https://${BASE_URL}/users/signup/social`,
           {
             provider: "KAKAO",
-            socialId: kakaoCode,
-            nickname,
+            socialId: socialId || kakaoCode,
+            nickname: "",
             agreements: [
               { type: "AGE_OVER_14", agreed: true },
               { type: "TERMS_OF_SERVICE", agreed: true },
@@ -46,19 +40,26 @@ const Kakao = () => {
               { type: "PUSH_NOTIFICATION", agreed: false },
             ],
           },
-          { headers: { "Content-Type": "application/json;charset=utf-8" } }
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json;charset=utf-8" },
+          }
         );
 
-        const { userId, role } = signupResponse.data;
+        const { userId, role, nickname } = signupResponse.data;
 
         useUserStore.getState().setUser({
           ...useUserStore.getState(),
           userId,
-          nickname,
+          nickname: nickname || "",
           role,
         });
 
-        router.push("/main");
+        if (!nickname) {
+          router.push("/set-nickname");
+        } else {
+          router.push("/main");
+        }
       } else {
         // 3️⃣ 기존 회원 -> 바로 로그인 처리
         const { userId, nickname, role } = signIn;

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Backward from "@/svgs/Backward.svg";
 import Button from "@/components/Button/Button";
 import Checkbox from "@/components/Checkbox/Checkbox";
@@ -10,8 +10,12 @@ import Topbar from "@/components/template/Topbar";
 import ProgressBar from "@/components/Progressbar/Progressbar";
 import { useAgreementStore } from "@/app/stores/userStore";
 
-const Page = () => {
+const SOCIAL_SIGNUP_KEY = "dearwith:socialSignUp";
+
+const AgreementContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isSocialSignUp, setIsSocialSignUp] = useState(false);
 
   const totalSteps = 6;
   const [currentStep, setCurrentStep] = useState(1);
@@ -24,6 +28,30 @@ const Page = () => {
     item4: false,
     item5: agreementStore.item5,
   });
+
+  useEffect(() => {
+    // 소셜 회원가입인지 확인
+    const provider = searchParams?.get("provider");
+    const socialId = searchParams?.get("socialId");
+    
+    if (provider && socialId) {
+      try {
+        sessionStorage.setItem(
+          SOCIAL_SIGNUP_KEY,
+          JSON.stringify({ provider, socialId })
+        );
+        setIsSocialSignUp(true);
+      } catch {}
+    } else {
+      // sessionStorage에서 확인
+      try {
+        const stored = sessionStorage.getItem(SOCIAL_SIGNUP_KEY);
+        if (stored) {
+          setIsSocialSignUp(true);
+        }
+      } catch {}
+    }
+  }, [searchParams]);
 
   const allChecked = Object.values(checkedItems).every(Boolean);
 
@@ -53,7 +81,14 @@ const Page = () => {
       item3: checkedItems.item3,
       item5: checkedItems.item5,
     });
-    router.push("/mail-send");
+    
+    if (isSocialSignUp) {
+      // 소셜 회원가입이면 닉네임 설정 페이지로 이동
+      router.push("/social-nickname");
+    } else {
+      // 일반 회원가입이면 이메일 발송 페이지로 이동
+      router.push("/mail-send");
+    }
     setCurrentStep((prev) => Math.min(prev + 1, 6));
   };
 
@@ -143,6 +178,14 @@ const Page = () => {
         }
       />
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AgreementContent />
+    </Suspense>
   );
 };
 

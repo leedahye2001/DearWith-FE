@@ -59,6 +59,22 @@ export const updateNickname = async (nickname: string) => {
   return res.data;
 };
 
+// 소셜 회원가입
+export const postSocialSignUp = async (
+  provider: "KAKAO" | "APPLE",
+  socialId: string,
+  nickname: string,
+  agreements: Array<{ type: string; agreed: boolean }>
+) => {
+  const res = await api.post("/users/signup/social", {
+    provider,
+    socialId,
+    nickname,
+    agreements,
+  });
+  return res.data;
+};
+
 // 로그인 
 export const getSignIn = async (email: string, password: string) => {
   const res = await api.post(

@@ -88,7 +88,13 @@ export default function LayoutClient({ children }: Props) {
           paddingBottom: showNavbar ? `calc(${navbarHeight} + env(safe-area-inset-bottom))` : '0',
         }}
       >
-        {children}
+        <div
+          style={{
+            marginBottom: isNative ? '100px' : '0',
+          }}
+        >
+          {children}
+        </div>
       </div>
       <AlertModalClient />
       {showNavbar && <Navbar />}
