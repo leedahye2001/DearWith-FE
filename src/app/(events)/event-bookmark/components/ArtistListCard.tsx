@@ -30,7 +30,13 @@ export default function ArtistListCard({
 }: ArtistListCardProps) {
   const router = useRouter();
 
-  const handleCardClick = () => router.push(`/event-detail/${id}`);
+  const handleCardClick = () => {
+    if (type === "GROUP") {
+      router.push(`/search/${id}?type=${encodeURIComponent(type)}&groupId=${id}&groupName=${encodeURIComponent(nameKr)}`);
+    } else {
+      router.push(`/search/${id}?type=${encodeURIComponent(type)}&artistId=${id}&artistName=${encodeURIComponent(nameKr)}`);
+    }
+  };
 
   const formatDate = (value?: string) => {
     if (!value) return "";

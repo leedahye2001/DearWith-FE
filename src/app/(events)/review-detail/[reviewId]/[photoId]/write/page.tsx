@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
-import { getReviewDetail, patchEventReviewDetail } from "@/apis/api";
+import { getReviewDetail } from "@/apis/api";
 import EventReviewWrite, { ReviewDetail } from "@/app/(events)/event-detail/components/EventReviewWrite";
 import Spinner from "@/components/Spinner/Spinner";
 import { useEffect, useState, Suspense } from "react";
@@ -26,7 +26,7 @@ function ReviewWriteContent() {
           id: data.id,
           content: data.content || "",
           tags: data.tags || [],
-          images: data.images?.map((img, idx) => {
+          images: data.images?.map((img: { variants?: { name: string; url: string; id?: number }[] }, idx: number) => {
             const url = img.variants?.[2]?.url || img.variants?.[1]?.url || img.variants?.[0]?.url;
             return {
               id: img.variants?.[0]?.id,
@@ -67,8 +67,6 @@ function ReviewWriteContent() {
         eventId=""
         reviewData={reviewData}
         onClose={() => router.push(`/review-detail/${reviewId}/${photoId}`)}
-        reviewId={reviewId}
-        photoId={photoId}
       />
     </div>
   );

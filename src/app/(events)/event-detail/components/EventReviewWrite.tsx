@@ -14,12 +14,6 @@ import Close from "@/svgs/Close.svg";
 import Checker from "@/svgs/Checker.svg";
 import Bottombar from "@/components/template/Bottombar";
 
-interface UploadedImage {
-  tmpKey: string;
-  url: string;
-  displayOrder: number;
-}
-
 interface ReviewImage {
   id?: number;
   tmpKey?: string;
@@ -45,16 +39,12 @@ interface EventReviewWriteProps {
   eventId: string;
   reviewData?: ReviewDetail;
   onClose?: () => void;
-  reviewId?: string;
-  photoId?: string;
 }
 
 export default function EventReviewWrite({
   eventId,
   reviewData,
   onClose,
-  reviewId,
-  photoId,
 }: EventReviewWriteProps) {
   const isEdit = Boolean(reviewData);
 

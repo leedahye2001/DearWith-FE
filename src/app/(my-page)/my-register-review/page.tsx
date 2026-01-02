@@ -10,6 +10,8 @@ import RegisterReviewListCard from "./components/RegisterReviewListCard";
 export interface MyReviewResponseItem {
   eventId: string;
   reviewId: string;
+  photoId?: string;
+  imageId?: string;
   imageUrl: string;
   eventTitle: string;
   reviewContent: string;
@@ -19,6 +21,8 @@ export interface MyReviewResponseItem {
 
 export interface RegisterReviewCardProps {
   id: string;
+  photoId?: string;
+  imageId?: string;
   imageUrl: string | null;
   eventTitle: string;
   reviewContent: string;
@@ -38,6 +42,7 @@ const MyRegisteredReviews = () => {
 
       const mapped = list.map((item) => ({
         id: item.reviewId,
+        photoId: item.photoId || item.imageId || "",
         imageUrl: item.imageUrl || null,
         eventTitle: item.eventTitle,
         reviewContent: item.reviewContent,

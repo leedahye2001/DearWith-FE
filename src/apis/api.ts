@@ -1,4 +1,3 @@
-import { ReviewDetail } from "@/app/(events)/event-detail/components/EventReviewWrite";
 import api, { refreshApi } from "./instance";
 import { isNativeApp, nativeLogout } from "@/lib/native/bridge";
 import type { PatchEventData } from "@/app/(events)/event-register/page";

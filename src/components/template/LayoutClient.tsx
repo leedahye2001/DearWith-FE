@@ -39,7 +39,7 @@ export default function LayoutClient({ children }: Props) {
       }
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
+    const handleTouchMove = () => {
       // 스와이프 중에는 기본 동작 허용 (스크롤 등)
     };
 
