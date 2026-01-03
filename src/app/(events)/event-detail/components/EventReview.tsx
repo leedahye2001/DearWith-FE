@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import HeartDefault from "@/svgs/HeartDefault.svg";
 import HeartFill from "@/svgs/HeartFill.svg";
 import Etc from "@/svgs/Etc.svg";
@@ -56,10 +56,14 @@ interface EventReviewProps {
 
 const EventReview = ({ eventId }: EventReviewProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const highlightReviewId = searchParams?.get("highlight");
 
   const [posts, setPosts] = useState<PostResponse | null>(null);
   const [photoReviews, setPhotoReviews] = useState<PostImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const reviewRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [reportReviewId, setReportReviewId] = useState<string | null>(null);
@@ -83,6 +87,35 @@ const EventReview = ({ eventId }: EventReviewProps) => {
 
     fetchEvent();
   }, [eventId]);
+
+  // 하이라이트 및 스크롤 처리
+  useEffect(() => {
+    if (!highlightReviewId || !posts || posts.content.length === 0 || isLoading) return;
+
+    const targetElement = reviewRefs.current[highlightReviewId];
+
+    if (targetElement) {
+      // 약간의 딜레이 후 스크롤 (렌더링 완료 대기)
+      setTimeout(() => {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+
+        // 하이라이트 애니메이션 시작
+        setHighlightedId(highlightReviewId);
+
+        // 2초 후 하이라이트 제거
+        setTimeout(() => {
+          setHighlightedId(null);
+          // URL에서 highlight 파라미터 제거
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.delete("highlight");
+          window.history.replaceState({}, "", newUrl.toString());
+        }, 2000);
+      }, 100);
+    }
+  }, [highlightReviewId, posts, isLoading]);
 
   const handleLikeToggle = async (reviewId: string) => {
     if (!posts) return;
@@ -179,11 +212,23 @@ const EventReview = ({ eventId }: EventReviewProps) => {
 
       {/* 리뷰 게시글 */}
       {posts?.content?.length ? (
-        posts.content.map((post) => (
-          <div
-            key={post.id}
-            className="mx-[24px] border-b-[0.8px] border-divider-1"
-          >
+        posts.content.map((post) => {
+          const isHighlighted = highlightedId === post.id;
+          return (
+            <div
+              key={post.id}
+              ref={(el) => {
+                reviewRefs.current[post.id] = el;
+              }}
+              className={`mx-[24px] border-b-[0.8px] border-divider-1 transition-all duration-700 ease-out ${
+                isHighlighted
+                  ? "bg-primary/10 ring-4 ring-primary rounded-[8px] p-[8px] -m-[8px]"
+                  : ""
+              }`}
+              style={{
+                animation: isHighlighted ? "dropHighlight 0.6s ease-out" : "none",
+              }}
+            >
             <div className="flex justify-between w-full items-center my-[20px]">
               {/* 프로필 */}
               <div className="flex w-full">
@@ -320,7 +365,8 @@ const EventReview = ({ eventId }: EventReviewProps) => {
               </button>
             </div>
           </div>
-        ))
+          );
+        })
       ) : (
         <div className="flex flex-col justify-center items-center p-[24px] gap-[16px] h-[500px]">
           <h3 className="text-[18px] font-[700] text-text-5">

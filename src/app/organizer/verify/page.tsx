@@ -20,7 +20,7 @@ function VerifyContent() {
       setAuthData({ result, ticket, handle });
       if (result === "success") {
         setVerified(true); // 인증 성공 상태
-        router.push(`https://dearwith.kr/event-register`);
+        router.push(`/event-register`);
       }
     }
   }, [result, ticket, handle, setAuthData, setVerified, router]);

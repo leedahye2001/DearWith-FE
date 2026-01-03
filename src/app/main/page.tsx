@@ -156,7 +156,7 @@ export default function Home() {
                 className="flex justify-start items-start border border-divider-1 rounded-[4px] p-[12px] min-w-[260px] gap-[10px] cursor-pointer"
                 onClick={() =>
                   router.push(
-                    `/review-detail/${review.reviewId}/${review.images[0].id}`
+                    `/event-detail/${review.eventId}/review?highlight=${review.reviewId}`
                   )
                 }
               >

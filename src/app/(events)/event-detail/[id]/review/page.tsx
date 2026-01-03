@@ -5,7 +5,7 @@ import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import EventReview from "../../components/EventReview";
 import { getEventDetail } from "@/apis/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Spinner from "@/components/Spinner/Spinner";
 
 export default function EventReviewPage() {
@@ -69,7 +69,13 @@ export default function EventReviewPage() {
         </button>
       </div>
 
-      <EventReview eventId={id || ""} />
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-[400px]">
+          <Spinner />
+        </div>
+      }>
+        <EventReview eventId={id || ""} />
+      </Suspense>
     </div>
   );
 }
