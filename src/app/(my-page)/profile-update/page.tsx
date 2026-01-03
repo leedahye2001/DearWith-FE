@@ -195,21 +195,21 @@ const Page = () => {
             _onChange={handleNicknameChange}
           />
         </div>
-      </div>
+        </div>
 
       <div className="flex-1" />
 
-      {/* 변경하기 */}
-      <Bottombar
-        _bottomNode={
-          <Button
-            _state="main"
-            _node="변경하기"
+        {/* 변경하기 */}
+        <Bottombar
+          _bottomNode={
+            <Button
+              _state="main"
+              _node="변경하기"
             _buttonProps={{ disabled: !canSubmit || isSubmitting, className: "w-full" }}
-            _onClick={handleSubmit}
-          />
-        }
-      />
+              _onClick={handleSubmit}
+            />
+          }
+        />
 
       {/* 탈퇴하기 */}
       <div className="px-[24px] pb-[100px]">

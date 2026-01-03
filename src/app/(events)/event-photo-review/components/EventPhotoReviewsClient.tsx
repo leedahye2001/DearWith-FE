@@ -119,30 +119,30 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
 
   return (
     <div className="bg-bg-1 min-h-screen">
-        <Topbar
-          _leftImage={
-            <button onClick={() => router.back()}>
-              <Backward />
-            </button>
-          }
-          _topNode="포토리뷰 전체보기"
-        />
+      <Topbar
+        _leftImage={
+          <button onClick={() => router.back()}>
+            <Backward />
+          </button>
+        }
+        _topNode="포토리뷰 전체보기"
+      />
 
-        <div className="grid grid-cols-3 gap-[8px] p-[8px]">
-          {photos.length === 0 ? (
-            <div className="col-span-3 flex justify-center items-center h-[300px]">
-              <p className="text-text-3">포토리뷰가 없습니다.</p>
-            </div>
-          ) : (
-            photos.map((photo) => {
-              const variant = photo.image.variants[0];
-              if (!variant) return null;
+      <div className="grid grid-cols-3 gap-[8px] p-[8px]">
+        {photos.length === 0 ? (
+          <div className="col-span-3 flex justify-center items-center h-[300px]">
+            <p className="text-text-3">포토리뷰가 없습니다.</p>
+          </div>
+        ) : (
+          photos.map((photo) => {
+            const variant = photo.image.variants[0];
+            if (!variant) return null;
 
               const isHighlighted = highlightedId === photo.image.id;
 
-              return (
-                <div
-                  key={photo.image.id}
+            return (
+              <div
+                key={photo.image.id}
                   ref={(el) => {
                     photoRefs.current[photo.image.id] = el;
                   }}
@@ -154,23 +154,23 @@ export default function EventPhotoReviewsClient({ id }: { id: string }) {
                   style={{
                     animation: isHighlighted ? "dropHighlightScale 0.6s ease-out" : "none",
                   }}
-                  onClick={() =>
-                    router.push(
-                      `/review-detail/${photo.reviewId}/${photo.image.id}`
-                    )
-                  }
-                >
-                  <Image
-                    src={variant.url}
-                    alt={variant.name}
-                    fill
-                    sizes="(max-width: 768px) 33vw, 25vw"
+                onClick={() =>
+                  router.push(
+                    `/review-detail/${photo.reviewId}/${photo.image.id}`
+                  )
+                }
+              >
+                <Image
+                  src={variant.url}
+                  alt={variant.name}
+                  fill
+                  sizes="(max-width: 768px) 33vw, 25vw"
                     className="object-cover rounded-[4px]"
-                  />
-                </div>
-              );
-            })
-          )}
+                />
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

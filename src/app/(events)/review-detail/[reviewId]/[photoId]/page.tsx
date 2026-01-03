@@ -170,24 +170,24 @@ const ReviewDetail = () => {
         </div>
 
         <div className="relative">
-          <button
+        <button
             onClick={(e) => {
               e.stopPropagation();
               setOpenMenuId(openMenuId === post.id ? null : post.id);
             }}
             className="cursor-pointer z-10"
-          >
-            <Etc />
-          </button>
+        >
+          <Etc />
+        </button>
           {openMenuId === post.id && (
             <div
-              className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[70px] border border-divider-1"
+              className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[90px] border border-divider-1"
               onClick={(e) => e.stopPropagation()}
             >
               {post.editable ? (
                 <>
                   <button
-                    className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
+                    className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
                     onClick={() => {
                       router.push(`/review-detail/${reviewId}/${photoId}/write`);
                       setOpenMenuId(null);
@@ -196,7 +196,7 @@ const ReviewDetail = () => {
                     수정하기
                   </button>
                   <button
-                    className="w-full text-left px-[8px] py-[4px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]"
+                    className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]"
                     onClick={() => {
                       // TODO: 삭제 기능 구현
                       setOpenMenuId(null);
@@ -207,7 +207,7 @@ const ReviewDetail = () => {
                 </>
               ) : (
                 <button
-                  className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400]"
+                  className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400]"
                   onClick={() => {
                     setReportReviewId(post.id);
                     setOpenMenuId(null);

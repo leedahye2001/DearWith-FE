@@ -273,13 +273,13 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                 <Etc />
                 {openMenuId === post.id && (
                   <div
-                   className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[70px] border border-divider-1"
+                   className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[90px] border border-divider-1"
                    onClick={(e) => e.stopPropagation()}
                   >
                     {post.editable ? (
                       <>
                         <button
-                          className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
+                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
                           onClick={() => {
                             router.push(`/event-detail/${eventId}/review/write?edit=${post.id}`);
                             setOpenMenuId(null);
@@ -288,13 +288,13 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                           수정하기
                         </button>
                         <button
-                        className="w-full text-left px-[8px] py-[4px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]">
+                        className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]">
                           삭제하기
                         </button>
                       </>
                     ) : (
                       <button
-                          className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400]"
+                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400]"
                         onClick={() => {
                           setReportReviewId(post.id);
                           setOpenMenuId(null);

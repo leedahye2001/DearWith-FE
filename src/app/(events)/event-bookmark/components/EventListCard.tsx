@@ -103,12 +103,12 @@ export default function EventListCard({
 
           return artistNamesKr?.length > 0 ? (
             <p className={`flex rounded-[4px] ${badgeColor} text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]`}>
-              {artistNamesKr.join(", ")}
-            </p>
-          ) : groupNamesKr?.length > 0 ? (
+            {artistNamesKr.join(", ")}
+          </p>
+        ) : groupNamesKr?.length > 0 ? (
             <p className={`flex rounded-[4px] ${badgeColor} text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]`}>
-              {groupNamesKr.join(", ")}
-            </p>
+            {groupNamesKr.join(", ")}
+          </p>
           ) : null;
         })()}
       </div>
