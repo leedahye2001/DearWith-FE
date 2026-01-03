@@ -25,6 +25,7 @@ import {
 import NoticeList from "../components/NoticeList";
 import Spinner from "@/components/Spinner/Spinner";
 import useModalStore from "@/app/stores/useModalStore";
+import { WEB_BASE_URL } from "@/app/routePath";
 
 export interface EventDetail {
   id: string;
@@ -208,6 +209,52 @@ export default function EventDetailPage() {
     );
   };
 
+  const handleShare = () => {
+    setIsMenuOpen(false);
+    const shareUrl = `https://${WEB_BASE_URL}/event-detail/${id}`;
+    const shareText = event?.title || "디어위드 이벤트";
+    const payload = { text: shareText, url: shareUrl };
+
+    // 1) iOS WebView
+    if (typeof window !== "undefined" && window.webkit?.messageHandlers?.share) {
+      window.webkit.messageHandlers.share.postMessage(payload);
+      return;
+    }
+
+    // 2) Android WebView
+    if (typeof window !== "undefined" && window.Android?.share) {
+      window.Android.share(JSON.stringify(payload));
+      return;
+    }
+
+    // 3) 일반 웹 브라우저 - Web Share API
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({
+        title: shareText,
+        text: shareText,
+        url: shareUrl,
+      }).catch((err) => {
+        // 사용자가 공유를 취소한 경우 (AbortError)는 에러로 처리하지 않음
+        if (err.name !== "AbortError") {
+          console.error("공유 실패:", err);
+        }
+      });
+      return;
+    }
+
+    // 4) 폴백: 클립보드에 복사
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        openAlert("링크가 클립보드에 복사되었습니다.");
+      }).catch((err) => {
+        console.error("클립보드 복사 실패:", err);
+        openAlert("공유 기능을 사용할 수 없습니다.");
+      });
+    } else {
+      openAlert("공유 기능을 사용할 수 없습니다.");
+    }
+  };
+
   if (isLoading) return <Spinner />;
 
   if (!event)
@@ -328,7 +375,7 @@ export default function EventDetailPage() {
                   : null}
               </div>
               <div className="flex items-center gap-[8px]">
-                <button>
+                <button onClick={handleShare}>
                   <Share />
                 </button>
                 <button onClick={toggleBookmark}>
@@ -350,6 +397,12 @@ export default function EventDetailPage() {
                         className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[70px] border border-divider-1"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        <button
+                          className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
+                          onClick={handleShare}
+                        >
+                          공유하기
+                        </button>
                         <button
                           className="w-full text-left px-[8px] py-[4px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
                           onClick={handleEdit}
