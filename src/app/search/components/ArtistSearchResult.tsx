@@ -50,7 +50,9 @@ const ArtistSearchResult = ({ artist }: { artist: Artist }) => {
         <div className="flex flex-col">
           <p className="text-[14px] font-[600] text-text-5">{artist.nameKr}</p>
           <p className="text-[12px] font-[400] text-text-4">
-            {artist.birthDate?.replace(/-/g, ".")}
+            {artist.type === "GROUP" 
+              ? artist.debutDate?.replace(/-/g, ".")
+              : artist.birthDate?.replace(/-/g, ".")}
           </p>
         </div>
       </div>

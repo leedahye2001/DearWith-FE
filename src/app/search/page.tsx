@@ -21,7 +21,8 @@ export interface Artist {
   id: number;
   nameKr: string;
   nameEn: string;
-  birthDate: string;
+  birthDate?: string;
+  debutDate?: string;
   imageUrl: string;
   type: string;
 }
