@@ -101,7 +101,6 @@ const Page = () => {
             <p className="text-[16px] font-[700] text-text-5">
               {profile?.nickname} 님
             </p>
-            <p className="text-[12px] text-text-2">@{profile?.nickname}</p>
           </div>
         </div>
       </div>
@@ -224,21 +223,21 @@ function Section({
   );
 }
 
-function MenuItem({ text, path, rightNode, hasData }: MenuItemProps) {
-  const { openAlert } = useModalStore();
+function MenuItem({ text, path, rightNode }: MenuItemProps) {
+  // const { openAlert } = useModalStore();
   const router = useRouter();
 
   const handleClick = () => {
-    if (hasData === false) {
-      if (text.includes("이벤트")) {
-        openAlert("등록한 이벤트가 없습니다.");
-      } else if (text.includes("아티스트")) {
-        openAlert("등록한 아티스트가 없습니다.");
-      } else if (text.includes("리뷰")) {
-        openAlert("작성한 리뷰가 없습니다.");
-      }
-      return;
-    }
+    // if (hasData === false) {
+    //   if (text.includes("이벤트")) {
+    //     openAlert("등록한 이벤트가 없습니다.");
+    //   } else if (text.includes("아티스트")) {
+    //     openAlert("등록한 아티스트가 없습니다.");
+    //   } else if (text.includes("리뷰")) {
+    //     openAlert("작성한 리뷰가 없습니다.");
+    //   }
+    //   return;
+    // }
 
     if (path) {
       router.push(path);

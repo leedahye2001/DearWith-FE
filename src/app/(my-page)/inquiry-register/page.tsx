@@ -62,6 +62,7 @@ const InquiryRegisterPage = () => {
           _title="제목"
           _inputProps={{
             placeholder: "제목을 입력해주세요.",
+            className: "placeholder:text-text-3 text-[14px]",
           }}
         />
 

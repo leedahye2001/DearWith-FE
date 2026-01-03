@@ -11,9 +11,6 @@ import Add from "@/svgs/Add.svg";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import useModalStore from "../stores/useModalStore";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import CalendarInput from "@/components/Input/CalendarInput";
 
 const Page = () => {
   const router = useRouter();
@@ -26,14 +23,44 @@ const Page = () => {
 
   const [artistName, setArtistName] = useState("");
   const [groupName, setGroupName] = useState("");
-  const [birthDate, setBirthDate] = useState<Date | null>(null);
-  const [debut, setDebut] = useState<Date | null>(null);
+  const [birthDate, setBirthDate] = useState(""); // yyyy-mm-dd 형식
+  const [debut, setDebut] = useState(""); // yyyy-mm-dd 형식
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 날짜 포맷팅 함수 (숫자만 허용, 자동 하이픈 추가)
+  const formatDateInput = (value: string): string => {
+    // 숫자만 추출
+    const numbers = value.replace(/\D/g, "");
+    
+    // 최대 8자리까지만 허용 (yyyyMMdd)
+    const limitedNumbers = numbers.slice(0, 8);
+    
+    // 길이에 따라 하이픈 추가
+    if (limitedNumbers.length <= 4) {
+      return limitedNumbers;
+    } else if (limitedNumbers.length <= 6) {
+      return `${limitedNumbers.slice(0, 4)}-${limitedNumbers.slice(4)}`;
+    } else {
+      return `${limitedNumbers.slice(0, 4)}-${limitedNumbers.slice(4, 6)}-${limitedNumbers.slice(6)}`;
+    }
+  };
+
+  // 생일 입력 핸들러
+  const handleBirthDateChange = (value: string) => {
+    const formatted = formatDateInput(value);
+    setBirthDate(formatted);
+  };
+
+  // 데뷔일 입력 핸들러
+  const handleDebutChange = (value: string) => {
+    const formatted = formatDateInput(value);
+    setDebut(formatted);
+  };
 
   // 이미지 업로드
   const handleImageClick = () => fileInputRef.current?.click();
@@ -92,29 +119,23 @@ const Page = () => {
       // 이미지 업로드 (tmpKey 반환)
       const tmpKey = await uploadImage(imageFile);
 
-      // 날짜 포맷팅 (YYYY-MM-DD)
-      const formatDate = (date: Date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-      };
-
-      const body =
-        registerType === "artist"
-          ? {
-              nameKr: artistName,
-              tmpKey,
-              birthDate: birthDate ? formatDate(birthDate) : undefined,
-            }
-          : {
-              nameKr: groupName,
-              tmpKey,
-              debutDate: debut,
-            };
-
-      await api.post("/api/artists", body);
-      openAlert("아티스트 등록이 완료되었습니다.");
+      if (registerType === "artist") {
+        const body = {
+          nameKr: artistName,
+          tmpKey,
+          birthDate: birthDate || undefined,
+        };
+        await api.post("/api/artists", body);
+        openAlert("아티스트 등록이 완료되었습니다.");
+      } else {
+        const body = {
+          nameKr: groupName,
+          tmpKey,
+          debutDate: debut || undefined,
+        };
+        await api.post("/api/groups", body);
+        openAlert("그룹 등록이 완료되었습니다.");
+      }
       router.back();
     } catch (error) {
       console.error(error);
@@ -216,23 +237,23 @@ const Page = () => {
                   _title="아티스트 명 *"
                   _inputProps={{
                     placeholder: "아티스트 명을 입력해주세요.",
+                    className: "placeholder:text-text-3 text-[14px]",
                   }}
                 />
               </div>
 
               <div className="mt-4 w-full">
-                <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
-                  생일 *
-                </h1>
-                <div className="w-full">
-                  <DatePicker
-                    selected={birthDate}
-                    onChange={(date) => setBirthDate(date)}
-                    dateFormat="yyyy-MM-dd"
-                    customInput={<CalendarInput placeholder="0000-00-00" />}
-                    wrapperClassName="w-full"
-                  />
-                </div>
+                <Input
+                  _value={birthDate}
+                  _state="textbox-basic"
+                  _onChange={handleBirthDateChange}
+                  _title="생일 *"
+                  _inputProps={{
+                    placeholder: "yyyy-mm-dd",
+                    className: "placeholder:text-text-3 text-[14px]",
+                    maxLength: 10,
+                  }}
+                />
               </div>
             </>
           ) : (
@@ -245,19 +266,21 @@ const Page = () => {
                   _title="그룹 명 *"
                   _inputProps={{
                     placeholder: "그룹 명을 입력해주세요.",
+                    className: "placeholder:text-text-3 text-[14px]",
                   }}
                 />
               </div>
               <div className="mt-4 w-full">
-                <h1 className="text-text-5 text-[14px] font-[600] mb-[6px]">
-                  데뷔일 *
-                </h1>
-                <DatePicker
-                  selected={debut}
-                  onChange={(debut) => setDebut(debut)}
-                  dateFormat="yyyy-MM-dd"
-                  customInput={<CalendarInput placeholder="0000-00-00" />}
-                  wrapperClassName="w-full"
+                <Input
+                  _value={debut}
+                  _state="textbox-basic"
+                  _onChange={handleDebutChange}
+                  _title="데뷔일 *"
+                  _inputProps={{
+                    placeholder: "yyyy-mm-dd",
+                    className: "placeholder:text-text-3 text-[14px]",
+                    maxLength: 10,
+                  }}
                 />
               </div>
             </>

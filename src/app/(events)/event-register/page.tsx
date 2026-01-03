@@ -319,7 +319,7 @@ const EventRegisterContent = () => {
   }, [editEventId, openAlert, setAuthData, setVerified]);
 
   const handleXLogin = () => {
-    router.push(`http://${BASE_URL}/oauth2/x/authorize`);
+    router.push(`https://${BASE_URL}/oauth2/x/authorize`);
   };
 
   // 파일 선택 버튼 클릭 시 input 트리거
@@ -633,45 +633,45 @@ const EventRegisterContent = () => {
             />
           </div>
 
-          <div className="mt-4 w-full">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-              주최자 X 계정
-              {isOrganizer === true && (
-                <span className="text-text-5 ml-[4px]">*</span>
-              )}
-            </p>
-            <div className="flex gap-[8px] w-full">
-              <Input
-                _value={handle || ""}
-                _state="textbox-basic"
-                _containerProps={{ className: "flex-1 min-w-0" }}
-                _wrapperProps={{ className: "w-full" }}
-                _leftNode={<span className="text-text-3 text-[14px] font-[400]">@</span>}
-                _bottomNode={
-                  isVerified
-                    ? ""
-                    : isOrganizer === true
-                    ? "주최자는 X 계정 인증이 필수입니다."
-                    : "X 계정을 인증해주세요."
-                }
-              />
+            {isOrganizer === true && (
+              <div className="mt-4 w-full">
+                <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                  주최자 X 계정
+                  <span className="text-text-5 ml-[4px]">*</span>
+                </p>
+                <div className="flex gap-[8px] w-full">
+                  <Input
+                    _value={handle || ""}
+                    _state="textbox-basic"
+                    _containerProps={{ className: "flex-1 min-w-0" }}
+                    _wrapperProps={{ className: "w-full" }}
+                    _leftNode={<span className="text-text-3 text-[14px] font-[400]">@</span>}
+                    _bottomNode={
+                      isVerified
+                        ? ""
+                        : "주최자는 X 계정 인증이 필수입니다."
+                    }
+                  />
 
-              <Button
-                _state="main"
-                _node={isVerified ? "인증완료" : "인증하기"}
-                _onClick={handleXLogin}
-                _buttonProps={{
-                  className: `p-[10px] w-[88px] ${
-                    isVerified
-                      ? "bg-bg-2 text-text-4"
-                      : "bg-[#FD725C] text-white"
-                  } hover:cursor-pointer`,
-                  disabled: isSubmitting,
-                }}
-              />
-            </div>
+                  <Button
+                    _state="main"
+                    _node={isVerified ? "인증완료" : "인증하기"}
+                    _onClick={handleXLogin}
+                    _buttonProps={{
+                      className: `p-[10px] w-[88px] ${
+                        isVerified
+                          ? "bg-bg-2 text-text-4"
+                          : "bg-[#FD725C] text-white"
+                      } hover:cursor-pointer`,
+                      disabled: isSubmitting,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
             {isOrganizer === false && (
-              <div className="mt-[12px] w-full">
+              <div className="mt-4 w-full">
                 <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
                   X 링크 <span className="text-text-3 text-[12px] font-[400]">(선택)</span>
                 </p>
@@ -683,6 +683,7 @@ const EventRegisterContent = () => {
                   _wrapperProps={{ className: "w-full" }}
                   _inputProps={{
                     placeholder: "X 계정 링크를 입력해주세요.",
+                    className: "placeholder:text-text-3 text-[14px]",
                   }}
                   _bottomNode={
                     xLink && !isValidXLink
@@ -693,7 +694,6 @@ const EventRegisterContent = () => {
                 />
               </div>
             )}
-          </div>
         </div>
 
         <div className="flex flex-col justity-center items-start mb-[24px]">
@@ -776,6 +776,7 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 10,
+                  className: "placeholder:text-text-3 text-[14px]",
                 }}
                 _onChange={handleDateInput(setStartDate)}
               />
@@ -790,6 +791,7 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 10,
+                  className: "placeholder:text-text-3 text-[14px]",
                 }}
                 _onChange={handleDateInput(setEndDate)}
               />
@@ -811,6 +813,7 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 5,
+                  className: "placeholder:text-text-3 text-[14px]",
                 }}
                 _onChange={handleTimeInput(setOpenTime)}
               />
@@ -825,6 +828,7 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 5,
+                  className: "placeholder:text-text-3 text-[14px]",
                 }}
                 _onChange={handleTimeInput(setCloseTime)}
               />
@@ -984,7 +988,7 @@ const EventRegisterContent = () => {
                     _wrapperProps={{ className: "w-full" }}
                     _inputProps={{
                       placeholder: `${title}을 입력해주세요. (최대 10개)`,
-                      className: "placeholder:text-text-3",
+                      className: "placeholder:text-text-3 text-[14px]",
                       onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) =>
                         handleKeyDown(e, value, setValue, tags, setTags),
                     }}
