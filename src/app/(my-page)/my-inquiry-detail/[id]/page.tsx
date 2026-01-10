@@ -5,9 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
 import Spinner from "@/components/Spinner/Spinner";
-import Button from "@/components/Button/Button";
-import useModalStore from "@/app/stores/useModalStore";
-import { answerSatisfaction, getMyInquiryDetail } from "@/apis/api";
+// import Button from "@/components/Button/Button";
+// import useModalStore from "@/app/stores/useModalStore";
+import { getMyInquiryDetail } from "@/apis/api";
+// import { AxiosError } from "axios";
 
 interface InquiryDetail {
   id: string;
@@ -27,12 +28,12 @@ const InquiryDetailPage = () => {
   const params = useParams<{ id: string }>();
   const inquiryId = params?.id ?? "";
 
-  const { openAlert, openConfirm } = useModalStore();
+  // const { openAlert, openConfirm } = useModalStore();
 
   const [notice, setNotice] = useState<InquiryDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [satisfaction, setSatisfaction] = useState<"good" | "bad">("good");
+  // const [satisfaction, setSatisfaction] = useState<"good" | "bad">("good");
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -43,15 +44,15 @@ const InquiryDetailPage = () => {
     return `${yy}.${mm}.${dd}`;
   };
 
-  useEffect(() => {
-    if (notice?.satisfactionStatus) {
-      if (notice.satisfactionStatus === "SATISFIED") {
-        setSatisfaction("good");
-      } else if (notice.satisfactionStatus === "UNSATISFIED") {
-        setSatisfaction("bad");
-      }
-    }
-  }, [notice]);
+  // useEffect(() => {
+  //   if (notice?.satisfactionStatus) {
+  //     if (notice.satisfactionStatus === "SATISFIED") {
+  //       setSatisfaction("good");
+  //     } else if (notice.satisfactionStatus === "UNSATISFIED") {
+  //       setSatisfaction("bad");
+  //     }
+  //   }
+  // }, [notice]);
 
   useEffect(() => {
     const fetchInquiry = async () => {
@@ -69,19 +70,21 @@ const InquiryDetailPage = () => {
   }, [inquiryId]);
 
   // 만족도 API 처리
-  const handleSatisfaction = (type: "good" | "bad") => {
-    const apiType = type === "good" ? "SATISFIED" : "UNSATISFIED";
+  // const handleSatisfaction = (type: "good" | "bad") => {
+  //   const apiType = type === "good" ? "SATISFIED" : "UNSATISFIED";
 
-    openConfirm("의견을 제출하시겠습니까?", async () => {
-      try {
-        await answerSatisfaction(inquiryId, apiType);
-        setSatisfaction(type);
-      } catch (e) {
-        console.error(e);
-        openAlert("오류가 발생했습니다.");
-      }
-    });
-  };
+  //   openConfirm("의견을 제출하시겠습니까?", async () => {
+  //     try {
+  //       await answerSatisfaction(inquiryId, apiType);
+  //       setSatisfaction(type);
+  //     } catch (error) {
+  //       console.error(error);
+  //       const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+  //       const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "비밀번호 변경에 실패했습니다. 다시 시도해주세요.";
+  //       openAlert(errorMessage);
+  //     }
+  //   });
+  // };
 
   if (loading)
     return (
@@ -133,13 +136,12 @@ const InquiryDetailPage = () => {
                   {notice.answer.content}
                 </div>
               </div>
-              <div className="flex flex-col justify-center items-center gap-[16px]">
+              {/* <div className="flex flex-col justify-center items-center gap-[16px]">
                 <h2 className="text-[14px] text-text-5 font-[700]">
                   답변에 만족하셨나요?
                 </h2>
 
                 <div className="flex gap-[8px]">
-                  {/* 아쉬워요 */}
                   <Button
                     _state="main"
                     _node="아쉬워요"
@@ -153,7 +155,6 @@ const InquiryDetailPage = () => {
                     }}
                   />
 
-                  {/* 만족해요 */}
                   <Button
                     _state="main"
                     _node="만족해요"
@@ -167,7 +168,7 @@ const InquiryDetailPage = () => {
                     }}
                   />
                 </div>
-              </div>
+              </div> */}
             </>
           )}
         </div>

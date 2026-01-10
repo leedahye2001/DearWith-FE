@@ -11,6 +11,7 @@ import Add from "@/svgs/Add.svg";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import useModalStore from "../stores/useModalStore";
+import { AxiosError } from "axios";
 
 const Page = () => {
   const router = useRouter();
@@ -139,7 +140,9 @@ const Page = () => {
       router.back();
     } catch (error) {
       console.error(error);
-      openAlert("오류가 발생했습니다.");
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "비밀번호 변경에 실패했습니다. 다시 시도해주세요.";
+      openAlert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

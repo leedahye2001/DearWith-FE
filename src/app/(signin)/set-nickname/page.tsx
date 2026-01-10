@@ -9,9 +9,12 @@ import Bottombar from "@/components/template/Bottombar";
 import { getNicknameCheck, updateNickname } from "@/apis/api";
 import useUserStore from "@/app/stores/userStore";
 import Popup from "@/components/Popup/Popup";
+import useModalStore from "@/app/stores/useModalStore";
+import { AxiosError } from "axios";
 
 const Page = () => {
   const router = useRouter();
+  const { openAlert } = useModalStore();
   const [inputNickname, setInputNickname] = useState<string>("");
   const [showPopup, setShowPopup] = useState(false);
 
@@ -32,7 +35,7 @@ const Page = () => {
       // 닉네임 중복 확인
       const checkData = await getNicknameCheck(inputNickname);
       if (checkData.isAvailable === false) {
-        alert("이미 사용 중인 닉네임입니다.");
+        openAlert("이미 사용 중인 닉네임입니다.");
         return;
       }
 
@@ -48,7 +51,10 @@ const Page = () => {
 
       setShowPopup(true);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "";
+      openAlert(errorMessage);
     }
   };
 

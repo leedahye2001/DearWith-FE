@@ -13,6 +13,7 @@ import TagCancel from "@/svgs/TagCancel.svg";
 import Close from "@/svgs/Close.svg";
 import Checker from "@/svgs/Checker.svg";
 import Bottombar from "@/components/template/Bottombar";
+import { AxiosError } from "axios";
 
 interface ReviewImage {
   id?: number;
@@ -212,9 +213,11 @@ export default function EventReviewWrite({
       }
 
       onClose?.();
-    } catch (err) {
-      console.error(err);
-      alert("오류가 발생했습니다.");
+    } catch (error) {
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "비밀번호 변경에 실패했습니다. 다시 시도해주세요.";
+      openAlert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

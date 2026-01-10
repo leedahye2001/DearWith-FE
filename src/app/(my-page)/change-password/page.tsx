@@ -5,15 +5,16 @@ import Input from "@/components/Input/Input";
 import Button from "@/components/Button/Button";
 import { useRouter } from "next/navigation";
 import Bottombar from "@/components/template/Bottombar";
-import { getPasswordConfirm } from "@/apis/api";
+import { getPasswordConfirm, postLogout } from "@/apis/api";
 import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
 import WriteTitle from "@/app/(events)/event-detail/components/WriteTitle";
 import ViewDefault from "@/svgs/ViewDefault.svg";
 import ViewOn from "@/svgs/ViewOn.svg";
 import useModalStore from "@/app/stores/useModalStore";
-import useUserStore from "@/app/stores/userStore";
+import useUserStore, { useAuthStore } from "@/app/stores/userStore";
 import ProgressBar from "@/components/Progressbar/Progressbar";
+import { AxiosError } from "axios";
 
 const Page = () => {
   const router = useRouter();
@@ -61,14 +62,27 @@ const Page = () => {
     try {
       await getPasswordConfirm(newPassword);
 
+      // 로그아웃 처리 (서버 쿠키 삭제)
+      try {
+        await postLogout();
+      } catch (logoutError) {
+        console.error("로그아웃 에러:", logoutError);
+        // 로그아웃 실패해도 계속 진행 (클라이언트 쿠키 삭제는 계속 진행)
+      }
+
+      // 클라이언트 저장소 정리
       localStorage.clear();
       useUserStore.getState().clearUser();
+      useAuthStore.getState().clearTokens(); // 쿠키에 저장된 토큰 삭제
 
       openAlert("비밀번호가 변경되었어요. 다시 로그인 해주세요.");
+      router.replace("/login");
 
-      router.push("/login");
-    } catch {
-      setConfirmPasswordError("비밀번호를 다시 입력해주세요.");
+    } catch (error){
+      console.error("비밀번호 변경 에러:", error);
+      const axiosError = error as AxiosError<{ code?: string; message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "비밀번호 변경에 실패했습니다. 다시 시도해주세요.";
+      setConfirmPasswordError(errorMessage);
     }
   };
 
@@ -100,6 +114,9 @@ const Page = () => {
           _onChange={handleNewPasswordChange}
           _inputProps={{
             type: showPassword ? "text" : "password",
+            placeholder: "비밀번호를 입력해주세요.",
+            className: "placeholder:text-text-3 text-[14px] text-text-5",
+         
           }}
           _rightNode={
             <button type="button" onClick={togglePassword}>
@@ -117,6 +134,9 @@ const Page = () => {
           _onChange={handleConfirmPasswordChange}
           _inputProps={{
             type: showPassword ? "text" : "password",
+            placeholder: "비밀번호를 입력해주세요.",
+            className: "placeholder:text-text-3 text-[14px] text-text-5",
+         
           }}
           _rightNode={
             <button type="button" onClick={togglePassword}>

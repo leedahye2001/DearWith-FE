@@ -13,6 +13,7 @@ import Topbar from "@/components/template/Topbar";
 import ProgressBar from "@/components/Progressbar/Progressbar";
 import useModalStore from "@/app/stores/useModalStore";
 import useUserStore from "@/app/stores/userStore";
+import { AxiosError } from "axios";
 
 const SOCIAL_SIGNUP_KEY = "dearwith:socialSignUp";
 
@@ -122,8 +123,10 @@ const Page = () => {
       setCurrentStep((prev) => Math.min(prev + 1, 6));
       router.push("/signup-complete");
     } catch (error) {
-      console.error("소셜 회원가입 에러:", error);
-      openAlert("회원가입 요청에 실패했습니다. 다시 시도해주세요.");
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "";
+      openAlert(errorMessage);
     }
   };
 

@@ -10,6 +10,7 @@ import {
   postGroupLike,
 } from "@/apis/api";
 import ArtistListCard from "../components/ArtistListCard";
+import { AxiosError } from "axios";
 
 export interface ArtistBookmarkProps {
   id: string;
@@ -44,7 +45,10 @@ export default function ArtistBookmarkPage() {
         setLikedArtistsIds((prev) => [...prev, id]);
       }
     } catch (error) {
-      console.error("찜 API 실패:", error);
+      console.error(error);
+      // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail ;
+      // openAlert(errorMessage);
     }
   };
 
@@ -55,7 +59,10 @@ export default function ArtistBookmarkPage() {
       setLikedArtistsIds(res.filter((e) => e.bookmarked).map((e) => e.id));
       return res;
     } catch (error) {
-      console.error("북마크 아티스트 조회 실패:", error);
+      console.error(error);
+      // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail;
+      // openAlert(errorMessage);
     }
   }, []);
 

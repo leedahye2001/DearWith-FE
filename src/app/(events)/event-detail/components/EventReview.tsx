@@ -78,8 +78,11 @@ const EventReview = ({ eventId }: EventReviewProps) => {
 
         const photoData = await getEventPhotoReviews(eventId);
         setPhotoReviews(photoData.images || []);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
+        // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+        // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail;
+        // openAlert(errorMessage);
       } finally {
         setIsLoading(false);
       }

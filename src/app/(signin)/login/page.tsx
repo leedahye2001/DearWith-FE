@@ -205,6 +205,10 @@ const Page = () => {
           _bottomNode={emailErrorMessage}
           _onChange={handleEmailChange}
           _containerProps={{ className: "pb-[20px]" }}
+          _inputProps={{
+            placeholder: "이메일을 입력해주세요.",
+            className: "placeholder:text-text-3",
+          }}
         />
         <Input
           _value={password}
@@ -213,6 +217,8 @@ const Page = () => {
           _onChange={handlePasswordChange}
           _inputProps={{
             type: showPassword ? "text" : "password",
+            placeholder: "비밀번호를 입력해주세요.",
+            className: "placeholder:text-text-3",
           }}
           _rightNode={
             <button type="button" onClick={togglePassword}>

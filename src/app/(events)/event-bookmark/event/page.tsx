@@ -43,7 +43,10 @@ export default function EventBookmarkPage() {
         setLikedEventsIds((prev) => [...prev, id]);
       }
     } catch (error) {
-      console.error("이벤트 찜 API 실패:", error);
+      console.error(error);
+      // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail;
+      // openAlert(errorMessage);
     }
   };
 

@@ -26,6 +26,7 @@ import NoticeList from "../components/NoticeList";
 import Spinner from "@/components/Spinner/Spinner";
 import useModalStore from "@/app/stores/useModalStore";
 import { WEB_BASE_URL } from "@/app/routePath";
+import { AxiosError } from "axios";
 
 export interface EventDetail {
   id: string;
@@ -124,8 +125,11 @@ export default function EventDetailPage() {
       } else {
         await deleteEventLike(id); // 서버에서 북마크 삭제
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail;
+      // openAlert(errorMessage);
       setIsBookmarked((prev) => !prev); // 실패하면 롤백
     }
   };
@@ -138,8 +142,11 @@ export default function EventDetailPage() {
         // const noticeData = await getEventNoticeList(id);
         setEvent(data);
         // setNotice(noticeData);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
+        // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+        // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail;
+        // openAlert(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -193,9 +200,11 @@ export default function EventDetailPage() {
       openAlert("이벤트가 삭제되었습니다.", () => {
         router.push("/main");
       });
-    } catch (err) {
-      console.error(err);
-      openAlert("이벤트 삭제에 실패했습니다.");
+    } catch (error) {
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "이벤트가 삭제에 실패했습니다. 다시 시도해주세요.";
+      openAlert(errorMessage);
     }
   };
 

@@ -11,9 +11,12 @@ import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
 import Bottombar from "@/components/template/Bottombar";
 import ProgressBar from "@/components/Progressbar/Progressbar";
+import useModalStore from "@/app/stores/useModalStore";
+import { AxiosError } from "axios";
 
 const Page = () => {
   const router = useRouter();
+  const { openAlert } = useModalStore();
   const totalSteps = 6;
   const [currentStep, setCurrentStep] = useState(2);
 
@@ -38,7 +41,10 @@ const Page = () => {
       router.push("/mail-verify");
       setCurrentStep((prev) => Math.min(prev + 1, 6));
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "";
+      openAlert(errorMessage);
     }
   };
 

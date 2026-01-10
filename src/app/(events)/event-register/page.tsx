@@ -307,9 +307,11 @@ const EventRegisterContent = () => {
             setVerified(true);
           }
         }
-      } catch (err) {
-        console.error("이벤트 데이터 로드 실패:", err);
-        openAlert("이벤트 데이터를 불러오는데 실패했습니다.");
+      } catch (error) {
+        console.error(error);
+        const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+        const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "이벤트 정보 수정에 실패했습니다. 다시 시도해주세요.";
+        openAlert(errorMessage);
       } finally {
         setIsLoadingEvent(false);
       }

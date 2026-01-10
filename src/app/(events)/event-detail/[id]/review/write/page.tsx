@@ -50,19 +50,27 @@ export default function ReviewWritePage() {
             (r: ReviewItem) => String(r.id) === String(editReviewId)
           );
           console.log("found review:", review);
-          if (review) {
-            setReviewData({
-              id: String(review.id),
-              content: review.content || "",
-              tags: review.tags || [],
-              images: review.images?.map((img: ReviewImage, idx: number) => ({
-                id: img.id,
-                url: img.variants?.[2]?.url || img.variants?.[1]?.url || img.variants?.[0]?.url,
-                displayOrder: idx,
-              })) || [],
-            });
-          } else {
-            console.error("리뷰를 찾을 수 없습니다. editReviewId:", editReviewId);
+          
+          try{
+            if (review) {
+              setReviewData({
+                id: String(review.id),
+                content: review.content || "",
+                tags: review.tags || [],
+                images: review.images?.map((img: ReviewImage, idx: number) => ({
+                  id: img.id,
+                  url: img.variants?.[2]?.url || img.variants?.[1]?.url || img.variants?.[0]?.url,
+                  displayOrder: idx,
+                })) || [],
+              });
+            } else {
+              console.error("리뷰를 찾을 수 없습니다. editReviewId:", editReviewId);
+            }
+          } catch (error){
+            console.error(error);
+            // const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+            // const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail;
+            // openAlert(errorMessage);
           }
         }
       } catch (err) {

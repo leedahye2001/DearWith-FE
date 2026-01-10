@@ -11,9 +11,12 @@ import Backward from "@/svgs/Backward.svg";
 import Input from "@/components/Input/Input";
 import Countdown from "@/utils/Countdown";
 import ProgressBar from "@/components/Progressbar/Progressbar";
+import useModalStore from "@/app/stores/useModalStore";
+import { AxiosError } from "axios";
 
 const Page = () => {
   const router = useRouter();
+  const { openAlert } = useModalStore();
 
   const totalSteps = 6;
   const [currentStep, setCurrentStep] = useState(3);
@@ -55,8 +58,10 @@ const Page = () => {
       // alert("인증 메일이 재전송되었습니다.");
       setResendKey((prev) => prev + 1);
     } catch (error) {
-      console.error("재전송 에러:", error);
-      alert("이메일 재전송에 실패했습니다. 다시 시도해주세요.");
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "";
+      openAlert(errorMessage);
     }
   }, [inputEmail]);
 
