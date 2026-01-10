@@ -63,7 +63,7 @@ const Page = () => {
       const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "";
       openAlert(errorMessage);
     }
-  }, [inputEmail]);
+  }, [inputEmail, openAlert]);
 
   const rightNode = useMemo(
     () => (

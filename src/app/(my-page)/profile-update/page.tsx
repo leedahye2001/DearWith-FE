@@ -21,6 +21,7 @@ import WithdrawModal from "@/components/Modal/WithdrawModal/WithdrawModal";
 import api from "@/apis/instance";
 import Add from "@/svgs/Add.svg";
 import { AxiosError } from "axios";
+import Spinner from "@/components/Spinner/Spinner";
 
 const Page = () => {
   const router = useRouter();
@@ -259,6 +260,8 @@ const Page = () => {
           onSuccess={handleWithdrawComplete}
         />
       )}
+
+      {isSubmitting && <Spinner />}
     </div>
   );
 };

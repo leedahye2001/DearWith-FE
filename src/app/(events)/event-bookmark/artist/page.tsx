@@ -10,7 +10,6 @@ import {
   postGroupLike,
 } from "@/apis/api";
 import ArtistListCard from "../components/ArtistListCard";
-import { AxiosError } from "axios";
 
 export interface ArtistBookmarkProps {
   id: string;
