@@ -38,7 +38,7 @@ export default function Navbar() {
           className={pathname === "/main" ? "text-primary" : "text-icon-2"}
         />
         <span
-          className={`text-[12px] mt-[4px] ${
+          className={`typo-caption3 mt-[4px] ${
             pathname === "/main" ? "text-primary" : "text-icon-2"
           }`}
         >
@@ -55,7 +55,7 @@ export default function Navbar() {
           className={pathname === "/search" ? "text-primary" : "text-icon-2"}
         />
         <span
-          className={`text-[12px] mt-[4px] ${
+          className={`typo-caption3 mt-[4px] ${
             pathname === "/search" ? "text-primary" : "text-icon-2"
           }`}
         >
@@ -74,7 +74,7 @@ export default function Navbar() {
           }
         />
         <span
-          className={`text-[12px] mt-[4px] ${
+          className={`typo-caption3 mt-[4px] ${
             pathname?.startsWith("/event-bookmark") ? "text-primary" : "text-icon-2"
           }`}
         >
@@ -91,7 +91,7 @@ export default function Navbar() {
           className={pathname === "/my-page" ? "text-primary" : "text-icon-2"}
         />
         <span
-          className={`text-[12px] mt-[4px] ${
+          className={`typo-caption3 mt-[4px] ${
             pathname === "/my-page" ? "text-primary" : "text-icon-2"
           }`}
         >

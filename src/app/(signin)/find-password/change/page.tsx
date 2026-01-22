@@ -101,7 +101,7 @@ const ChangePasswordContent = () => {
       />
 
       <div className="px-[24px] pt-[30px]">
-        <h1 className="font-[700] text-text-5 text-[20px] mb-[20px]">
+        <h1 className="typo-title2 text-text-5 mb-[20px]">
           새로운 비밀번호를 등록해주세요
         </h1>
 
@@ -113,7 +113,7 @@ const ChangePasswordContent = () => {
           _inputProps={{
             type: showPassword ? "text" : "password",
             placeholder: "비밀번호를 입력해주세요.",
-            className: "placeholder:text-text-3 text-[14px] text-text-5",
+            className: "placeholder:text-text-3 typo-body2 text-text-5",
           }}
           _rightNode={
             <button type="button" onClick={togglePassword}>
@@ -132,7 +132,7 @@ const ChangePasswordContent = () => {
           _inputProps={{
             type: showPassword ? "text" : "password",
             placeholder: "비밀번호를 입력해주세요.",
-            className: "placeholder:text-text-3 text-[14px] text-text-5",
+            className: "placeholder:text-text-3 typo-body2 text-text-5",
           }}
           _rightNode={
             <button type="button" onClick={togglePassword}>
@@ -148,12 +148,11 @@ const ChangePasswordContent = () => {
           <Button
             _state="main"
             _node="비밀번호 변경하기"
-            _buttonProps={{ 
-              className: `hover:cursor-pointer ${
-                !newPassword || !confirmPassword || passwordError || confirmPasswordError
+            _buttonProps={{
+              className: `hover:cursor-pointer ${!newPassword || !confirmPassword || passwordError || confirmPasswordError
                   ? "opacity-50 cursor-not-allowed"
                   : ""
-              }`,
+                }`,
               disabled: !newPassword || !confirmPassword || !!passwordError || !!confirmPasswordError,
             }}
             _onClick={handleChangePassword}

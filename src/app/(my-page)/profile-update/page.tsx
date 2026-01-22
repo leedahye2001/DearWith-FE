@@ -199,26 +199,26 @@ const Page = () => {
             _onChange={handleNicknameChange}
           />
         </div>
-        </div>
+      </div>
 
       <div className="flex-1" />
 
-        {/* 변경하기 */}
-        <Bottombar
-          _bottomNode={
-            <Button
-              _state="main"
-              _node="변경하기"
+      {/* 변경하기 */}
+      <Bottombar
+        _bottomNode={
+          <Button
+            _state="main"
+            _node="변경하기"
             _buttonProps={{ disabled: !canSubmit || isSubmitting, className: "w-full" }}
-              _onClick={handleSubmit}
-            />
-          }
-        />
+            _onClick={handleSubmit}
+          />
+        }
+      />
 
       {/* 탈퇴하기 */}
       <div className="px-[24px] pb-[100px]">
         <p
-          className="text-text-2 underline text-[14px] cursor-pointer text-center"
+          className="text-text-2 underline typo-body2 cursor-pointer text-center"
           onClick={handleWithdraw}
         >
           탈퇴하기
@@ -227,7 +227,7 @@ const Page = () => {
 
       {showSheet && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-end z-[9999]">
-          <div className="bg-white w-full rounded-t-[12px] p-[20px] flex flex-col text-center text-[16px] font-[500]">
+          <div className="bg-white w-full rounded-t-[12px] p-[20px] flex flex-col text-center typo-label1">
             <button
               className="flex justify-start py-[16px]"
               onClick={handleOpenAlbum}

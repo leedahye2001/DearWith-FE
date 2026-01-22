@@ -189,7 +189,7 @@ const Page = () => {
 
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center items-center px-[24px] min-h-screen">
-      <h1 className="w-full text-left font-[700] text-text-5 text-[20px] pb-[40px]">
+      <h1 className="w-full text-left typo-title2 text-text-5 pb-[40px]">
         반가워요👋
         <br />
         디어위드와 함께
@@ -232,7 +232,7 @@ const Page = () => {
 
       <Button _state="main" _node="로그인" _buttonProps={{ className: "hover:cursor-pointer mb-[12px]" }} _onClick={fetchSignInData} />
 
-      <div className="flex text-[12px] font-[400] gap-[16px]">
+      <div className="flex typo-caption3 gap-[16px]">
         <p onClick={() => router.push("/find-password")} className="hover:cursor-pointer">비밀번호 찾기</p>
         <p>|</p>
         <p onClick={handleSignup} className="hover:cursor-pointer">회원가입</p>
@@ -240,7 +240,7 @@ const Page = () => {
 
       <div className="flex items-center pt-[40px] pb-[12px] w-full">
         <div className="flex-grow h-[1px] bg-divider-1" />
-        <p className="text-[12px] font-[600] px-[10px] whitespace-nowrap">또는</p>
+        <p className="typo-label3 px-[10px] whitespace-nowrap">또는</p>
         <div className="flex-grow h-[1px] bg-divider-1" />
       </div>
 
@@ -249,7 +249,7 @@ const Page = () => {
         _node={
           <div className="flex justify-between items-center p-[10px]">
             <KakaoLogo />
-            <span className="text-[#191919] text-[14px] font-[600]">
+            <span className="text-[#191919] typo-label2">
               카카오로 시작하기
             </span>
             <div className="w-[18px]" />
@@ -267,7 +267,7 @@ const Page = () => {
           _node={
             <div className="flex justify-between items-center p-[10px]">
               <KakaoLogo />
-              <span className="text-white text-[14px] font-[600]">
+              <span className="text-white typo-label2">
                 Apple로 시작하기
               </span>
               <div className="w-[18px]" />

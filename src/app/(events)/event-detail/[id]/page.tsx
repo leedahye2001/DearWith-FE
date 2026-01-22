@@ -97,7 +97,7 @@ export default function EventDetailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromMain = searchParams?.get("from") === "main";
-  
+
   const handleBackRouter = () => {
     if (fromMain) {
       router.push("/main");
@@ -303,248 +303,246 @@ export default function EventDetailPage() {
       <div className="flex justify-around border-b border-divider-1 mt-[4px]">
         <button
           onClick={() => router.push(`/event-detail/${event.id}`)}
-          className={`w-1/2 py-[12px] text-[14px] font-[600] ${
-            "text-primary border-b-[2px] border-primary"
-          }`}
+          className={`w-1/2 py-[12px] typo-label1 ${"text-primary border-b-[2px] border-primary"
+            }`}
         >
           홈
         </button>
         <button
           onClick={() => router.push(`/event-detail/${event.id}/review`)}
-          className={`w-1/2 py-[12px] text-[14px] font-[600] ${
-            "text-text-3"
-          }`}
+          className={`w-1/2 py-[12px] typo-label1 ${"text-text-3"
+            }`}
         >
           리뷰
         </button>
       </div>
 
       {event.images?.length > 0 && (
-            <div className="relative w-full h-[536px]">
-              <div 
-                className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide"
-                style={{ touchAction: 'pan-x pan-y' }}
-              >
-                <div className="flex h-full">
-                  {event.images.map((img, idx) => {
-                    const url = img?.variants?.[0]?.url || null;
+        <div className="relative w-full h-[536px]">
+          <div
+            className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide"
+            style={{ touchAction: 'pan-x pan-y' }}
+          >
+            <div className="flex h-full">
+              {event.images.map((img, idx) => {
+                const url = img?.variants?.[0]?.url || null;
 
-                    return (
-                      <div key={idx} className="relative min-w-full h-full flex-shrink-0 snap-center">
-                        {url ? (
-                          <Image
-                            src={url}
-                            alt={`${event.title}-${idx}`}
-                            fill
-                            className="object-cover"
-                            style={{ touchAction: 'pan-x pan-y' }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                            <p className="text-text-3 text-[12px]">이미지 없음</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 인덱스 표시 UI - 고정 */}
-              <div className="absolute bottom-[12px] right-[12px] flex justify-center items-center px-[15px] py-[4px] rounded-[20px] bg-bg-1/80 text-text-5 text-[12px] font-[600] pointer-events-none z-10">
-                1
-                <p className="text-text-3 font-[400]">
-                  &nbsp;|&nbsp;{event.images.length}
-                </p>
-              </div>
-            </div>
-          )}
-
-          <div className="p-[12px]">
-            <div className="flex justify-between items-center pb-[8px] pt-[28px]">
-              <div className="flex gap-[4px]">
-                {event.artists?.length > 0
-                  ? event.artists.map((artist) => (
-                      <div
-                        key={artist.id}
-                        className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto text-[12px] font-[600] rounded-[4px]"
-                      >
-                        {artist.nameKr}
-                      </div>
-                    ))
-                  : event.artistGroups?.length > 0
-                  ? event.artistGroups.map((artistGroup) => (
-                      <div
-                        key={artistGroup.id}
-                        className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto text-[12px] font-[600] rounded-[4px]"
-                      >
-                        {artistGroup.nameKr}
-                      </div>
-                    ))
-                  : null}
-              </div>
-              <div className="flex items-center gap-[8px]">
-                <button onClick={handleShare}>
-                  <Share />
-                </button>
-                <button onClick={toggleBookmark}>
-                  {isBookmarked ? <HeartFill /> : <HeartDefault />}
-                </button>
-                {event.editable && (
-                  <div
-                    className="relative flex items-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsMenuOpen(!isMenuOpen);
-                    }}
-                  >
-                    <button>
-                      <Etc />
-                    </button>
-                    {isMenuOpen && (
-                      <div
-                        className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[90px] border border-divider-1"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
-                          onClick={handleEdit}
-                        >
-                          수정하기
-                        </button>
-                        <button
-                          className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]"
-                          onClick={handleDeleteClick}
-                        >
-                          삭제하기
-                        </button>
+                return (
+                  <div key={idx} className="relative min-w-full h-full flex-shrink-0 snap-center">
+                    {url ? (
+                      <Image
+                        src={url}
+                        alt={`${event.title}-${idx}`}
+                        fill
+                        className="object-cover"
+                        style={{ touchAction: 'pan-x pan-y' }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                        <p className="text-text-3 typo-caption3">이미지 없음</p>
                       </div>
                     )}
                   </div>
-                )}
-              </div>
+                );
+              })}
             </div>
-
-            <h1 className="font-[700] text-[24px] text-text-5 pb-[16px]">
-              {event.title}
-            </h1>
-
-            <div className="flex items-center justify-start mb-[4px]">
-              <Twitter />
-              <p className="font-[600] text-[14px] text-text-5 pl-[8px]">
-                주최
-              </p>
-              <p className="font-[400] text-[12px] text-text-4 underline pl-[16px] pr-[4px]">
-                @{event.organizer?.xHandle}
-              </p>
-              {event.organizer?.verified === true ? <XVerification /> : ""}
-            </div>
-
-            <div className="flex items-center justify-start mb-[4px]">
-              <Calendar />
-              <p className="font-[600] text-[14px] text-text-5 pl-[8px]">
-                기간
-              </p>
-              <p className="font-[400] text-[12px] text-text-4 pl-[16px]">
-                {formatDate(event.startDate)} - {formatDate(event.endDate)}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-start mb-[4px]">
-              <Clock />
-              <p className="font-[600] text-[14px] text-text-5 pl-[8px]">
-                시간
-              </p>
-              <p className="font-[400] text-[12px] text-text-4 pl-[16px]">
-                {event.openTime} - {event.closeTime}
-              </p>
-
-              {/* 운영 상태 태그 */}
-              <div className="ml-[8px] flex justify-center items-center">
-                {isOpenNow(event.openTime, event.closeTime) ? (
-                  <span className="px-[6px] py-[2px] text-[12px] rounded-md bg-beige-200 text-red-400 font-semibold">
-                    영업 중
-                  </span>
-                ) : (
-                  <span className="px-[6px] py-[2px] text-[12px] rounded-md text-text-3 font-semibold bg-bg-2">
-                    영업 종료
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-start mb-[36px]">
-              <Place />
-              <p className="font-[600] text-[14px] text-text-5 pl-[8px]">
-                장소
-              </p>
-              <p className="font-[400] text-[12px] text-text-4 pl-[16px]">
-                {event.place.name}
-              </p>
-            </div>
-
-            {/* 지도 */}
-            <div className="mb-[40px]">
-              <h3 className="font-[700] text-[16px] text-text-5 mb-[12px]">
-                위치
-              </h3>
-              <KakaoMap
-                address={event.place.roadAddress || event.place.jibunAddress || ""}
-                lat={event.place.lat}
-                lng={event.place.lon}
-              />
-            </div>
-
-            {/* 기본 특전 */}
-            {includedBenefits.length > 0 && (
-              <div className="mb-[40px]">
-                <h3 className="font-[700] text-[16px] text-text-5 mb-[12px]">
-                  기본 특전
-                </h3>
-                <div className="grid grid-cols-3 gap-[12px]">
-                  {includedBenefits.map((b, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col justify-center items-center min-h-[52px] border border-divider-1 rounded-[4px] p-[12px]"
-                    >
-                      <p className="text-[12px] font-[600] text-text-5">
-                        {b.name}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 선착 특전 */}
-            {limitedBenefits.length > 0 && (
-              <div className="mb-[40px]">
-                <h3 className="font-[700] text-[16px] text-text-5 mb-[12px]">
-                  선착 특전
-                </h3>
-                <div className="grid grid-cols-3 gap-[12px]">
-                  {limitedBenefits.map((b, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col justify-center items-center min-h-[52px] border border-divider-1 rounded-[4px] p-[12px]"
-                    >
-                      {b.dayIndex !== undefined && (
-                        <p className="text-[10px] font-[400] text-text-4 mb-[4px]">
-                          {b.dayIndex}일차
-                        </p>
-                      )}
-                      <p className="text-[12px] font-[600] text-text-5">
-                        {b.name}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 공지사항 */}
-            <NoticeList notices={event.notices} eventId={event.id} />
           </div>
+
+          {/* 인덱스 표시 UI - 고정 */}
+          <div className="absolute bottom-[12px] right-[12px] flex justify-center items-center px-[15px] py-[4px] rounded-[20px] bg-bg-1/80 text-text-5 typo-label3 pointer-events-none z-10">
+            1
+            <p className="text-text-3 font-[400]">
+              &nbsp;|&nbsp;{event.images.length}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="p-[12px]">
+        <div className="flex justify-between items-center pb-[8px] pt-[28px]">
+          <div className="flex gap-[4px]">
+            {event.artists?.length > 0
+              ? event.artists.map((artist) => (
+                <div
+                  key={artist.id}
+                  className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto typo-label3 rounded-[4px]"
+                >
+                  {artist.nameKr}
+                </div>
+              ))
+              : event.artistGroups?.length > 0
+                ? event.artistGroups.map((artistGroup) => (
+                  <div
+                    key={artistGroup.id}
+                    className="px-[6px] py-[2px] bg-[#F86852] text-text-1 w-auto typo-label3 rounded-[4px]"
+                  >
+                    {artistGroup.nameKr}
+                  </div>
+                ))
+                : null}
+          </div>
+          <div className="flex items-center gap-[8px]">
+            <button onClick={handleShare}>
+              <Share />
+            </button>
+            <button onClick={toggleBookmark}>
+              {isBookmarked ? <HeartFill /> : <HeartDefault />}
+            </button>
+            {event.editable && (
+              <div
+                className="relative flex items-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(!isMenuOpen);
+                }}
+              >
+                <button>
+                  <Etc />
+                </button>
+                {isMenuOpen && (
+                  <div
+                    className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[90px] border border-divider-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3 border-b border-divider-1"
+                      onClick={handleEdit}
+                    >
+                      수정하기
+                    </button>
+                    <button
+                      className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]"
+                      onClick={handleDeleteClick}
+                    >
+                      삭제하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <h1 className="typo-title1 text-text-5 pb-[px]">
+          {event.title}
+        </h1>
+
+        <div className="flex items-center justify-start mb-[8px]">
+          <Twitter />
+          <p className="typo-label2 text-text-5 pl-[8px]">
+            주최
+          </p>
+          <p className="typo-caption2 text-text-4 underline pl-[16px] pr-[4px]">
+            @{event.organizer?.xHandle}
+          </p>
+          {event.organizer?.verified === true ? <XVerification /> : ""}
+        </div>
+
+        <div className="flex items-center justify-start mb-[8px]">
+          <Calendar />
+          <p className="typo-label2 text-text-5 pl-[8px]">
+            기간
+          </p>
+          <p className="typo-caption2 text-text-4 pl-[16px]">
+            {formatDate(event.startDate)} - {formatDate(event.endDate)}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-start mb-[8px]">
+          <Clock />
+          <p className="typo-label2 text-text-5 pl-[8px]">
+            시간
+          </p>
+          <p className="typo-caption2 text-text-4 pl-[16px]">
+            {event.openTime} - {event.closeTime}
+          </p>
+
+          {/* 운영 상태 태그 */}
+          <div className="ml-[8px] flex justify-center items-center">
+            {isOpenNow(event.openTime, event.closeTime) ? (
+              <span className="px-[6px] py-[2px] typo-label3 rounded-md bg-beige-200 text-red-400">
+                영업 중
+              </span>
+            ) : (
+              <span className="px-[6px] py-[2px] typo-label3 rounded-md text-text-3 bg-bg-2">
+                영업 종료
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-start mb-[36px]">
+          <Place />
+          <p className="typo-label2 text-text-5 pl-[8px]">
+            장소
+          </p>
+          <p className="typo-caption3 text-text-4 pl-[16px]">
+            {event.place.name}
+          </p>
+        </div>
+
+        {/* 지도 */}
+        <div className="mb-[40px]">
+          <h3 className="typo-title3 text-text-5 mb-[12px]">
+            위치
+          </h3>
+          <KakaoMap
+            address={event.place.roadAddress || event.place.jibunAddress || ""}
+            lat={event.place.lat}
+            lng={event.place.lon}
+          />
+        </div>
+
+        {/* 기본 특전 */}
+        {includedBenefits.length > 0 && (
+          <div className="mb-[40px]">
+            <h3 className="font-[700] text-[16px] text-text-5 mb-[12px]">
+              기본 특전
+            </h3>
+            <div className="grid grid-cols-3 gap-[12px]">
+              {includedBenefits.map((b, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col justify-center items-center min-h-[52px] border border-divider-1 rounded-[4px] p-[12px]"
+                >
+                  <p className="text-[12px] font-[600] text-text-5">
+                    {b.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 선착 특전 */}
+        {limitedBenefits.length > 0 && (
+          <div className="mb-[40px]">
+            <h3 className="font-[700] text-[16px] text-text-5 mb-[12px]">
+              선착 특전
+            </h3>
+            <div className="grid grid-cols-3 gap-[12px]">
+              {limitedBenefits.map((b, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col justify-center items-center min-h-[52px] border border-divider-1 rounded-[4px] p-[12px]"
+                >
+                  {b.dayIndex !== undefined && (
+                    <p className="text-[10px] font-[400] text-text-4 mb-[4px]">
+                      {b.dayIndex}일차
+                    </p>
+                  )}
+                  <p className="text-[12px] font-[600] text-text-5">
+                    {b.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 공지사항 */}
+        <NoticeList notices={event.notices} eventId={event.id} />
+      </div>
     </div>
   );
 }

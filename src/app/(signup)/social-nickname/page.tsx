@@ -141,7 +141,7 @@ const Page = () => {
         _topNode=""
       />
       <div className="px-[24px] pt-[30px]">
-        <h1 className="font-[700] text-text-5 text-[20px] pb-[20px]">
+        <h1 className="typo-title2 text-text-5 pb-[20px]">
           디어위드에서 사용할 <br />
           닉네임을 입력해 주세요
         </h1>

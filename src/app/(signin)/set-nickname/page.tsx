@@ -61,10 +61,10 @@ const Page = () => {
   return (
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       <div className="px-[24px] pt-[58px]">
-        <h2 className="font-[700] text-text-5 text-[20px] pb-[4px]">
+        <h2 className="typo-title2 text-text-5 pb-[4px]">
           디어위드와 함께해요!
         </h2>
-        <p className="font-[400] text-text-4 text-[14px] pb-[52px]">
+        <p className="typo-body2 text-text-4 pb-[52px]">
           닉네임은 영문, 한글, 숫자만 입력할 수 있어요.
         </p>
         <Input

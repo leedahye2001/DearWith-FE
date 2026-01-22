@@ -83,19 +83,19 @@ const Page = () => {
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       <Topbar _leftImage={<button onClick={() => router.back()}><Backward /></button>} _topNode="" />
       <div className="px-[24px] pt-[30px]">
-        <h1 className="font-[700] text-text-5 text-[20px]">
+        <h1 className="typo-title2 text-text-5">
           이메일 인증을 완료해주세요
         </h1>
-        <p className="text-text-4 font-[400] text-[14px] pb-[20px]">
+        <p className="text-text-4 typo-body2 pb-[20px]">
           아래 이메일로 보내드린 인증 코드를 입력해 주세요.
         </p>
         <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
         {inputEmail ? (
-          <div className="flex justify-center items-center rounded-[4px] w-full min-h-[44px] bg-[#FFF3D7] text-[16px] font-[600] py-[12px]">
+          <div className="flex justify-center items-center rounded-[4px] w-full min-h-[44px] bg-[#FFF3D7] typo-label1 py-[12px]">
             {inputEmail}
           </div>
         ) : (
-          <div className="flex justify-center items-center rounded-[4px] w-full min-h-[44px] bg-[#FFF3D7] text-[16px] font-[600] py-[12px]">
+          <div className="flex justify-center items-center rounded-[4px] w-full min-h-[44px] bg-[#FFF3D7] typo-label1 py-[12px]">
             이메일을 다시 입력해주세요.
           </div>
         )}
@@ -111,7 +111,7 @@ const Page = () => {
         />
 
         <div className="h-[1px] wu-full bg-divider-1 mt-[16px] mb-[8px]" />
-        <p className="text-text-2 text-[12px] font-[500]">
+        <p className="text-text-2 typo-caption3">
           입력하신 이메일로 인증 코드를 받지 못하셨다면
           <br /> 인증 코드 재전송 요청을 하거나 스팸 메일을 확인해주세요.
         </p>

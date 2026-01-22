@@ -113,9 +113,9 @@ const InquiryDetailPage = () => {
 
       <div className="w-full bg-bg-1 min-h-screen px-[24px]">
         <div className="mt-[24px]">
-          <h1 className="text-[16px] font-[700] text-text-5">{notice.title}</h1>
+          <h1 className="typo-title3 text-text-5">{notice.title}</h1>
 
-          <div className="flex items-center gap-[4px] mt-[4px] text-[12px] text-text-4">
+          <div className="flex items-center gap-[4px] mt-[4px] typo-caption3 text-text-4">
             <span>{formatDate(notice.createdAt)}</span>
           </div>
 
@@ -126,8 +126,8 @@ const InquiryDetailPage = () => {
             <>
               <div className="flex flex-col gap-[16px] py-[32px] border-b border-divider-1 mb-[28px]">
                 <div className="flex justify-between items-center gap-[4px]">
-                  <p className="text-[14px] text-text-5 font-[500]">디어위드</p>
-                  <span className="text-[12px] text-text-3 font-[400]">
+                  <p className="typo-label2 text-text-5">디어위드</p>
+                  <span className="typo-caption3 text-text-3">
                     {formatDate(notice.answer.answeredAt)}
                   </span>
                 </div>
@@ -137,7 +137,7 @@ const InquiryDetailPage = () => {
                 </div>
               </div>
               {/* <div className="flex flex-col justify-center items-center gap-[16px]">
-                <h2 className="text-[14px] text-text-5 font-[700]">
+                <h2 className="typo-label2 text-text-5">
                   답변에 만족하셨나요?
                 </h2>
 
@@ -149,8 +149,8 @@ const InquiryDetailPage = () => {
                     _buttonProps={{
                       className: `hover:cursor-pointer w-[160px] ${
                         satisfaction === "bad"
-                          ? "bg-red-400 text-text-1 text-[14px] font-[500]"
-                          : "bg-bg-2 text-text-3 text-[14px] font-[500]"
+                          ? "bg-red-400 text-text-1 typo-label2"
+                          : "bg-bg-2 text-text-3 typo-label2"
                       }`,
                     }}
                   />
@@ -162,8 +162,8 @@ const InquiryDetailPage = () => {
                     _buttonProps={{
                       className: `hover:cursor-pointer w-[160px] ${
                         satisfaction === "good"
-                          ? "bg-red-400 text-text-1 text-[14px] font-[500]"
-                          : "bg-bg-2 text-text-3 text-[14px] font-[500]"
+                          ? "bg-red-400 text-text-1 typo-label2"
+                          : "bg-bg-2 text-text-3 typo-label2"
                       }`,
                     }}
                   />

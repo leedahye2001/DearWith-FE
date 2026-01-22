@@ -79,7 +79,7 @@ export default function EventListCard({
 
         {statusBadge && (
           <div className="absolute bottom-0 left-0 bg-black/40 px-[10px] py-[6px] z-30 flex items-center justify-center">
-            <span className="text-[10px] text-white font-[600]">
+            <span className="typo-label4 text-white">
               {statusBadge}
             </span>
           </div>
@@ -102,11 +102,11 @@ export default function EventListCard({
           else if (eventState === "ENDED") badgeColor = "bg-red-200"; // 진행 종료
 
           return artistNamesKr?.length > 0 ? (
-            <p className={`flex rounded-[4px] ${badgeColor} text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]`}>
+            <p className={`flex rounded-[4px] ${badgeColor} typo-label3 text-text-1 items-center justify-center px-[6px] py-[2px]`}>
             {artistNamesKr.join(", ")}
           </p>
         ) : groupNamesKr?.length > 0 ? (
-            <p className={`flex rounded-[4px] ${badgeColor} text-[12px] font-[600] text-text-1 items-center justify-center px-[6px] py-[2px]`}>
+            <p className={`flex rounded-[4px] ${badgeColor} typo-label3 text-text-1 items-center justify-center px-[6px] py-[2px]`}>
             {groupNamesKr.join(", ")}
           </p>
           ) : null;
@@ -119,7 +119,7 @@ export default function EventListCard({
         }`}
         onClick={handleCardClick}
       >
-        <p className={`text-[14px] font-[600] leading-[20px] ${
+        <p className={`typo-label2 ${
           eventState === "ENDED" ? "text-text-2" : 
           eventState === "SCHEDULED" ? "text-text-4" : 
           "text-text-5"

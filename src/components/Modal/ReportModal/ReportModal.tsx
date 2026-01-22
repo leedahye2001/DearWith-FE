@@ -69,7 +69,7 @@ export default function ReportModal({
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-[24px]">
       <div className="w-full max-w-[400px] bg-bg-1 rounded-[12px] flex flex-col p-[24px] shadow-lg max-h-[80vh] overflow-y-auto">
-        <h2 className="text-text-5 text-[18px] font-[700] mb-[24px] text-start">
+        <h2 className="text-text-5 typo-title3 mb-[24px] text-start">
           신고 사유를 선택해주세요.
         </h2>
 
@@ -89,7 +89,7 @@ export default function ReportModal({
                   onChange={() => setSelectedReason(reason.value)}
                   className="w-[20px] h-[20px] accent-primary cursor-pointer"
                 />
-                <span className="text-[14px] text-text-5">{reason.label}</span>
+                <span className="typo-label2 text-text-5">{reason.label}</span>
               </label>
             ))}
           </div>
@@ -101,7 +101,7 @@ export default function ReportModal({
                 value={content}
                 onChange={(e) => handleContentChange(e.target.value)}
                 placeholder="신고 내용을 입력해주세요."
-                className="w-full h-[174px] p-[10px] border border-divider-2 rounded-[4px] text-[14px] font-[400] text-text-3 outline-none resize-none"
+                className="w-full h-[174px] p-[10px] border border-divider-2 rounded-[4px] typo-body2 text-text-3 outline-none resize-none"
                 maxLength={maxLength}
               />
             </div>

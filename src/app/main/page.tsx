@@ -143,7 +143,7 @@ export default function Home() {
 
       {/* 리뷰 */}
       <div>
-        <h1 className="font-[700] text-text-5 text-[16px] pb-[12px] pl-[24px]">
+        <h1 className="typo-title3 text-text-5 pb-[12px] pl-[24px]">
           회원님들의
           <br />찐 리뷰
         </h1>
@@ -177,10 +177,10 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col">
-                  <p className="text-[14px] font-[500] text-text-5 ">
+                  <p className="typo-label2 text-text-5 ">
                     {review.title}
                   </p>
-                  <span className="text-[10px] text-text-4 block w-[200px] truncate">
+                  <span className="typo-caption4 text-text-4 block w-[200px] truncate">
                     {review.content}
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export default function Home() {
       </div>
 
       {/* HOT 아티스트 그룹 리스트 */}
-      <h1 className="font-[700] text-text-5 text-[16px] text-center">
+      <h1 className="typo-title3 text-text-5 text-center">
         디어위드에서
         <br />
         새로 보고 싶은 콘텐츠가 있다면?

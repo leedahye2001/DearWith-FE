@@ -74,13 +74,13 @@ export default function ArtistBookmarkPage() {
       {/* Category Tabs */}
       <div className="flex w-full mt-[12px] border-b border-divider-1">
         <button
-          className="flex-1 py-[8px] text-center font-[600] text-text-3"
+          className="flex-1 py-[8px] text-center typo-label2 text-text-3"
           onClick={() => router.push("/event-bookmark/event")}
         >
           이벤트
         </button>
         <button
-          className="flex-1 py-[8px] text-center font-[600] border-b-[2px] border-primary text-text-5"
+          className="flex-1 py-[8px] text-center typo-label2 border-b-[2px] border-primary text-text-5"
           onClick={() => router.push("/event-bookmark/artist")}
         >
           아티스트
@@ -88,7 +88,7 @@ export default function ArtistBookmarkPage() {
       </div>
 
       <div className="flex justify-between items-center my-[16px]">
-        <h1 className="text-[14px] font-[600] text-text-5">
+        <h1 className="typo-label2 text-text-5">
           찜한 아티스트
           <span className="text-text-3 ml-1">{artists.length}</span>
         </h1>
@@ -97,10 +97,10 @@ export default function ArtistBookmarkPage() {
       <div className="w-full pb-[20px] flex flex-col">
         {artists.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[calc(100vh-150px)]">
-            <p className="text-[16px] text-text-5 font-[600]">
+            <p className="typo-label1 text-text-5">
               아직 찜한 아티스트가 없어요.
             </p>
-            <p className="text-[12px] text-text-3">
+            <p className="typo-caption3 text-text-3">
               마음에 드는 항목을 찜해보세요!
             </p>
           </div>

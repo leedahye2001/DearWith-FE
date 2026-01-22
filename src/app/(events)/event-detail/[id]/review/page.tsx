@@ -56,17 +56,15 @@ export default function EventReviewPage() {
       <div className="flex justify-around border-b border-divider-1 mt-[4px]">
         <button
           onClick={() => router.push(`/event-detail/${id}`)}
-          className={`w-1/2 py-[12px] text-[14px] font-[600] ${
-            "text-text-3"
-          }`}
+          className={`w-1/2 py-[12px] typo-label1 ${"text-text-3"
+            }`}
         >
           홈
         </button>
         <button
           onClick={() => router.push(`/event-detail/${id}/review`)}
-          className={`w-1/2 py-[12px] text-[14px] font-[600] ${
-            "text-primary border-b-[2px] border-primary"
-          }`}
+          className={`w-1/2 py-[12px] typo-label1 ${"text-primary border-b-[2px] border-primary"
+            }`}
         >
           리뷰
         </button>

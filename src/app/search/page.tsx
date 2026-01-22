@@ -137,10 +137,10 @@ const Page = () => {
       {recentSearches.length > 0 && (
         <div className="flex flex-col gap-[16px] mt-[12px] px-[24px] w-full">
           <div className="flex justify-between">
-            <h3 className="font-[700] text-[16px] text-text-5">최근 검색어</h3>
+            <h3 className="typo-title3 text-text-5">최근 검색어</h3>
             <button
               onClick={handleDeleteRecentAll}
-              className="text-[12px] font-[500] text-text-3 hover:cursor-pointer"
+              className="typo-caption3 text-text-3 hover:cursor-pointer"
             >
               모두 지우기
             </button>
@@ -151,7 +151,7 @@ const Page = () => {
               {recentSearches.map((query) => (
                 <div
                   key={query}
-                  className="flex items-center text-text-5 rounded-[4px] px-[6px] py-1 text-[12px] gap-1 border-[1px] border-primary"
+                  className="flex items-center text-text-5 rounded-[4px] px-[6px] py-1 typo-caption3 gap-1 border-[1px] border-primary"
                 >
                   <span>{query}</span>
                   <button
@@ -169,7 +169,7 @@ const Page = () => {
 
       <div className="flex flex-col gap-[20px] overflow-y-auto w-full mb-[20px] mt-[12px]">
         {search && (
-          <h1 className="px-[24px] text-[16px] font-[700] text-text-5">
+          <h1 className="px-[24px] typo-title3 text-text-5">
             &apos;{search}&apos;에 대한 검색 결과
           </h1>
         )}
@@ -177,7 +177,7 @@ const Page = () => {
         {search ? (
           category === "ARTIST" ? (
             artists.length === 0 ? (
-              <p className="text-[12px] text-text-3 flex justify-center items-center h-[500px]">
+              <p className="typo-caption3 text-text-3 flex justify-center items-center h-[500px]">
                 검색 결과가 없습니다.
               </p>
             ) : (
@@ -188,7 +188,7 @@ const Page = () => {
                 ))
             )
           ) : events.length === 0 ? (
-            <p className="text-[12px] text-text-3 flex justify-center items-center h-[500px]">
+            <p className="typo-caption3 text-text-3 flex justify-center items-center h-[500px]">
               검색 결과가 없습니다.
             </p>
           ) : (
@@ -204,10 +204,10 @@ const Page = () => {
         ) : (
           <div className="flex flex-col gap-[20px] mt-[12px] px-[24px] w-full">
             <div className="flex justify-between">
-              <h3 className="font-[700] text-[16px] text-text-5">
+              <h3 className="typo-title3 text-text-5">
                 실시간 검색어
               </h3>
-              <p className="text-[12px] font-[500] text-text-3">{hourLabel}</p>
+              <p className="typo-caption3 text-text-3">{hourLabel}</p>
             </div>
             {hotArtists.map((artist, index) => (
               <RealTimeSearch

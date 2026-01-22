@@ -24,7 +24,7 @@ const inputWrapperClasses = {
 
 const inputClasses = {
   common:
-    "flex items-center justify-center text-[14px] font-[400] text-text-5 w-full outline-none h-[20px]",
+    "flex items-center justify-center typo-body2 text-text-5 w-full outline-none h-[20px]",
 };
 
 const Input = ({
@@ -52,7 +52,7 @@ const Input = ({
       {..._containerProps}
       className={twMerge("flex flex-col", _containerProps?.className)}
     >
-      {_title && <h1 className="text-[14px] font-[600] pb-[6px]">{_title}</h1>}
+      {_title && <h1 className="typo-label2 pb-[6px]">{_title}</h1>}
       <div
         {..._wrapperProps}
         className={twMerge(
@@ -81,7 +81,7 @@ const Input = ({
         {_rightNode && <div className="flex-shrink-0">{_rightNode}</div>}
       </div>
       {_bottomNode && (
-        <p className="flex items-center font-[400] text-[12px] text-error pt-[4px]">
+        <p className="flex items-center typo-caption3 text-error pt-[4px]">
           {_bottomNode}
         </p>
       )}

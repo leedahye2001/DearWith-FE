@@ -33,7 +33,7 @@ const RealTimeSearch = ({
     >
       <div className="flex items-center gap-[12px]">
         {showRank && (
-          <span className="w-[20px] text-[14px] font-[700] text-primary">
+          <span className="w-[20px] typo-label2 text-primary">
             {index + 1}
           </span>
         )}
@@ -53,8 +53,8 @@ const RealTimeSearch = ({
         </div>
 
         <div className="flex flex-col">
-          <p className="text-[14px] font-[600] text-text-5">{artist.nameKr}</p>
-          <p className="text-[12px] font-[400] text-text-4">
+          <p className="typo-label2 text-text-5">{artist.nameKr}</p>
+          <p className="typo-caption3 text-text-4">
             {artist.type === "GROUP" 
               ? artist.debutDate?.replace(/-/g, ".")
               : artist.birthDate?.replace(/-/g, ".")}

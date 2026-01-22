@@ -596,15 +596,15 @@ const EventRegisterContent = () => {
       <div className="px-[24px] pt-[36px] w-full max-w-full overflow-x-hidden">
         <div className="flex flex-col justity-center items-start mb-[24px]">
           <div className="flex justify-center items-center gap-[6px] mb-[20px]">
-            <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 font-[600] text-[12px]">
+            <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 typo-label3">
               1
             </div>
-            <h3 className="text-text-5 text-[16px] font-[700]">
+            <h3 className="text-text-5 typo-title3">
               주최자 정보를 입력해주세요
             </h3>
           </div>
           <div className="flex items-center gap-[2px] mb-[6px]">
-            <p className="text-text-5 text-[14px] font-[600]">주최자 여부</p>
+            <p className="text-text-5 typo-label2">주최자 여부</p>
             <Reference />
           </div>
 
@@ -615,8 +615,8 @@ const EventRegisterContent = () => {
               _onClick={() => setIsOrganizer(true)}
               _buttonProps={{
                 className: `hover:cursor-pointer w-full ${isOrganizer === true
-                    ? "bg-[#FD725C] text-white"
-                    : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
+                  ? "bg-[#FD725C] text-white"
+                  : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
                   }`,
               }}
             />
@@ -626,8 +626,8 @@ const EventRegisterContent = () => {
               _onClick={() => setIsOrganizer(false)}
               _buttonProps={{
                 className: `hover:cursor-pointer w-full ${isOrganizer === false
-                    ? "bg-[#FD725C] text-white"
-                    : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
+                  ? "bg-[#FD725C] text-white"
+                  : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
                   }`,
               }}
             />
@@ -635,7 +635,7 @@ const EventRegisterContent = () => {
 
           {isOrganizer === true && (
             <div className="mt-4 w-full">
-              <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+              <p className="text-text-5 typo-label2 mb-[6px]">
                 주최자 X 계정
                 <span className="text-text-5 ml-[4px]">*</span>
               </p>
@@ -645,7 +645,7 @@ const EventRegisterContent = () => {
                   _state="textbox-basic"
                   _containerProps={{ className: "flex-1 min-w-0" }}
                   _wrapperProps={{ className: "w-full" }}
-                  _leftNode={<span className="text-text-3 text-[14px] font-[400]">@</span>}
+                  _leftNode={<span className="text-text-3 typo-body2">@</span>}
                   _bottomNode={
                     isVerified
                       ? ""
@@ -659,8 +659,8 @@ const EventRegisterContent = () => {
                   _onClick={handleXLogin}
                   _buttonProps={{
                     className: `p-[10px] w-[88px] ${isVerified
-                        ? "bg-bg-2 text-text-4"
-                        : "bg-[#FD725C] text-white"
+                      ? "bg-bg-2 text-text-4"
+                      : "bg-[#FD725C] text-white"
                       } hover:cursor-pointer`,
                     disabled: isSubmitting,
                   }}
@@ -671,8 +671,8 @@ const EventRegisterContent = () => {
 
           {isOrganizer === false && (
             <div className="mt-[16px] w-full">
-              <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-                X 링크 <span className="text-text-3 text-[12px] font-[400]">(선택)</span>
+              <p className="text-text-5 typo-label2 mb-[6px]">
+                X 링크 <span className="text-text-3 typo-caption3">(선택)</span>
               </p>
               <Input
                 _value={xLink}
@@ -682,7 +682,7 @@ const EventRegisterContent = () => {
                 _wrapperProps={{ className: "w-full" }}
                 _inputProps={{
                   placeholder: "X 계정 링크를 입력해주세요.",
-                  className: "placeholder:text-text-3 text-[14px]",
+                  className: "placeholder:text-text-3 typo-body2",
                 }}
                 _bottomNode={
                   xLink && !isValidXLink
@@ -697,10 +697,10 @@ const EventRegisterContent = () => {
 
         <div className="flex flex-col justity-center items-start mb-[24px]">
           <div className="flex justify-center items-center gap-[6px] mt-[36px] mb-[20px]">
-            <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 font-[600] text-[12px]">
+            <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 typo-label3">
               2
             </div>
-            <h3 className="text-text-5 text-[16px] font-[700]">
+            <h3 className="text-text-5 typo-title3">
               이벤트 정보를 입력해주세요
             </h3>
           </div>
@@ -738,10 +738,10 @@ const EventRegisterContent = () => {
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <p className="text-[14px] font-[600] text-text-5">
+                        <p className="typo-label2 text-text-5">
                           {a.nameKr}
                         </p>
-                        <p className="text-[12px] font-[400] text-text-4">
+                        <p className="typo-caption3 text-text-4">
                           {a.groupName}
                         </p>
                       </div>
@@ -775,11 +775,11 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 10,
-                  className: "placeholder:text-text-3 text-[14px]",
+                  className: "placeholder:text-text-3 typo-body2",
                 }}
                 _onChange={handleDateInput(setStartDate)}
               />
-              <span className="text-text-5 text-[14px] font-[500]">-</span>
+              <span className="text-text-5 typo-label2">-</span>
               <Input
                 _value={endDate}
                 _state="textbox-basic"
@@ -790,7 +790,7 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 10,
-                  className: "placeholder:text-text-3 text-[14px]",
+                  className: "placeholder:text-text-3 typo-body2",
                 }}
                 _onChange={handleDateInput(setEndDate)}
               />
@@ -812,11 +812,11 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 5,
-                  className: "placeholder:text-text-3 text-[14px]",
+                  className: "placeholder:text-text-3 typo-body2",
                 }}
                 _onChange={handleTimeInput(setOpenTime)}
               />
-              <span className="text-text-5 text-[14px] font-[500]">-</span>
+              <span className="text-text-5 typo-label2">-</span>
               <Input
                 _value={closeTime}
                 _state="textbox-basic"
@@ -827,7 +827,7 @@ const EventRegisterContent = () => {
                   inputMode: "numeric",
                   pattern: "[0-9]*",
                   maxLength: 5,
-                  className: "placeholder:text-text-3 text-[14px]",
+                  className: "placeholder:text-text-3 typo-body2",
                 }}
                 _onChange={handleTimeInput(setCloseTime)}
               />
@@ -894,7 +894,7 @@ const EventRegisterContent = () => {
                   className="rounded-[4px] border-1 border-divider-1 flex flex-col justify-center items-center w-[60px] h-[60px] hover:cursor-pointer shrink-0"
                 >
                   <Gallery />
-                  <p className="text-[10px] font-[400] text-text-5">
+                  <p className="typo-caption4 text-text-5">
                     사진 ({imagePreviews.length}/5)
                   </p>
                 </div>
@@ -935,13 +935,13 @@ const EventRegisterContent = () => {
           </div>
 
           <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[48px]">
-            <p className="text-text-4 text-[12px] font-[400]">
+            <p className="text-text-4 typo-caption3">
               · jpg, jpeg, png 형식의 이미지만 업로드 가능합니다.
             </p>
-            <p className="text-text-4 text-[12px] font-[400]">
+            <p className="text-text-4 typo-caption3">
               · 첫 번째 이미지는 썸네일로 등록됩니다.
             </p>
-            <p className="text-text-4 text-[12px] font-[400]">
+            <p className="text-text-4 typo-caption3">
               · 권장 크기 : 가로 375px / 세로 536px
             </p>
           </div>
@@ -949,10 +949,10 @@ const EventRegisterContent = () => {
 
         <div className="flex flex-col justity-center items-start mb-[24px]">
           <div className="flex justify-center items-center gap-[6px] mt-[36px]">
-            <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 font-[600] text-[12px]">
+            <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 typo-label3">
               3
             </div>
-            <h3 className="text-text-5 text-[16px] font-[700]">
+            <h3 className="text-text-5 typo-title3">
               특전 및 상품 정보를 입력해주세요
             </h3>
           </div>
@@ -976,7 +976,7 @@ const EventRegisterContent = () => {
               },
             ].map(({ title, value, tags, setValue, setTags }) => (
               <div key={title} className="mt-4 w-full">
-                <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                <p className="text-text-5 typo-label2 mb-[6px]">
                   {title}
                 </p>
                 <div className="flex flex-col gap-2 w-full">
@@ -987,7 +987,7 @@ const EventRegisterContent = () => {
                     _wrapperProps={{ className: "w-full" }}
                     _inputProps={{
                       placeholder: `${title}을 입력해주세요. (최대 10개)`,
-                      className: "placeholder:text-text-3 text-[14px]",
+                      className: "placeholder:text-text-3 typo-body2",
                       onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) =>
                         handleKeyDown(e, value, setValue, tags, setTags),
                     }}
@@ -996,7 +996,7 @@ const EventRegisterContent = () => {
                     {tags.map((tag, idx) => (
                       <div
                         key={`${title}-${tag}-${idx}`}
-                        className="bg-white w-full h-[44px] text-text-5 text-[14px] font-[400] rounded-[4px] border-[1px] border-divider-1 flex justify-between items-center p-[10px]"
+                        className="bg-white w-full h-[44px] text-text-5 typo-body2 rounded-[4px] border-[1px] border-divider-1 flex justify-between items-center p-[10px]"
                       >
                         <span className="truncate">{tag}</span>
                         <button onClick={() => handleRemoveTag(idx, tags, setTags)}>
@@ -1022,10 +1022,10 @@ const EventRegisterContent = () => {
 
         <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[48px] mt-[120px]">
           <div className="flex w-full justify-start items-center gap-[6px] pb-[4px]">
-            <div className="flex justify-center items-center rounded-xl w-[14px] h-[14px] bg-primary text-secondary-300 font-[600] text-[12px]">
+            <div className="flex justify-center items-center rounded-xl w-[14px] h-[14px] bg-primary text-secondary-300 typo-label3">
               !
             </div>
-            <p className="flex justify-center items-center text-text-5 text-[14px] font-[600]">
+            <p className="flex justify-center items-center text-text-5 typo-label2">
               이벤트 등록 시 유의 사항
             </p>
           </div>
@@ -1035,7 +1035,7 @@ const EventRegisterContent = () => {
           <p className="text-text-4 text-[12px] font-[400]">
             {`· 이벤트 예약 확인은 [마이>이벤트 관리] 에서 확인하실 수 있습니다.`}
           </p>
-          <p className="text-primary text-[12px] font-[400]">
+          <p className="text-primary typo-caption3">
             · 이벤트 등록 및 진행에 관하여 발생된 모든 문제는 디어위드에서
             책임지지 않습니다.
           </p>

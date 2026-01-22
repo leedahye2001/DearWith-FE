@@ -97,13 +97,13 @@ export default function EventBookmarkPage() {
       {/* Category Tabs */}
       <div className="flex w-full mt-[12px] border-b border-divider-1">
         <button
-          className="flex-1 py-[8px] text-center font-[600] border-b-[2px] border-primary text-text-5"
+          className="flex-1 py-[8px] text-center typo-label2 border-b-[2px] border-primary text-text-5"
           onClick={() => router.push("/event-bookmark/event")}
         >
           이벤트
         </button>
         <button
-          className="flex-1 py-[8px] text-center font-[600] text-text-3"
+          className="flex-1 py-[8px] text-center typo-label2 text-text-3"
           onClick={() => router.push("/event-bookmark/artist")}
         >
           아티스트
@@ -111,7 +111,7 @@ export default function EventBookmarkPage() {
       </div>
 
       <div className="flex justify-between items-center my-[16px]">
-        <h1 className="text-[14px] font-[600] text-text-5">
+        <h1 className="typo-label2 text-text-5">
           찜한 이벤트
           <span className="text-text-3 ml-1">{events.length}</span>
         </h1>
@@ -120,7 +120,7 @@ export default function EventBookmarkPage() {
           <select
             value={filterState}
             onChange={(e) => setFilterState(e.target.value as EventState)}
-            className="appearance-none border border-primary text-primary text-[12px] font-[600] rounded-[4px] bg-white h-[24px] px-[10px] pr-[28px]"
+            className="appearance-none border border-primary text-primary typo-label3 rounded-[4px] bg-white h-[24px] px-[10px] pr-[28px]"
           >
             <option value="SCHEDULED">진행 예정</option>
             <option value="IN_PROGRESS">진행 중</option>
@@ -133,10 +133,10 @@ export default function EventBookmarkPage() {
       <div className="w-full pb-[20px] grid grid-cols-2 gap-[16px]">
         {events.length === 0 ? (
           <div className="col-span-2 flex flex-col items-center justify-center min-h-[calc(100vh-150px)]">
-            <p className="text-[16px] text-text-5 font-[600]">
+            <p className="typo-label1 text-text-5">
               아직 찜한 이벤트가 없어요.
             </p>
-            <p className="text-[12px] text-text-3">
+            <p className="typo-caption3 text-text-3">
               마음에 드는 항목을 찜해보세요!
             </p>
           </div>

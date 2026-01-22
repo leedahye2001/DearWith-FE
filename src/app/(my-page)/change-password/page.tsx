@@ -115,7 +115,7 @@ const Page = () => {
           _inputProps={{
             type: showPassword ? "text" : "password",
             placeholder: "비밀번호를 입력해주세요.",
-            className: "placeholder:text-text-3 text-[14px] text-text-5",
+            className: "placeholder:text-text-3 typo-body2 text-text-5",
          
           }}
           _rightNode={
@@ -135,7 +135,7 @@ const Page = () => {
           _inputProps={{
             type: showPassword ? "text" : "password",
             placeholder: "비밀번호를 입력해주세요.",
-            className: "placeholder:text-text-3 text-[14px] text-text-5",
+            className: "placeholder:text-text-3 typo-body2 text-text-5",
          
           }}
           _rightNode={

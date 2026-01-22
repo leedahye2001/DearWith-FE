@@ -62,12 +62,12 @@ const InquiryRegisterPage = () => {
           _title="제목"
           _inputProps={{
             placeholder: "제목을 입력해주세요.",
-            className: "placeholder:text-text-3 text-[14px]",
+            className: "placeholder:text-text-3 typo-body2",
           }}
         />
 
         {/* 내용 */}
-        <label className="text-[14px] font-[600] mt-[16px] mb-[8px]">
+        <label className="typo-label2 mt-[16px] mb-[8px]">
           내용
         </label>
 
@@ -76,11 +76,11 @@ const InquiryRegisterPage = () => {
             value={content}
             onChange={(e) => handleContentChange(e.target.value)}
             placeholder="내용을 입력해주세요."
-            className="border border-divider-2 rounded-[6px] px-[12px] pt-[10px] pb-[18px] text-[14px] w-full h-[200px] resize-none "
+            className="border border-divider-2 rounded-[6px] px-[12px] pt-[10px] pb-[18px] typo-body2 w-full h-[200px] resize-none "
           />
 
           {/* 글자 수 카운터 */}
-          <span className="absolute bottom-[10px] right-[12px] text-[12px] text-text-3">
+          <span className="absolute bottom-[10px] right-[12px] typo-caption3 text-text-3">
             {content.length}/{maxLength}
           </span>
         </div>

@@ -155,7 +155,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       {/* 상단: 사진 리뷰 */}
       <div className="px-[24px] mt-[16px]">
-        <h3 className="font-[600] text-[14px] text-text-5 mb-[8px]">
+        <h3 className="typo-label2 text-text-5 mb-[8px]">
           등록된 리뷰 {photoReviews.length}개
         </h3>
 
@@ -202,7 +202,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                   cursor-pointer
                 "
                     >
-                      <span className="text-white font-[600] text-[14px]">
+                      <span className="text-white typo-label2">
                         + 더 보기
                       </span>
                     </div>
@@ -249,10 +249,10 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                   )}
                 </div>
                 <div className="flex flex-col pl-[12px]">
-                  <p className="text-text-5 font-[600] text-[14px]">
+                  <p className="text-text-5 typo-label2">
                     {post.nickname}
                   </p>
-                  <p className="text-text-2 font-[400] text-[10px]">
+                  <p className="text-text-2 typo-caption4">
                     {(() => {
                       const d = new Date(post.createdAt);
                       const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -282,7 +282,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                     {post.editable ? (
                       <>
                         <button
-                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400] border-b border-divider-1"
+                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3 border-b border-divider-1"
                           onClick={() => {
                             router.push(`/event-detail/${eventId}/review/write?edit=${post.id}`);
                             setOpenMenuId(null);
@@ -291,13 +291,13 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                           수정하기
                         </button>
                         <button
-                        className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 text-[12px] font-[400]">
+                        className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 typo-caption3">
                           삭제하기
                         </button>
                       </>
                     ) : (
                       <button
-                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 text-[12px] font-[400]"
+                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3"
                         onClick={() => {
                           setReportReviewId(post.id);
                           setOpenMenuId(null);
@@ -331,7 +331,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                          <p className="text-text-3 text-[12px]">이미지 없음</p>
+                          <p className="text-text-3 typo-caption3">이미지 없음</p>
                         </div>
                       )}
                     </div>
@@ -341,7 +341,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             )}
 
             {/* 본문 */}
-            <p className="w-full font-[400] text-[14px] text-text-5 leading-[165%] my-[12px]">
+            <p className="w-full typo-body2 text-text-5 my-[12px]">
               {post.content}
             </p>
 
@@ -350,7 +350,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
               {post.tags.map((tag, idx) => (
                 <div
                   key={idx}
-                  className="px-[6px] py-[2px] bg-[#FFE5AF] text-[#FD725C] text-[12px] font-[600] rounded-[4px] flex justify-center items-center"
+                  className="px-[6px] py-[2px] bg-[#FFE5AF] text-[#FD725C] typo-label3 rounded-[4px] flex justify-center items-center"
                 >
                   {tag}
                 </div>
@@ -358,7 +358,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             </div>
 
             {/* 좋아요 */}
-            <div className="flex my-[20px] gap-[16px] text-text-3 font-[600] text-[12px] justify-start">
+            <div className="flex my-[20px] gap-[16px] text-text-3 typo-label3 justify-start">
               <button
                 className="flex gap-[2px] items-center"
                 onClick={() => handleLikeToggle(post.id)}
@@ -372,10 +372,10 @@ const EventReview = ({ eventId }: EventReviewProps) => {
         })
       ) : (
         <div className="flex flex-col justify-center items-center p-[24px] gap-[16px] h-[500px]">
-          <h3 className="text-[18px] font-[700] text-text-5">
+          <h3 className="typo-title3 text-text-5">
             아직 리뷰가 없어요
           </h3>
-          <p className="text-text-4 text-[14px]">
+          <p className="text-text-4 typo-body2">
             첫 번째 리뷰를 작성해보세요!
           </p>
         </div>
