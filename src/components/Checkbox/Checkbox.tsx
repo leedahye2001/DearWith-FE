@@ -39,11 +39,13 @@ const Checkbox = ({
       {..._inputWrapperProps}
       htmlFor={_id}
       className={twMerge(
-        "flex items-center gap-[11px] text-text-3 text-[14px] cursor-pointer pb-1",
+        "flex items-center gap-[11px] text-text-3 text-[14px] cursor-pointer",
         _inputWrapperProps?.className
       )}
     >
-      {_checked ? <CheckboxFill /> : renderUncheckedIcon()}
+      <div className="flex items-center justify-center flex-shrink-0">
+        {_checked ? <CheckboxFill /> : renderUncheckedIcon()}
+      </div>
       <input
         {..._inputProps}
         className="hidden"
@@ -52,7 +54,9 @@ const Checkbox = ({
         checked={_checked}
         onChange={handleChange}
       />
-      {_value}
+      <div className="flex items-center">
+        {_value}
+      </div>
     </label>
   );
 };

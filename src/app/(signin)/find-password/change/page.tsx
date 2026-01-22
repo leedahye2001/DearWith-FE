@@ -150,8 +150,8 @@ const ChangePasswordContent = () => {
             _node="비밀번호 변경하기"
             _buttonProps={{
               className: `hover:cursor-pointer ${!newPassword || !confirmPassword || passwordError || confirmPasswordError
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
+                ? "opacity-50 cursor-not-allowed"
+                : ""
                 }`,
               disabled: !newPassword || !confirmPassword || !!passwordError || !!confirmPasswordError,
             }}

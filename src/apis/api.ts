@@ -176,7 +176,7 @@ export const getEventBookmark = async (filterState: string) => {
 
 // 아티스트 북마크(찜) 조회페이지
 export const getArtistBookmark = async () => {
-  const res = await api.get(`/api/my/artists/bookmark`,{});
+  const res = await api.get(`/api/my/artists/bookmark`, {});
   console.log(res.data.content);
   return res.data.content;
 };
@@ -315,6 +315,17 @@ export const eventNoticePost = async (
   const res = await api.post(`/api/events/${eventId}/notices`, {
     title,
     content,
+  });
+  return res.data;
+};
+
+//시스템 공지사항 등록
+export const postSystemNotice = async (title: string, content: string, important: boolean = false) => {
+  const res = await api.post(`/api/admin/notices`, {
+    title,
+    content,
+    important,
+    pushEnabled: true,
   });
   return res.data;
 };
@@ -458,7 +469,7 @@ export const deleteProfileImage = async () => {
 
 // 프로필 사진 추가/수정
 export const updateProfileImage = async (tmpKey: string) => {
-  const res= await api.patch(`/users/me/profile/image`, { tmpKey });
+  const res = await api.patch(`/users/me/profile/image`, { tmpKey });
   console.log(res.data);
   return res.data;
 };
@@ -492,13 +503,13 @@ export const commitUpload = async (tmpKey: string) => {
 
 // 기존 비밀번호 조회 (현재 비밀번호 확인)
 export const getPasswordVerify = async (currentPassword: string) => {
-  const res = await api.post("/users/me/password/verify", {currentPassword});
+  const res = await api.post("/users/me/password/verify", { currentPassword });
   return res.data;
 };
 
 // 비밀번호 변경 (로그인 후)
 export const getPasswordConfirm = async (newPassword: string) => {
-  const res = await api.post("/users/password/change", {newPassword});
+  const res = await api.post("/users/password/change", { newPassword });
   return res.data;
 };
 
@@ -519,7 +530,7 @@ export const getMyInquiryList = async () => {
 };
 
 // 내 문의사항 상세 조회
-export const getMyInquiryDetail = async (inquiryId:string) => {
+export const getMyInquiryDetail = async (inquiryId: string) => {
   const res = await api.get(`/api/inquiries/${inquiryId}`);
   return res.data;
 };
@@ -539,7 +550,7 @@ export const answerSatisfaction = async (
   inquiryId: string,
   satisfactionStatus: string,
 ) => {
-  const res = await api.post(`/api/inquiries/${inquiryId}/satisfaction`, {satisfactionStatus});
+  const res = await api.post(`/api/inquiries/${inquiryId}/satisfaction`, { satisfactionStatus });
   return res.data;
 };
 

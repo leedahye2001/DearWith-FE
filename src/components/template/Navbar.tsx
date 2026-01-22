@@ -17,8 +17,8 @@ export default function Navbar() {
     setIsNative(isNativeApp());
   }, []);
 
-  const navbarHeight = isNative 
-    ? 'calc(60px + env(safe-area-inset-bottom))' 
+  const navbarHeight = isNative
+    ? 'calc(60px + env(safe-area-inset-bottom))'
     : 'calc(80px + env(safe-area-inset-bottom))';
 
   return (
@@ -38,9 +38,8 @@ export default function Navbar() {
           className={pathname === "/main" ? "text-primary" : "text-icon-2"}
         />
         <span
-          className={`typo-caption3 mt-[4px] ${
-            pathname === "/main" ? "text-primary" : "text-icon-2"
-          }`}
+          className={`typo-caption3 mt-[4px] ${pathname === "/main" ? "text-primary" : "text-icon-2"
+            }`}
         >
           홈
         </span>
@@ -55,9 +54,8 @@ export default function Navbar() {
           className={pathname === "/search" ? "text-primary" : "text-icon-2"}
         />
         <span
-          className={`typo-caption3 mt-[4px] ${
-            pathname === "/search" ? "text-primary" : "text-icon-2"
-          }`}
+          className={`typo-caption3 mt-[4px] ${pathname === "/search" ? "text-primary" : "text-icon-2"
+            }`}
         >
           검색
         </span>
@@ -74,9 +72,8 @@ export default function Navbar() {
           }
         />
         <span
-          className={`typo-caption3 mt-[4px] ${
-            pathname?.startsWith("/event-bookmark") ? "text-primary" : "text-icon-2"
-          }`}
+          className={`typo-caption3 mt-[4px] ${pathname?.startsWith("/event-bookmark") ? "text-primary" : "text-icon-2"
+            }`}
         >
           찜
         </span>
@@ -91,9 +88,8 @@ export default function Navbar() {
           className={pathname === "/my-page" ? "text-primary" : "text-icon-2"}
         />
         <span
-          className={`typo-caption3 mt-[4px] ${
-            pathname === "/my-page" ? "text-primary" : "text-icon-2"
-          }`}
+          className={`typo-caption3 mt-[4px] ${pathname === "/my-page" ? "text-primary" : "text-icon-2"
+            }`}
         >
           마이
         </span>
