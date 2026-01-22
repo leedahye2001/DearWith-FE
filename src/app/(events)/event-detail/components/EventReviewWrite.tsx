@@ -100,13 +100,13 @@ export default function EventReviewWrite({
     const totalCount = images.length + selected.length;
     if (totalCount > 2)
       return openAlert("최대 2개의 이미지만 등록할 수 있어요.");
-    
+
     const newImages: ImageItem[] = selected.map((file, idx) => ({
       file,
       preview: URL.createObjectURL(file),
       displayOrder: images.length + idx,
     }));
-    
+
     setImages((prev) => [...prev, ...newImages]);
     e.target.value = ""; // 같은 파일 다시 선택 가능하도록
   };
@@ -139,7 +139,7 @@ export default function EventReviewWrite({
   const uploadNewImages = async (imageItems: ImageItem[]): Promise<{ tmpKey: string; displayOrder: number }[]> => {
     const newImageItems = imageItems.filter((img) => img.file && !img.id);
     if (!newImageItems.length) return [];
-    
+
     const uploaded: { tmpKey: string; displayOrder: number }[] = [];
     for (const imageItem of newImageItems) {
       if (!imageItem.file) continue;
@@ -165,7 +165,7 @@ export default function EventReviewWrite({
       if (isEdit && reviewData) {
         // 새 이미지 업로드
         const newImageUploads = await uploadNewImages(images);
-        
+
         // 최종 이미지 배열 구성 (기존 이미지 유지 + 새 이미지 추가)
         const finalImages = images.map((img) => {
           if (img.id) {
@@ -181,9 +181,9 @@ export default function EventReviewWrite({
             );
             return uploaded
               ? {
-                  tmpKey: uploaded.tmpKey,
-                  displayOrder: uploaded.displayOrder,
-                }
+                tmpKey: uploaded.tmpKey,
+                displayOrder: uploaded.displayOrder,
+              }
               : null;
           }
         }).filter((img): img is { id: number; displayOrder: number } | { tmpKey: string; displayOrder: number } => img !== null);
@@ -200,7 +200,7 @@ export default function EventReviewWrite({
       } else {
         // 신규 등록
         const newImageUploads = await uploadNewImages(images);
-        
+
         await api.post(`/api/events/${eventId}/reviews`, {
           content,
           tags,
@@ -273,7 +273,7 @@ export default function EventReviewWrite({
           _node="+ 추가하기"
           _onClick={handleAddTag}
           _buttonProps={{
-            className: "bg-red-300 text-white mb-[16px] w-full mt-[12px]",
+            className: "bg-red-400 text-white mb-[16px] w-full mt-[12px]",
           }}
         />
       </div>
@@ -339,7 +339,7 @@ export default function EventReviewWrite({
             fileInputRef.current?.click();
           }}
           _buttonProps={{
-            className: "bg-red-300 text-white mt-[16px] w-full",
+            className: "bg-red-400 text-white mt-[16px] w-full",
           }}
         />
       </div>

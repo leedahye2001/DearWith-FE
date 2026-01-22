@@ -105,7 +105,7 @@ export const FAB = ({ _url, _icon, _onClick }: FABProps) => {
   return (
     <button
       className="fixed right-[20px] bottom-[32px] z-50 
-                 flex items-center justify-center w-[56px] h-[56px]
+                 flex items-center justify-center w-[44px] h-[44px]
                  bg-primary text-white rounded-full shadow-lg
                  hover:scale-105 active:scale-95 transition-transform"
       onClick={handleClick}

@@ -1010,7 +1010,7 @@ const EventRegisterContent = () => {
                     _node="+ 추가하기"
                     _onClick={() => handleAddTag(value, setValue, tags, setTags)}
                     _buttonProps={{
-                      className: "bg-[#FD725C] text-white w-full mt-[12px]",
+                      className: "bg-red-400 text-white w-full mt-[12px]",
                       disabled: isSubmitting,
                     }}
                   />

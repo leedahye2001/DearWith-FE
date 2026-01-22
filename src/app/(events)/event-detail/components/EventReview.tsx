@@ -155,10 +155,6 @@ const EventReview = ({ eventId }: EventReviewProps) => {
     <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center">
       {/* 상단: 사진 리뷰 */}
       <div className="px-[24px] mt-[16px]">
-        <h3 className="typo-label2 text-text-5 mb-[8px]">
-          등록된 리뷰 {photoReviews.length}개
-        </h3>
-
         <div className="flex gap-[8px]">
           {photoReviews
             .slice()
@@ -166,7 +162,7 @@ const EventReview = ({ eventId }: EventReviewProps) => {
             .map((img, idx, arr) => {
               const url =
                 Array.isArray(img?.image?.variants) &&
-                img.image.variants.length > 0
+                  img.image.variants.length > 0
                   ? img.image.variants[0]?.url || img.image.variants[1]?.url
                   : null;
 
@@ -176,9 +172,8 @@ const EventReview = ({ eventId }: EventReviewProps) => {
               return (
                 <div
                   key={idx}
-                  className={`relative w-[78px] h-[78px] rounded-[4px] overflow-hidden flex-shrink-0 ${
-                    hasImage ? "cursor-pointer" : ""
-                  }`}
+                  className={`relative w-[78px] h-[78px] rounded-[4px] overflow-hidden flex-shrink-0 ${hasImage ? "cursor-pointer" : ""
+                    }`}
                   onClick={() => {
                     if (hasImage && !isLast) {
                       router.push(`/review-detail/${img.reviewId}/${img.image.id}`);
@@ -223,159 +218,158 @@ const EventReview = ({ eventId }: EventReviewProps) => {
               ref={(el) => {
                 reviewRefs.current[post.id] = el;
               }}
-              className={`mx-[24px] border-b-[0.8px] border-divider-1 transition-all duration-700 ease-out ${
-                isHighlighted
-                  ? "bg-primary/10 ring-4 ring-primary rounded-[8px] p-[8px] -m-[8px]"
-                  : ""
-              }`}
+              className={`mx-[24px] border-b-[0.8px] border-divider-1 transition-all duration-700 ease-out ${isHighlighted
+                ? "bg-primary/10 ring-4 ring-primary rounded-[8px] p-[8px] -m-[8px]"
+                : ""
+                }`}
               style={{
                 animation: isHighlighted ? "dropHighlight 0.6s ease-out" : "none",
               }}
             >
-            <div className="flex justify-between w-full items-center my-[20px]">
-              {/* 프로필 */}
-              <div className="flex w-full">
-                <div className="w-[36px] h-[36px] rounded-[50px] bg-divider-1 overflow-hidden">
-                  {post.profileImageUrl ? (
-                    <Image
-                      src={post.profileImageUrl}
-                      alt={post.nickname}
-                      width={36}
-                      height={36}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <ReviewProfile className="w-full h-full" />
-                  )}
+              <div className="flex justify-between w-full items-center my-[20px]">
+                {/* 프로필 */}
+                <div className="flex w-full">
+                  <div className="w-[36px] h-[36px] rounded-[50px] bg-divider-1 overflow-hidden">
+                    {post.profileImageUrl ? (
+                      <Image
+                        src={post.profileImageUrl}
+                        alt={post.nickname}
+                        width={36}
+                        height={36}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ReviewProfile className="w-full h-full" />
+                    )}
+                  </div>
+                  <div className="flex flex-col pl-[12px]">
+                    <p className="text-text-5 typo-label2">
+                      {post.nickname}
+                    </p>
+                    <p className="text-text-2 typo-caption4">
+                      {(() => {
+                        const d = new Date(post.createdAt);
+                        const month = String(d.getMonth() + 1).padStart(2, "0");
+                        const day = String(d.getDate()).padStart(2, "0");
+                        const hour = String(d.getHours()).padStart(2, "0");
+                        const minute = String(d.getMinutes()).padStart(2, "0");
+                        return `${month}.${day} ${hour}:${minute}`;
+                      })()}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex flex-col pl-[12px]">
-                  <p className="text-text-5 typo-label2">
-                    {post.nickname}
-                  </p>
-                  <p className="text-text-2 typo-caption4">
-                    {(() => {
-                      const d = new Date(post.createdAt);
-                      const month = String(d.getMonth() + 1).padStart(2, "0");
-                      const day = String(d.getDate()).padStart(2, "0");
-                      const hour = String(d.getHours()).padStart(2, "0");
-                      const minute = String(d.getMinutes()).padStart(2, "0");
-                      return `${month}.${day} ${hour}:${minute}`;
-                    })()}
-                  </p>
-                </div>
-              </div>
 
-              {/* 메뉴 */}
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenMenuId(openMenuId === post.id ? null : post.id);
-                }}
-                className="relative"
-              >
-                <Etc />
-                {openMenuId === post.id && (
-                  <div
-                   className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[90px] border border-divider-1"
-                   onClick={(e) => e.stopPropagation()}
-                  >
-                    {post.editable ? (
-                      <>
+                {/* 메뉴 */}
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMenuId(openMenuId === post.id ? null : post.id);
+                  }}
+                  className="relative"
+                >
+                  <Etc />
+                  {openMenuId === post.id && (
+                    <div
+                      className="absolute right-0 top-full mt-[8px] bg-white rounded-[8px] z-[9999] w-[90px] border border-divider-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {post.editable ? (
+                        <>
+                          <button
+                            className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3 border-b border-divider-1"
+                            onClick={() => {
+                              router.push(`/event-detail/${eventId}/review/write?edit=${post.id}`);
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            수정하기
+                          </button>
+                          <button
+                            className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 typo-caption3">
+                            삭제하기
+                          </button>
+                        </>
+                      ) : (
                         <button
-                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3 border-b border-divider-1"
+                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3"
                           onClick={() => {
-                            router.push(`/event-detail/${eventId}/review/write?edit=${post.id}`);
+                            setReportReviewId(post.id);
                             setOpenMenuId(null);
                           }}
                         >
-                          수정하기
+                          신고하기
                         </button>
-                        <button
-                        className="w-full text-left px-[16px] py-[8px] text-red-500 hover:bg-gray-100 typo-caption3">
-                          삭제하기
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                          className="w-full text-left px-[16px] py-[8px] hover:bg-gray-100 typo-caption3"
-                        onClick={() => {
-                          setReportReviewId(post.id);
-                          setOpenMenuId(null);
-                        }}
-                      >
-                        신고하기
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 이미지 영역 */}
-            {post.images.length > 0 && (
-              <div className="flex justify-between my-[12px] ">
-                {post.images.map((img, idx) => {
-                  const url = img.variants[0]?.url || img.variants[1]?.url;
-                  return (
-                    <div
-                      key={idx}
-                      className="w-[160.5px] h-[160.5px] rounded-[4px] flex-shrink-0 overflow-hidden"
-                    >
-                      {url ? (
-                        <Image
-                          width={160.5}
-                          height={160.5}
-                          src={url}
-                          alt={url}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                          <p className="text-text-3 typo-caption3">이미지 없음</p>
-                        </div>
                       )}
                     </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* 본문 */}
-            <p className="w-full typo-body2 text-text-5 my-[12px]">
-              {post.content}
-            </p>
-
-            {/* 태그 */}
-            <div className="flex flex-wrap gap-[4px]">
-              {post.tags.map((tag, idx) => (
-                <div
-                  key={idx}
-                  className="px-[6px] py-[2px] bg-[#FFE5AF] text-[#FD725C] typo-label3 rounded-[4px] flex justify-center items-center"
-                >
-                  {tag}
+                  )}
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* 좋아요 */}
-            <div className="flex my-[20px] gap-[16px] text-text-3 typo-label3 justify-start">
-              <button
-                className="flex gap-[2px] items-center"
-                onClick={() => handleLikeToggle(post.id)}
-              >
-                {post.liked ? <HeartFill /> : <HeartDefault />}
-                <p>{post.likeCount}</p>
-              </button>
+              {/* 이미지 영역 */}
+              {post.images.length > 0 && (
+                <div className="flex justify-between my-[12px] ">
+                  {post.images.map((img, idx) => {
+                    const url = img.variants[0]?.url || img.variants[1]?.url;
+                    return (
+                      <div
+                        key={idx}
+                        className="w-[160.5px] h-[160.5px] rounded-[4px] flex-shrink-0 overflow-hidden"
+                      >
+                        {url ? (
+                          <Image
+                            width={160.5}
+                            height={160.5}
+                            src={url}
+                            alt={url}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                            <p className="text-text-3 typo-caption3">이미지 없음</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* 본문 */}
+              <p className="w-full typo-body2 text-text-5 my-[12px]">
+                {post.content}
+              </p>
+
+              {/* 태그 */}
+              <div className="flex flex-wrap gap-[4px]">
+                {post.tags.map((tag, idx) => (
+                  <div
+                    key={idx}
+                    className="px-[6px] py-[2px] bg-[#FFE5AF] text-[#FD725C] typo-label3 rounded-[4px] flex justify-center items-center"
+                  >
+                    {tag}
+                  </div>
+                ))}
+              </div>
+
+              {/* 좋아요 */}
+              <div className="flex my-[20px] gap-[16px] text-text-3 typo-label3 justify-start">
+                <button
+                  className="flex gap-[2px] items-center"
+                  onClick={() => handleLikeToggle(post.id)}
+                >
+                  {post.liked ? <HeartFill /> : <HeartDefault />}
+                  <p>{post.likeCount}</p>
+                </button>
+              </div>
             </div>
-          </div>
           );
         })
       ) : (
-        <div className="flex flex-col justify-center items-center p-[24px] gap-[16px] h-[500px]">
-          <h3 className="typo-title3 text-text-5">
+        <div className="flex flex-col justify-center items-center p-[24px] h-[500px]">
+          <h3 className="typo-label1 text-text-5">
             아직 리뷰가 없어요
           </h3>
-          <p className="text-text-4 typo-body2">
+          <p className="text-text-3 typo-caption3">
             첫 번째 리뷰를 작성해보세요!
           </p>
         </div>
