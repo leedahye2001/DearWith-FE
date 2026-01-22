@@ -57,7 +57,7 @@ const Page = () => {
   if (!data) return <Spinner />;
 
   const { profile, stats, notifications } = data;
-  
+
   // 디버깅: passwordChangeAvailable 값 확인
   console.log("passwordChangeAvailable:", profile?.passwordChangeAvailable, typeof profile?.passwordChangeAvailable);
 
@@ -70,10 +70,10 @@ const Page = () => {
       } finally {
         useUserStore.getState().clearUser();
         router.replace("/login");
-      }      
+      }
     });
   };
-  
+
 
   const handleProfileUpdate = () => {
     useProfileStore.getState().setProfile(profile); // profile은 API에서 가져온 { nickname, profileImageUrl }
@@ -198,8 +198,8 @@ function Stat({ value, label, path }: { value: number; label: string; path?: str
 
   return (
     <div className="text-center cursor-pointer" onClick={handleClick}>
-      <p className={`text-[16px] font-[500] ${valueClass}`}>{value}</p>
-      <p className="text-[12px] font-[500] text-text-2">{label}</p>
+      <p className={`typo-label1 ${valueClass}`}>{value}</p>
+      <p className="typo-label3 text-text-2">{label}</p>
     </div>
   );
 }

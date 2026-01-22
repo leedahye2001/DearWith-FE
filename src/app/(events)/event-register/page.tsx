@@ -575,7 +575,7 @@ const EventRegisterContent = () => {
 
   if (isLoadingEvent) {
     return (
-      <div className="flex flex-col justify-center w-full overflow-x-hidden">
+      <div className="flex flex-col justify-center w-full bg-bg-1 min-h-screen">
         <Topbar
           _leftImage={<Backward onClick={handleBackRouter} />}
           _topNode={editEventId ? "이벤트 수정" : "이벤트 등록"}
@@ -588,7 +588,7 @@ const EventRegisterContent = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center w-full overflow-x-hidden">
+    <div className="flex flex-col justify-center w-full bg-bg-1 min-h-screen">
       <Topbar
         _leftImage={<Backward onClick={handleBackRouter} />}
         _topNode={editEventId ? "이벤트 수정" : "이벤트 등록"}

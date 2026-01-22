@@ -20,21 +20,21 @@ const RealTimeSearch = ({
     const type = artist.type === "GROUP" ? "GROUP" : "ARTIST";
     const idParam = artist.type === "GROUP" ? "groupId" : "artistId";
     const nameParam = artist.type === "GROUP" ? "groupName" : "artistName";
-    
+
     router.push(
       `/search/${artist.id}?type=${encodeURIComponent(type)}&${idParam}=${artist.id}&${nameParam}=${encodeURIComponent(artist.nameKr)}`
     );
   };
 
   return (
-    <div 
+    <div
       className="flex justify-between w-full items-center cursor-pointer"
       onClick={handleClick}
     >
       <div className="flex items-center gap-[12px]">
         {showRank && (
-          <span className="w-[20px] typo-label2 text-primary">
-            {index + 1}
+          <span className={`w-auto typo-label2 ${index <= 2 ? "text-primary" : "text-text-5"}`}>
+            {index + 1}위
           </span>
         )}
 
@@ -55,7 +55,7 @@ const RealTimeSearch = ({
         <div className="flex flex-col">
           <p className="typo-label2 text-text-5">{artist.nameKr}</p>
           <p className="typo-caption3 text-text-4">
-            {artist.type === "GROUP" 
+            {artist.type === "GROUP"
               ? artist.debutDate?.replace(/-/g, ".")
               : artist.birthDate?.replace(/-/g, ".")}
           </p>

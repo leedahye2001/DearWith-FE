@@ -81,10 +81,10 @@ const MyRegisteredEvents = () => {
       <div className="flex flex-col w-full justify-center pt-[16px] px-[24px]">
         <div className="flex justify-between items-center mb-[16px]">
           <div className="flex items-center gap-[6px]">
-            <h1 className="text-[14px] font-[600] text-text-5">
+            <h1 className="typo-label2 text-text-5">
               등록한 이벤트
             </h1>
-            <span className="text-text-3 font-[600]">{events.length}</span>
+            <span className="text-text-3 typo-label2">{events.length}</span>
           </div>
         </div>
 

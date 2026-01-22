@@ -34,12 +34,12 @@ export default function RegisterReviewListCard({
         )}
       </div>
 
-      <div className="flex flex-col justify-center flex-1 min-w-0">
-        <p className="text-[14px] text-text-5 font-[600]">{eventTitle}</p>
-        <p className="text-[14px] text-text-5 font-[500] line-clamp-1 break-words">
+      <div className="flex flex-col justify-center flex-1 min-w-0 gap-[4px]">
+        <p className="typo-label2 text-text-5">{eventTitle}</p>
+        <p className="typo-caption2 text-text-5 line-clamp-1 break-words">
           {reviewContent}
         </p>
-        <p className="text-[12px] text-text-2 font-[400]">
+        <p className="text-text-2 typo-caption3">
           {(() => {
             const date = new Date(createdAt);
             return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;

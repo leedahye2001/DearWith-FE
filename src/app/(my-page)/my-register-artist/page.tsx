@@ -45,12 +45,14 @@ export default function MyRegisterArtistPage() {
         _leftImage={<Backward onClick={handleBackRouter} />}
         _topNode="내가 등록한 아티스트"
       />
-       <div className="flex justify-between items-center px-[24px]">
+      <div className="flex flex-col w-full justify-center pt-[16px] px-[24px]">
+        <div className="flex justify-between items-center mb-[16px]">
           <div className="flex items-center gap-[6px]">
-            <h1 className="text-[14px] font-[600] text-text-5">작성한 리뷰</h1>
-            <span className="text-text-3 font-[600]">{data.length}</span>
+            <h1 className="typo-label2 text-text-5">등록한 아티스트</h1>
+            <span className="text-text-3 typo-label2">{data.length}</span>
           </div>
         </div>
+      </div>
 
       {/* 왼쪽 텍스트 + 이미지 */}
       {data.length > 0 && (
@@ -67,16 +69,16 @@ export default function MyRegisterArtistPage() {
 function ArtistCard({ id, nameKr, imageUrl, createdAt }: ArtistItem) {
   return (
     <div
-      className="flex justify-between items-center py-[16px] border-b border-divider-1 cursor-pointer"
+      className="flex justify-between items-center py-[12px] border-b border-divider-1 cursor-pointer"
       key={id}
     >
       <div className="flex items-center gap-4">
-        <div className="w-[52px] h-[52px] rounded-full overflow-hidden bg-gray-200">
+        <div className="w-[40px] h-[40px] rounded-full overflow-hidden bg-gray-200">
           {imageUrl && (
             <Image
               src={imageUrl}
-              width={52}
-              height={52}
+              width={40}
+              height={40}
               alt={nameKr}
               className="w-full h-full object-cover"
               unoptimized
@@ -85,8 +87,8 @@ function ArtistCard({ id, nameKr, imageUrl, createdAt }: ArtistItem) {
         </div>
 
         <div className="flex flex-col">
-          <p className="text-[14px] font-[700] text-text-5">{nameKr}</p>
-          <p className="text-[12px] text-text-2 font-[400]">
+          <p className="typo-label2 text-text-5">{nameKr}</p>
+          <p className="typo-caption3 text-text-2">
             {(() => {
               const date = new Date(createdAt);
               return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
