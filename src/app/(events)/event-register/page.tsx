@@ -104,7 +104,7 @@ const EventRegisterContent = () => {
     const all: Benefit[] = [];
 
     // 기본특전
-    basicTags.forEach((tag, i) =>{
+    basicTags.forEach((tag, i) => {
       const dayIndex = i + 1;
       if (dayIndex < 1) throw new Error("dayIndex must be >= 1");
 
@@ -118,7 +118,7 @@ const EventRegisterContent = () => {
         displayOrder: i + 1,
         visibleFrom,
       })
-  });
+    });
 
     // 일별 선착순 특전 (LIMITED)
     firstTags.forEach((tag, i) => {
@@ -296,7 +296,7 @@ const EventRegisterContent = () => {
         // 주최자 정보
         if (eventData.organizer) {
           setIsOrganizer(eventData.organizer.verified);
-          
+
           // X 인증 정보가 있으면 인증 상태 설정
           if (eventData.organizer.verified && eventData.organizer.xHandle) {
             setAuthData({
@@ -564,9 +564,9 @@ const EventRegisterContent = () => {
     } catch (err) {
       console.error(err);
       const axiosError = err as AxiosError<{ message?: string; detail?: string }>;
-      const errorMessage = axiosError?.response?.data?.message || 
-                          axiosError?.response?.data?.detail || 
-                          (editEventId ? "이벤트 수정 중 오류가 발생했습니다." : "이벤트 등록 중 오류가 발생했습니다.");
+      const errorMessage = axiosError?.response?.data?.message ||
+        axiosError?.response?.data?.detail ||
+        (editEventId ? "이벤트 수정 중 오류가 발생했습니다." : "이벤트 등록 중 오류가 발생했습니다.");
       openAlert(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -614,11 +614,10 @@ const EventRegisterContent = () => {
               _node="주최자 입니다."
               _onClick={() => setIsOrganizer(true)}
               _buttonProps={{
-                className: `hover:cursor-pointer w-full ${
-                  isOrganizer === true
+                className: `hover:cursor-pointer w-full ${isOrganizer === true
                     ? "bg-[#FD725C] text-white"
                     : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
-                }`,
+                  }`,
               }}
             />
             <Button
@@ -626,76 +625,74 @@ const EventRegisterContent = () => {
               _node="주최자가 아닙니다."
               _onClick={() => setIsOrganizer(false)}
               _buttonProps={{
-                className: `hover:cursor-pointer w-full ${
-                  isOrganizer === false
+                className: `hover:cursor-pointer w-full ${isOrganizer === false
                     ? "bg-[#FD725C] text-white"
                     : "bg-bg-1 text-[#FD725C] border-[1px] border-[#FD725C]"
-                }`,
+                  }`,
               }}
             />
           </div>
 
-            {isOrganizer === true && (
-              <div className="mt-4 w-full">
-                <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-                  주최자 X 계정
-                  <span className="text-text-5 ml-[4px]">*</span>
-                </p>
-                <div className="flex gap-[8px] w-full">
-                  <Input
-                    _value={handle || ""}
-                    _state="textbox-basic"
-                    _containerProps={{ className: "flex-1 min-w-0" }}
-                    _wrapperProps={{ className: "w-full" }}
-                    _leftNode={<span className="text-text-3 text-[14px] font-[400]">@</span>}
-                    _bottomNode={
-                      isVerified
-                        ? ""
-                        : "주최자는 X 계정 인증이 필수입니다."
-                    }
-                  />
-
-                  <Button
-                    _state="main"
-                    _node={isVerified ? "인증완료" : "인증하기"}
-                    _onClick={handleXLogin}
-                    _buttonProps={{
-                      className: `p-[10px] w-[88px] ${
-                        isVerified
-                          ? "bg-bg-2 text-text-4"
-                          : "bg-[#FD725C] text-white"
-                      } hover:cursor-pointer`,
-                      disabled: isSubmitting,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {isOrganizer === false && (
-              <div className="mt-4 w-full">
-                <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-                  X 링크 <span className="text-text-3 text-[12px] font-[400]">(선택)</span>
-                </p>
+          {isOrganizer === true && (
+            <div className="mt-4 w-full">
+              <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                주최자 X 계정
+                <span className="text-text-5 ml-[4px]">*</span>
+              </p>
+              <div className="flex gap-[8px] w-full">
                 <Input
-                  _value={xLink}
+                  _value={handle || ""}
                   _state="textbox-basic"
-                  _onChange={setXLink}
-                  _containerProps={{ className: "w-full" }}
+                  _containerProps={{ className: "flex-1 min-w-0" }}
                   _wrapperProps={{ className: "w-full" }}
-                  _inputProps={{
-                    placeholder: "X 계정 링크를 입력해주세요.",
-                    className: "placeholder:text-text-3 text-[14px]",
-                  }}
+                  _leftNode={<span className="text-text-3 text-[14px] font-[400]">@</span>}
                   _bottomNode={
-                    xLink && !isValidXLink
-                      ? "X 계정 링크를 다시 입력해주세요."
-                      : ""
+                    isVerified
+                      ? ""
+                      : "주최자는 X 계정 인증이 필수입니다."
                   }
-                  _rightNode={isValidXLink ? <Check /> : undefined}
+                />
+
+                <Button
+                  _state="main"
+                  _node={isVerified ? "인증완료" : "인증하기"}
+                  _onClick={handleXLogin}
+                  _buttonProps={{
+                    className: `p-[10px] w-[88px] ${isVerified
+                        ? "bg-bg-2 text-text-4"
+                        : "bg-[#FD725C] text-white"
+                      } hover:cursor-pointer`,
+                    disabled: isSubmitting,
+                  }}
                 />
               </div>
-            )}
+            </div>
+          )}
+
+          {isOrganizer === false && (
+            <div className="mt-[16px] w-full">
+              <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+                X 링크 <span className="text-text-3 text-[12px] font-[400]">(선택)</span>
+              </p>
+              <Input
+                _value={xLink}
+                _state="textbox-basic"
+                _onChange={setXLink}
+                _containerProps={{ className: "w-full" }}
+                _wrapperProps={{ className: "w-full" }}
+                _inputProps={{
+                  placeholder: "X 계정 링크를 입력해주세요.",
+                  className: "placeholder:text-text-3 text-[14px]",
+                }}
+                _bottomNode={
+                  xLink && !isValidXLink
+                    ? "X 계정 링크를 다시 입력해주세요."
+                    : ""
+                }
+                _rightNode={isValidXLink ? <Check /> : undefined}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col justity-center items-start mb-[24px]">
@@ -756,7 +753,7 @@ const EventRegisterContent = () => {
             )}
           </div>
 
-          <div className="mt-4 w-full">
+          <div className="mt-[16px] w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이벤트 명
             </p>
@@ -939,13 +936,13 @@ const EventRegisterContent = () => {
 
           <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[48px]">
             <p className="text-text-4 text-[12px] font-[400]">
-            · jpg, jpeg, png 형식의 이미지만 업로드 가능합니다.
+              · jpg, jpeg, png 형식의 이미지만 업로드 가능합니다.
             </p>
             <p className="text-text-4 text-[12px] font-[400]">
-            · 첫 번째 이미지는 썸네일로 등록됩니다.
+              · 첫 번째 이미지는 썸네일로 등록됩니다.
             </p>
             <p className="text-text-4 text-[12px] font-[400]">
-            · 권장 크기 : 가로 375px / 세로 536px
+              · 권장 크기 : 가로 375px / 세로 536px
             </p>
           </div>
         </div>
@@ -1068,7 +1065,7 @@ const Page = () => {
     <Suspense fallback={
       <div className="flex flex-col justify-center w-full overflow-x-hidden">
         <Topbar
-          _leftImage={<Backward onClick={() => {}} />}
+          _leftImage={<Backward onClick={() => { }} />}
           _topNode="이벤트 등록"
         />
         <div className="flex justify-center items-center h-screen">

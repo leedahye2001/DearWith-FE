@@ -78,13 +78,285 @@
   --color-beige-500: #ffd175;
 }
 
+/* Typography Utilities */
+@layer utilities {
+
+  /* Headline */
+  .typo-headline-l {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-headline-m {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-headline-s {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  /* Title */
+  .typo-title-1 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-title-2 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-title-3 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  /* Label */
+  .typo-label-l {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+  }
+
+  .typo-label-m {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  .typo-label-s {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  .typo-label-xs {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  /* Body */
+  .typo-body-1 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 180%;
+    letter-spacing: 0;
+  }
+
+  .typo-body-2 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 180%;
+    letter-spacing: 0;
+  }
+
+  /* Caption */
+  .typo-caption-l {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+  }
+
+  .typo-caption-m {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  .typo-caption-s {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  .typo-caption-xs {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  /* Caption (Number format) */
+  .typo-caption1 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+  }
+
+  .typo-caption2 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  .typo-caption3 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  .typo-caption4 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  /* Headline (Number format) */
+  .typo-headline1 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-headline2 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-headline3 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  /* Label (Number format) */
+  .typo-label1 {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+  }
+
+  .typo-label2 {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  .typo-label3 {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  .typo-label4 {
+    font-family: var(--font-pretendard);
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: 0;
+  }
+
+  /* Title (Number format) */
+  .typo-title1 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-title2 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  .typo-title3 {
+    font-family: var(--font-pretendard);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 135%;
+    letter-spacing: 0;
+  }
+
+  /* Body (Number format) */
+  .typo-body1 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 180%;
+    letter-spacing: 0;
+  }
+
+  .typo-body2 {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 180%;
+    letter-spacing: 0;
+  }
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE, Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* 모바일 스크롤 문제 해결 */
@@ -103,9 +375,11 @@ body {
     transform: translateY(-20px);
     opacity: 0.5;
   }
+
   50% {
     transform: translateY(5px);
   }
+
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -117,9 +391,11 @@ body {
     transform: scale(0.8) translateY(-20px);
     opacity: 0.5;
   }
+
   50% {
     transform: scale(1.05) translateY(5px);
   }
+
   100% {
     transform: scale(1.1) translateY(0);
     opacity: 1;

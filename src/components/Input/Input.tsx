@@ -17,9 +17,9 @@ interface BasicInputProps {
 
 const inputWrapperClasses = {
   "textbox-basic":
-    "flex w-full h-[44px] p-[10px] border border-divider-2 border-[1px] rounded-[4px] justify-between items-center overflow-hidden relative",
+    "flex w-full h-[44px] p-[10px] border border-divider-1 border-[1px] rounded-[4px] justify-between items-center overflow-hidden relative",
   "textbox-underline":
-    "flex w-full h-[44px] py-[10px] border-divider-2 border-b-[1px] justify-between overflow-hidden relative",
+    "flex w-full h-[44px] py-[10px] border-divider-1 border-b-[1px] justify-between overflow-hidden relative",
 };
 
 const inputClasses = {
