@@ -70,7 +70,7 @@ export default function ArtistBookmarkPage() {
   }, [fetchBookmarkedArtists]);
 
   return (
-    <div className="flex flex-col w-full justify-center pt-[16px] px-[24px]">
+    <div className="flex flex-col w-full justify-center pt-[16px]">
       {/* Category Tabs */}
       <div className="flex w-full mt-[12px] border-b border-divider-1">
         <button
@@ -87,33 +87,35 @@ export default function ArtistBookmarkPage() {
         </button>
       </div>
 
-      <div className="flex justify-between items-center my-[16px]">
-        <h1 className="typo-label2 text-text-5">
-          찜한 아티스트
-          <span className="text-text-3 ml-1">{artists.length}</span>
-        </h1>
-      </div>
+      <div className="px-[24px]">
+        <div className="flex justify-between items-center my-[16px]">
+          <h1 className="typo-label2 text-text-5">
+            찜한 아티스트
+            <span className="text-text-3 ml-1">{artists.length}</span>
+          </h1>
+        </div>
 
-      <div className="w-full pb-[20px] flex flex-col">
-        {artists.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-150px)]">
-            <p className="typo-label1 text-text-5">
-              아직 찜한 아티스트가 없어요.
-            </p>
-            <p className="typo-caption3 text-text-3">
-              마음에 드는 항목을 찜해보세요!
-            </p>
-          </div>
-        ) : (
-          artists.map((artist) => (
-            <ArtistListCard
-              key={`${artist.id}`}
-              {...artist}
-              bookmarked={likedArtistsIds.includes(artist.id)}
-              onToggleLike={() => toggleLike(artist.id, artist.type)}
-            />
-          ))
-        )}
+        <div className="w-full pb-[20px] flex flex-col">
+          {artists.length === 0 ? (
+            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-150px)]">
+              <p className="typo-label1 text-text-5">
+                아직 찜한 아티스트가 없어요.
+              </p>
+              <p className="typo-caption3 text-text-3">
+                마음에 드는 항목을 찜해보세요!
+              </p>
+            </div>
+          ) : (
+            artists.map((artist) => (
+              <ArtistListCard
+                key={`${artist.id}`}
+                {...artist}
+                bookmarked={likedArtistsIds.includes(artist.id)}
+                onToggleLike={() => toggleLike(artist.id, artist.type)}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
