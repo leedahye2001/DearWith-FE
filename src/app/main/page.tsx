@@ -135,125 +135,125 @@ export default function Home() {
           transition: isPulling ? "none" : "transform 0.25s ease-out",
         }}
       >
-      {/* 캐러셀 */}
-      {bannerImages.length > 0 && (
-        <Carousel modalCarouselImageJson={{ images: bannerImages }} />
-      )}
+        {/* 캐러셀 */}
+        {bannerImages.length > 0 && (
+          <Carousel modalCarouselImageJson={{ images: bannerImages }} />
+        )}
 
-      {/* 당월 생일 아티스트 */}
-      {/* <BirthdayArtistsSection
+        {/* 당월 생일 아티스트 */}
+        {/* <BirthdayArtistsSection
         currentMonth={currentMonth}
         birthdayArtists={birthdayArtists}
       /> */}
 
-      <EventSection
-        title={
-          <>
-            <span className="text-primary">디어위드</span>
-            에서 <br />
-            추천하는 이벤트-!
-          </>
-        }
-        events={recommendedEvents}
-        likedIds={likedIds}
-        onToggleLike={toggleLike}
-      />
-      <EventSection
-        title={
-          <>
-            지금 가장 HOT한
-            <br /> 이벤트
-          </>
-        }
-        events={hotEvents}
-        likedIds={likedIds}
-        onToggleLike={toggleLike}
-      />
-      <EventSection
-        title={
-          <>
-            새로 등록된
-            <br />
-            이벤트
-          </>
-        }
-        events={newEvents}
-        likedIds={likedIds}
-        onToggleLike={toggleLike}
-      />
+        <EventSection
+          title={
+            <>
+              <span className="text-primary">디어위드</span>
+              에서 <br />
+              추천하는 이벤트-!
+            </>
+          }
+          events={recommendedEvents}
+          likedIds={likedIds}
+          onToggleLike={toggleLike}
+        />
+        <EventSection
+          title={
+            <>
+              지금 가장 HOT한
+              <br /> 이벤트
+            </>
+          }
+          events={hotEvents}
+          likedIds={likedIds}
+          onToggleLike={toggleLike}
+        />
+        <EventSection
+          title={
+            <>
+              새로 등록된
+              <br />
+              이벤트
+            </>
+          }
+          events={newEvents}
+          likedIds={likedIds}
+          onToggleLike={toggleLike}
+        />
 
-      {/* 리뷰 */}
-      <div>
-        <h1 className="typo-title3 text-text-5 pb-[12px] pl-[24px]">
-          회원님들의
-          <br />찐 리뷰
-        </h1>
+        {/* 리뷰 */}
+        <div>
+          <h1 className="typo-title3 text-text-5 pb-[12px] pl-[24px]">
+            회원님들의
+            <br />찐 리뷰
+          </h1>
 
-        <div className="flex flex-col gap-[8px] px-[24px] mb-[40px] ">
-          {latestReviews?.length > 0 ? (
-            latestReviews.map((review) => (
-              <div
-                key={review.reviewId}
-                className="flex justify-start items-start border border-divider-1 rounded-[4px] p-[12px] min-w-[260px] gap-[10px] cursor-pointer"
-                onClick={() =>
-                  router.push(
-                    `/event-detail/${review.eventId}/review?highlight=${review.reviewId}`
-                  )
-                }
-              >
-                <div className="relative w-[40px] h-[40px] overflow-hidden rounded-[4px] shrink-0">
-                  {review.images?.[0]?.variants?.[0]?.url || review.images?.[0]?.variants?.[1]?.url ? (
-                    <Image
-                      src={review.images?.[0]?.variants?.[0]?.url || review.images?.[0]?.variants?.[1]?.url}
-                      alt={review.title}
-                      fill
-                      sizes="40px"
-                      className="object-cover !w-full !h-full"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-[10px] text-text-3">
-                      No Img
-                    </div>
-                  )}
+          <div className="flex flex-col gap-[8px] px-[24px] mb-[40px] ">
+            {latestReviews?.length > 0 ? (
+              latestReviews.map((review) => (
+                <div
+                  key={review.reviewId}
+                  className="flex justify-start items-start border border-divider-1 rounded-[4px] p-[12px] min-w-[260px] gap-[10px] cursor-pointer"
+                  onClick={() =>
+                    router.push(
+                      `/event-detail/${review.eventId}/review?highlight=${review.reviewId}`
+                    )
+                  }
+                >
+                  <div className="relative w-[40px] h-[40px] overflow-hidden rounded-[4px] shrink-0">
+                    {review.images?.[0]?.variants?.[0]?.url || review.images?.[0]?.variants?.[1]?.url ? (
+                      <Image
+                        src={review.images?.[0]?.variants?.[0]?.url || review.images?.[0]?.variants?.[1]?.url}
+                        alt={review.title}
+                        fill
+                        sizes="40px"
+                        className="object-cover !w-full !h-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-200 text-[10px] text-text-3">
+                        No Img
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col">
+                    <p className="typo-label2 text-text-5 ">
+                      {review.title}
+                    </p>
+                    <span className="typo-caption4 text-text-4 block w-[200px] truncate">
+                      {review.content}
+                    </span>
+                  </div>
                 </div>
-
-                <div className="flex flex-col">
-                  <p className="typo-label2 text-text-5 ">
-                    {review.title}
-                  </p>
-                  <span className="typo-caption4 text-text-4 block w-[200px] truncate">
-                    {review.content}
-                  </span>
-                </div>
-              </div>
-            ))
-          ) : (
-            <span className="text-text-4 text-sm">등록된 리뷰가 없습니다.</span>
-          )}
+              ))
+            ) : (
+              <span className="text-text-4 text-sm">등록된 리뷰가 없습니다.</span>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* HOT 아티스트 그룹 리스트 */}
-      <h1 className="typo-title3 text-text-5 text-center">
-        디어위드에서
-        <br />
-        새로 보고 싶은 콘텐츠가 있다면?
-      </h1>
-      <InfiniteRolling items={hotData ?? []} />
+        {/* HOT 아티스트 그룹 리스트 */}
+        <h1 className="typo-title3 text-text-5 text-center">
+          디어위드에서
+          <br />
+          새로 보고 싶은 콘텐츠가 있다면?
+        </h1>
+        <InfiniteRolling items={hotData ?? []} />
 
-      {/* 아티스트 등록, 이벤트 등록 */}
-      <div className="flex justify-between w-full px-[24px] gap-[11px] mb-[60px]">
-        <Button
-          _state="main"
-          _node="아티스트 등록"
-          _onClick={() => handleRouter(`/artist-register`)}
-        />
-        <Button
-          _state="main"
-          _node="이벤트 등록"
-          _onClick={() => handleRouter(`/event-register`)}
-        />
-      </div>
+        {/* 아티스트 등록, 이벤트 등록 */}
+        <div className="flex justify-between w-full px-[24px] gap-[11px] mb-[60px]">
+          <Button
+            _state="main"
+            _node="아티스트 등록"
+            _onClick={() => handleRouter(`/artist-register`)}
+          />
+          <Button
+            _state="main"
+            _node="이벤트 등록"
+            _onClick={() => handleRouter(`/event-register`)}
+          />
+        </div>
       </div>
     </div>
   );

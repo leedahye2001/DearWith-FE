@@ -95,7 +95,7 @@ export function usePullToRefresh(
           navigator.vibrate(50);
         }
         setIsRefreshing(true);
-        Promise.resolve(onRefreshRef.current()).finally(() => {});
+        Promise.resolve(onRefreshRef.current()).finally(() => { });
         setTimeout(() => setIsRefreshing(false), spinDurationMs);
       }
     };
