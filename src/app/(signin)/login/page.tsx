@@ -18,28 +18,27 @@ import {
   isAppleNative,
 } from "@/lib/native/bridge";
 import { getSignIn, validateToken } from "@/apis/api";
+import { KAKAO_AUTH_DIRECT_URL, SOCIAL_SIGNUP_DIRECT_KEY } from "@/app/routePath";
 
 type NativeSocialSignInPayload =
   | { error: true; code: string; message: string }
   | {
-      error?: false;
-      needSignUp: boolean;
-      provider?: string;
-      socialId?: string;
-      signIn?: { message?: string; userId: string; nickname: string; role: string } | null;
-    };
+    error?: false;
+    needSignUp: boolean;
+    provider?: string;
+    socialId?: string;
+    signIn?: { message?: string; userId: string; nickname: string; role: string } | null;
+  };
 
 type NativeEmailLoginPayload =
   | { error: true; code: string; message: string }
   | {
-      error?: false;
-      signIn: { message?: string; userId: string; nickname: string; role: string };
-    };
+    error?: false;
+    signIn: { message?: string; userId: string; nickname: string; role: string };
+  };
 
-const KAKAO_AUTH_URL =
-  "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=a1c8f8ab77b2ad88da439427df5c5226&redirect_uri=https://www.dearwith.kr/oauth/kakao";
-
-const SOCIAL_SIGNUP_KEY = "dearwith:socialSignUp";
+const KAKAO_AUTH_URL = `${KAKAO_AUTH_DIRECT_URL}`;
+const SOCIAL_SIGNUP_KEY = `${SOCIAL_SIGNUP_DIRECT_KEY}`;
 
 const Page = () => {
   const router = useRouter();
@@ -79,8 +78,14 @@ const Page = () => {
     setPasswordError(passwordRegex.test(v) ? "" : "영문, 숫자, 특수문자 포함 8자리 이상");
   };
 
+  // 이메일 유효성 검사
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const emailErrorMessage =
-    inputEmail && !inputEmail.trim().toLowerCase().endsWith(".com") ? "메일 형식이 올바르지 않습니다" : "";
+    inputEmail && !emailRegex.test(inputEmail.trim().toLowerCase())
+      ? "메일 형식이 올바르지 않습니다"
+      : "";
+
 
   const fetchSignInData = async () => {
     // 앱: 이메일 로그인도 네이티브에게 위임(웹뷰->네이티브로 email/password 전달)
@@ -132,7 +137,7 @@ const Page = () => {
           SOCIAL_SIGNUP_KEY,
           JSON.stringify({ provider: payload.provider, socialId: payload.socialId })
         );
-      } catch {}
+      } catch { }
       router.push("/agreement");
       return;
     }
@@ -188,7 +193,7 @@ const Page = () => {
   }, [router, handleNativeSocialResult, handleNativeEmailResult]);
 
   return (
-    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center items-center px-[24px] min-h-screen">
+    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center items-center px-[24px] h-full">
       <h1 className="w-full text-left typo-title2 text-text-5 pb-[40px]">
         반가워요👋
         <br />

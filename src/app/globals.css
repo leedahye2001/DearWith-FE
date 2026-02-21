@@ -363,11 +363,22 @@
 html,
 body {
   height: 100%;
-  overflow-x: hidden;
+  width: 100%;
+  overflow: hidden !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: none;
 }
 
 body {
   position: relative;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: none;
 }
 
 @keyframes dropHighlight {

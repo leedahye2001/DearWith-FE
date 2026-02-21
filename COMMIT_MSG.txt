@@ -1,0 +1,9 @@
+fix: 레이아웃 스크롤 영역 분리 및 톱바 고정
+
+- LayoutClient: 톱바/네비바 제외한 중간 콘텐츠 영역에만 스크롤 적용
+  - 상단 48px 블록으로 톱바 영역 확보 (hasTopbar 시)
+  - PATHS_WITHOUT_TOPBAR로 톱바 없는 화면(로그인·회원가입 등)은 빈 공간 없이 전체 높이 사용
+- Topbar: sticky → fixed, max-w-[428px] mx-auto, z-[100] 적용
+- globals.css: html/body overflow hidden·position fixed로 모바일 스크롤/overscroll 제어
+- routePath: 카카오 인증·소셜 회원가입용 env 변수 export 추가
+- package.json: dev 스크립트에 -H 0.0.0.0 추가 (외부 접속용)
