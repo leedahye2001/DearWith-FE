@@ -28,7 +28,7 @@ const SystemNoticeDetailPage = () => {
 
   useEffect(() => {
     if (notificationId) {
-      patchNotificationRead(notificationId).catch(() => {});
+      patchNotificationRead(notificationId).catch(() => { });
     }
   }, [notificationId]);
 

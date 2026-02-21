@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
@@ -43,9 +43,22 @@ export default function Page() {
   const [isMenuOpen, setIsMenuOpen] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const fetchAlerts = useCallback(async () => {
+    try {
+      const res = await getAlertMessage();
+      setAlerts(res ?? []);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "알림 조회에 실패했습니다. 다시 시도해주세요.";
+      openAlert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [openAlert]);
+
   useEffect(() => {
     fetchAlerts();
-  }, []);
+  }, [fetchAlerts]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -68,19 +81,6 @@ export default function Page() {
   //   if (permEnabled === null) return false;
   //   return permEnabled === false;
   // }, [permEnabled]);
-
-  const fetchAlerts = async () => {
-    try {
-      const res = await getAlertMessage();
-      setAlerts(res ?? []);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
-      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "알림 조회에 실패했습니다. 다시 시도해주세요.";
-      openAlert(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const { rootRef, pullOffset, isPulling, isRefreshing, showRefreshIndicator } = usePullToRefresh(fetchAlerts);
 

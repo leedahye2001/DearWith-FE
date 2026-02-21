@@ -169,11 +169,13 @@ interface AgreementState {
   item1: boolean; // AGE_OVER_14
   item2: boolean; // TERMS_OF_SERVICE
   item3: boolean; // PERSONAL_INFORMATION
+  item4: boolean; // 마케팅 제3자 제공 (선택)
   item5: boolean; // PUSH_NOTIFICATION
   setAgreements: (agreements: {
     item1: boolean;
     item2: boolean;
     item3: boolean;
+    item4: boolean;
     item5: boolean;
   }) => void;
 }
@@ -182,6 +184,7 @@ export const useAgreementStore = create<AgreementState>((set) => ({
   item1: false,
   item2: false,
   item3: false,
+  item4: false,
   item5: false,
   setAgreements: (agreements) => set(agreements),
 }));

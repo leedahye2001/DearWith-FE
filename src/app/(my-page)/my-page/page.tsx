@@ -171,7 +171,7 @@ const Page = () => {
       </Section>
 
       <Divider />
-      <MenuItem text="개인정보처리방침" hasData />
+      <MenuItem text="개인정보처리방침" path="/agreement/privacy" hasData />
       <Divider />
       <button
         className="mt-6 text-left text-[14px] font-[400] text-text-5 hover:cursor-pointer"

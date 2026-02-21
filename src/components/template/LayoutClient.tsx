@@ -31,7 +31,7 @@ const FULL_SCREEN_PATHS = [
 const PATHS_WITHOUT_TOPBAR = [
   "/event-bookmark/event",
   "/event-bookmark/artist",
-  "/my-page"
+  "/my-page",
 ];
 
 export default function LayoutClient({ children }: Props) {

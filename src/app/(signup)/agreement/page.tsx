@@ -25,7 +25,7 @@ const AgreementContent = () => {
     item1: agreementStore.item1,
     item2: agreementStore.item2,
     item3: agreementStore.item3,
-    item4: false,
+    item4: agreementStore.item4,
     item5: agreementStore.item5,
   });
 
@@ -33,7 +33,7 @@ const AgreementContent = () => {
     // 소셜 회원가입인지 확인
     const provider = searchParams?.get("provider");
     const socialId = searchParams?.get("socialId");
-    
+
     if (provider && socialId) {
       try {
         sessionStorage.setItem(
@@ -41,7 +41,7 @@ const AgreementContent = () => {
           JSON.stringify({ provider, socialId })
         );
         setIsSocialSignUp(true);
-      } catch {}
+      } catch { }
     } else {
       // sessionStorage에서 확인
       try {
@@ -49,11 +49,16 @@ const AgreementContent = () => {
         if (stored) {
           setIsSocialSignUp(true);
         }
-      } catch {}
+      } catch { }
     }
   }, [searchParams]);
 
   const allChecked = Object.values(checkedItems).every(Boolean);
+
+  // 체크 변경 시 스토어 동기화 (setState 콜백 안에서 하면 렌더 중 업데이트 에러 발생하므로 effect에서 처리)
+  useEffect(() => {
+    useAgreementStore.getState().setAgreements(checkedItems);
+  }, [checkedItems]);
 
   const handleItemChange = (
     key: keyof typeof checkedItems,
@@ -74,14 +79,14 @@ const AgreementContent = () => {
   };
 
   const fetchAgreeData = () => {
-    // agreement 체크 상태를 스토어에 저장
     agreementStore.setAgreements({
       item1: checkedItems.item1,
       item2: checkedItems.item2,
       item3: checkedItems.item3,
+      item4: checkedItems.item4,
       item5: checkedItems.item5,
     });
-    
+
     if (isSocialSignUp) {
       // 소셜 회원가입이면 닉네임 설정 페이지로 이동
       router.push("/social-nickname");
@@ -131,7 +136,13 @@ const AgreementContent = () => {
         />
         <Checkbox
           _id="item3"
-          _value="[필수] 개인정보 수집 및 이용 동의"
+          _value={
+            <>
+              <span onClick={() => router.push("/agreement/privacy")}>
+                [필수] 개인정보 수집 및 이용 동의
+              </span>
+            </>
+          }
           _type="icon2"
           _checked={checkedItems.item3}
           _onChange={(checked) => handleItemChange("item3", checked)}
@@ -158,15 +169,14 @@ const AgreementContent = () => {
             _state="main"
             _node="동의하고 진행하기"
             _buttonProps={{
-              className: `hover:cursor-pointer ${
-                !(
-                  checkedItems.item1 &&
-                  checkedItems.item2 &&
-                  checkedItems.item3
-                )
-                  ? "opacity-50 cursor-not-allowed w-full"
-                  : ""
-              }`,
+              className: `hover:cursor-pointer ${!(
+                checkedItems.item1 &&
+                checkedItems.item2 &&
+                checkedItems.item3
+              )
+                ? "opacity-50 cursor-not-allowed w-full"
+                : ""
+                }`,
               disabled: !(
                 checkedItems.item1 &&
                 checkedItems.item2 &&
