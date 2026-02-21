@@ -20,7 +20,7 @@ export default function AlertModal() {
 
         <div className="mb-[10px]">
           {type === "alert" && (
-            <div className="flex justify-center ">
+            <div className="flex justify-center mt-4">
               <Button
                 _state="main"
                 _node="확인"
@@ -33,7 +33,7 @@ export default function AlertModal() {
           )}
 
           {type === "confirm" && (
-            <div className="flex justify-between gap-[12px]">
+            <div className="flex justify-between gap-[12px] mt-4">
               <Button
                 _state="main"
                 _buttonProps={{ className: "bg-bg-2" }}

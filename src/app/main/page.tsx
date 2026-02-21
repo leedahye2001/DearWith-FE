@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { getHotArtistGroupTopTwenty, getMain } from "@/apis/api";
 import useMainStore from "../stores/useMainStore";
-// import BirthdayArtistsSection from "./components/BirthdayArtistSection";
 import EventSection from "./components/EventSection";
 import Topbar from "@/components/template/Topbar";
 import DearwithLogo from "@/svgs/DearwithLogo.svg";
@@ -12,7 +11,10 @@ import Button from "@/components/Button/Button";
 import { useRouter } from "next/navigation";
 import InfiniteRolling from "@/components/InfiniteRolling.tsx/InfiniteRolling";
 import BellNotification from "./components/BellNotification";
+import MainSkeleton from "./components/MainSkeleton";
 import Image from "next/image";
+import { AxiosError } from "axios";
+import useModalStore from "../stores/useModalStore";
 
 interface hotArtistGroup {
   id: string;
@@ -23,17 +25,17 @@ interface hotArtistGroup {
 
 export default function Home() {
   const router = useRouter();
-  // const currentMonth = new Date().toLocaleString("ko-KR", { month: "numeric" });
 
+  const { openAlert } = useModalStore();
   const setMainData = useMainStore((state) => state.setMainData);
   const [bannerImages, setBannerImages] = useState<string[]>([]);
-  // const birthdayArtists = useMainStore((state) => state.birthdayArtists);
   const recommendedEvents = useMainStore((state) => state.recommendedEvents);
   const hotEvents = useMainStore((state) => state.hotEvents);
   const newEvents = useMainStore((state) => state.newEvents);
   const latestReviews = useMainStore((state) => state.latestReviews);
   const [hotData, setHotData] = useState<hotArtistGroup[]>([]);
   const [likedIds, setLikedIds] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleLike = (id: string) => {
     setLikedIds((prev) =>
@@ -54,7 +56,6 @@ export default function Home() {
         latestReviews: data.latestReviews,
       });
       setHotData(hotArtistGroupData);
-      // banner 이미지 추출
       const bannerUrls =
         data.banners?.map(
           (b: { id: string; imageUrl: string }) => b.imageUrl
@@ -72,8 +73,13 @@ export default function Home() {
         .map((event) => event.id);
 
       setLikedIds(initialLiked);
+      setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+
+      console.error(error);
+      const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "데이터 로딩에 실패했습니다. 다시 시도해주세요.";
+      openAlert(errorMessage);
     }
   }, [setMainData]);
 
@@ -84,6 +90,20 @@ export default function Home() {
   const handleRouter = (url: string) => {
     router.push(url);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col w-full justify-center">
+        <Topbar
+          _leftImage={<DearwithLogo />}
+          _rightImage={
+            <BellNotification onClick={() => router.push("/notification")} />
+          }
+        />
+        <MainSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full justify-center">
