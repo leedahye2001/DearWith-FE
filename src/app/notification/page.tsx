@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/template/Topbar";
 import Backward from "@/svgs/Backward.svg";
@@ -63,11 +63,11 @@ export default function Page() {
     setPushToggleOn(permEnabled);
   }, [permEnabled]);
 
-  const showBanner = useMemo(() => {
-    if (!isNativeApp()) return false;
-    if (permEnabled === null) return false;
-    return permEnabled === false;
-  }, [permEnabled]);
+  // const showBanner = useMemo(() => {
+  //   if (!isNativeApp()) return false;
+  //   if (permEnabled === null) return false;
+  //   return permEnabled === false;
+  // }, [permEnabled]);
 
   const fetchAlerts = async () => {
     try {
@@ -186,37 +186,33 @@ export default function Page() {
           transition: isPulling ? "none" : "transform 0.25s ease-out",
         }}
       >
-        {/* 앱에서만 + enabled=false일 때만 배너 */}
-        {showBanner && (
-          <div className="mx-[24px] py-[16px] flex justify-between items-center rounded-[4px] mt-[12px]">
-            <ToggleItem
-              label=""
-              defaultState={false}
-              value={pushToggleOn}
-              onChange={onPushToggleChange}
-            />
-            <div className="flex gap-[16px]">
-              <button
-                type="button"
-                className="text-text-2 text-[12px] font-[500]"
-                onClick={handleReadAll}
-              >
-                모두 읽음
-              </button>
-              <button
-                type="button"
-                className="text-text-2 text-[12px] font-[500]"
-                onClick={handleDeleteAll}
-              >
-                모두 삭제
-              </button>
-            </div>
+        <div className="mx-[24px] py-[16px] flex justify-between items-center rounded-[4px] mt-[12px]">
+          <ToggleItem
+            label=""
+            defaultState={false}
+            value={pushToggleOn}
+            onChange={onPushToggleChange}
+          />
+          <div className="flex gap-[16px]">
+            <button
+              type="button"
+              className="text-text-2 text-[12px] font-[500]"
+              onClick={handleReadAll}
+            >
+              모두 읽음
+            </button>
+            <button
+              type="button"
+              className="text-text-2 text-[12px] font-[500]"
+              onClick={handleDeleteAll}
+            >
+              모두 삭제
+            </button>
           </div>
-        )}
+        </div>
 
-        <div className="px-[24px] py-[20px] flex flex-col gap-[16px]">
+        <div className="py-[20px] flex flex-col gap-[16px]">
           {loading ? (
-            // <Spinner />
             <NotificationSkeleton />
           ) : alerts.length === 0 ? (
             <div className="flex justify-center items-center h-[60vh]">
@@ -229,7 +225,7 @@ export default function Page() {
               return (
                 <div
                   key={alert.id}
-                  className="flex justify-between items-start border-b pb-[16px] border-divider-1 cursor-pointer"
+                  className="flex justify-between items-start border-b pb-[16px] border-divider-1 cursor-pointer px-[24px]"
                   onClick={() => goToLink(alert)}
                 >
                   <div className="flex gap-[10px] flex-1 min-w-0">

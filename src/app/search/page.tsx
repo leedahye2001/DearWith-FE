@@ -16,6 +16,8 @@ import ArtistSearchResult from "./components/ArtistSearchResult";
 import RealTimeSearch from "./components/RealTimeSearch";
 import { EventCardProps } from "../main/components/MainEventCard";
 import useCurrentHourLabel from "@/utils/useCurrentHourLabel";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import RefreshIcon from "@/components/Icons/RefreshIcon";
 
 export interface Artist {
   id: number;
@@ -81,18 +83,22 @@ const Page = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchHotArtists = async () => {
-      try {
-        const res = await getHotArtistGroupTopTwenty();
-        setHotArtists(res || []);
-      } catch (err) {
-        console.error("실시간 검색어 불러오기 실패:", err);
-      }
-    };
+  const fetchHotArtists = async () => {
+    try {
+      const res = await getHotArtistGroupTopTwenty();
+      setHotArtists(res || []);
+    } catch (err) {
+      console.error("실시간 검색어 불러오기 실패:", err);
+    }
+  };
 
+  useEffect(() => {
     fetchHotArtists();
   }, []);
+
+
+  const { rootRef, pullOffset, isPulling, isRefreshing, showRefreshIndicator } = usePullToRefresh(fetchHotArtists);
+
 
   // 검색 동작
   const handleSearchChange = async (value: string) => {
@@ -118,7 +124,7 @@ const Page = () => {
   };
 
   return (
-    <div className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center gap-[12px]">
+    <div ref={rootRef} className="bg-bg-1 dark:bg-bg-1 flex flex-col justify-center gap-[12px]">
       {/* 검색창 */}
       <div className="sticky top-0 z-10 bg-bg-1 flex w-full justify-center">
         <Input
@@ -134,8 +140,22 @@ const Page = () => {
         />
       </div>
 
+      {showRefreshIndicator && (
+        <div
+          className="flex justify-center items-center w-full py-[20px] bg-bg-1 shrink-0"
+          aria-live="polite"
+          aria-busy={isRefreshing}
+        >
+          <RefreshIcon isRefreshing={isRefreshing} />
+        </div>
+      )}
+
       {recentSearches.length > 0 && (
-        <div className="flex flex-col gap-[16px] mt-[12px] px-[24px] w-full">
+        <div className="flex flex-col gap-[16px] mt-[12px] px-[24px] w-full"
+          style={{
+            transform: pullOffset > 0 ? `translateY(${pullOffset}px)` : undefined,
+            transition: isPulling ? "none" : "transform 0.25s ease-out",
+          }}>
           <div className="flex justify-between">
             <h3 className="typo-title3 text-text-5">최근 검색어</h3>
             <button
@@ -196,7 +216,6 @@ const Page = () => {
               {events.slice(0, 10).map((event) => (
                 <div key={event.id} className="p-4 border rounded">
                   <h3>{event.title}</h3>
-                  {/* 이벤트 카드 컴포넌트 추가 */}
                 </div>
               ))}
             </div>

@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
-import { getEventNoticeDetail } from "@/apis/api";
+import { getEventNoticeDetail, patchNotificationRead } from "@/apis/api";
 import Spinner from "@/components/Spinner/Spinner";
 import Button from "@/components/Button/Button";
+import useModalStore from "@/app/stores/useModalStore";
+import { AxiosError } from "axios";
 
 interface NoticeDetail {
   id: number;
@@ -22,10 +24,19 @@ interface NoticeDetail {
 const NoticeDetailPage = () => {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const noticeId = params?.id ?? "";
+  const notificationId = searchParams?.get("notificationId");
+  const { openAlert } = useModalStore();
 
   const [notice, setNotice] = useState<NoticeDetail | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (notificationId) {
+      patchNotificationRead(notificationId).catch(() => { });
+    }
+  }, [notificationId]);
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -41,15 +52,17 @@ const NoticeDetailPage = () => {
       try {
         const res = await getEventNoticeDetail(noticeId);
         setNotice(res);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+        const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "알림 조회에 실패했습니다. 다시 시도해주세요.";
+        openAlert(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
     fetchNotice();
-  }, [noticeId]);
+  }, [noticeId, openAlert]);
 
   if (loading)
     return (

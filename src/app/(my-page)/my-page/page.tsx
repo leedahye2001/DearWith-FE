@@ -203,7 +203,7 @@ function Stat({ value, label, path }: { value: number; label: string; path?: str
 }
 
 function Divider() {
-  return <div className="border-[0.8px] border-b border-divider-1 my-[20px]" />;
+  return <div className="border-[0.8px] border-b border-divider-1 my-[20px] -mx-[24px]" />;
 }
 
 function Section({

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Backward from "@/svgs/Backward.svg";
 import Topbar from "@/components/template/Topbar";
-import { getSystemNoticeDetail } from "@/apis/api";
+import { getSystemNoticeDetail, patchNotificationRead } from "@/apis/api";
 import Spinner from "@/components/Spinner/Spinner";
 import Button from "@/components/Button/Button";
 
@@ -19,10 +19,18 @@ interface SystemNoticeDetail {
 const SystemNoticeDetailPage = () => {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const noticeId = params?.id ?? "";
+  const notificationId = searchParams?.get("notificationId");
 
   const [notice, setNotice] = useState<SystemNoticeDetail | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (notificationId) {
+      patchNotificationRead(notificationId).catch(() => {});
+    }
+  }, [notificationId]);
 
   const formatDate = (isoString: string | null | undefined) => {
     if (!isoString) return "";

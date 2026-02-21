@@ -77,13 +77,11 @@ export default function Home() {
       setLikedIds(initialLiked);
       setIsLoading(false);
     } catch (error) {
-
-      console.error(error);
       const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
       const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "데이터 로딩에 실패했습니다. 다시 시도해주세요.";
       openAlert(errorMessage);
     }
-  }, [setMainData]);
+  }, [setMainData, openAlert]);
 
   useEffect(() => {
     fetchData();
@@ -135,16 +133,11 @@ export default function Home() {
           transition: isPulling ? "none" : "transform 0.25s ease-out",
         }}
       >
+
         {/* 캐러셀 */}
         {bannerImages.length > 0 && (
           <Carousel modalCarouselImageJson={{ images: bannerImages }} />
         )}
-
-        {/* 당월 생일 아티스트 */}
-        {/* <BirthdayArtistsSection
-        currentMonth={currentMonth}
-        birthdayArtists={birthdayArtists}
-      /> */}
 
         <EventSection
           title={

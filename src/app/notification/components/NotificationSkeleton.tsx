@@ -17,7 +17,7 @@ export default function NotificationSkeleton() {
             {Array.from({ length: ROW_COUNT }).map((_, i) => (
                 <div
                     key={i}
-                    className="flex justify-between items-start border-b border-divider-1 pb-[16px] mb-[16px] last:mb-0"
+                    className="flex justify-between items-start border-b border-divider-1 pb-[16px] mb-[16px] last:mb-0 px-[24px]"
                 >
                     <div className="flex gap-[10px] flex-1 min-w-0">
                         <Skeleton className="w-[16px] h-[16px] rounded-full flex-shrink-0" />
