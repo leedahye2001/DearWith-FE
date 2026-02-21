@@ -26,9 +26,9 @@ const SystemNoticeDetailPage = () => {
 
   const formatDate = (isoString: string | null | undefined) => {
     if (!isoString) return "";
-    
+
     const date = new Date(isoString);
-    
+
     // Invalid Date 체크
     if (isNaN(date.getTime())) return "";
 
@@ -85,7 +85,7 @@ const SystemNoticeDetailPage = () => {
           <h1 className="text-[16px] font-[700] text-text-5">{notice.title}</h1>
 
           <div className="flex items-center gap-[4px] mt-[4px] text-[12px] text-text-4">
-             <p>디어위드 | </p>
+            <p>디어위드 | </p>
             <span>{formatDate(notice.createdAt)}</span>
           </div>
 

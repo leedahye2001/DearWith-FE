@@ -347,6 +347,26 @@ export const getUnreadNotifications = async () => {
   return res.data;
 };
 
+// 알림 단일 삭제
+export const deleteNotification = async (notificationId: number | string) => {
+  await api.delete(`/api/notifications/${notificationId}`);
+};
+
+// 알림 단일 읽음 처리
+export const patchNotificationRead = async (notificationId: number | string) => {
+  await api.patch(`/api/notifications/${notificationId}/read`);
+};
+
+// 알림 모두 읽음 처리
+export const patchNotificationsReadAll = async () => {
+  await api.patch("/api/notifications/read-all");
+};
+
+// 알림 전체/읽은 알림 삭제 (onlyRead: true = 읽은 알림만, false = 전체)
+export const deleteAllNotifications = async (onlyRead: boolean) => {
+  await api.delete("/api/notifications", { params: { onlyRead } });
+};
+
 //최근 검색어 조회
 export const getRecentSearch = async () => {
   const res = await api.get(`/api/search/recent`);

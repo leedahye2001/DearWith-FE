@@ -58,8 +58,6 @@ const Page = () => {
 
   const { profile, stats, notifications } = data;
 
-  // 디버깅: passwordChangeAvailable 값 확인
-  console.log("passwordChangeAvailable:", profile?.passwordChangeAvailable, typeof profile?.passwordChangeAvailable);
 
   const handleLogout = () => {
     openConfirm("로그아웃 하시겠습니까?", async () => {
@@ -76,7 +74,7 @@ const Page = () => {
 
 
   const handleProfileUpdate = () => {
-    useProfileStore.getState().setProfile(profile); // profile은 API에서 가져온 { nickname, profileImageUrl }
+    useProfileStore.getState().setProfile(profile);
     router.push("/profile-update");
   };
 
@@ -224,21 +222,9 @@ function Section({
 }
 
 function MenuItem({ text, path, rightNode }: MenuItemProps) {
-  // const { openAlert } = useModalStore();
   const router = useRouter();
 
   const handleClick = () => {
-    // if (hasData === false) {
-    //   if (text.includes("이벤트")) {
-    //     openAlert("등록한 이벤트가 없습니다.");
-    //   } else if (text.includes("아티스트")) {
-    //     openAlert("등록한 아티스트가 없습니다.");
-    //   } else if (text.includes("리뷰")) {
-    //     openAlert("작성한 리뷰가 없습니다.");
-    //   }
-    //   return;
-    // }
-
     if (path) {
       router.push(path);
     }

@@ -6,19 +6,24 @@ import { motion } from "framer-motion";
 interface ToggleItemProps {
   label: string;
   defaultState: boolean;
+  /** controlled: 부모가 상태 제어. 전달 시 클릭해도 내부 상태로 바꾸지 않고 onChange만 호출 */
+  value?: boolean;
   onChange: (value: boolean) => void;
 }
 
 export default function ToggleItem({
   label,
   defaultState,
+  value,
   onChange,
 }: ToggleItemProps) {
-  const [isOn, setIsOn] = useState(defaultState);
+  const [internalOn, setInternalOn] = useState(defaultState);
+  const isControlled = value !== undefined;
+  const isOn = isControlled ? value : internalOn;
 
   const toggle = () => {
     const newValue = !isOn;
-    setIsOn(newValue);
+    if (!isControlled) setInternalOn(newValue);
     onChange(newValue);
   };
 

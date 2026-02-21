@@ -15,6 +15,8 @@ import MainSkeleton from "./components/MainSkeleton";
 import Image from "next/image";
 import { AxiosError } from "axios";
 import useModalStore from "../stores/useModalStore";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import RefreshIcon from "@/components/Icons/RefreshIcon";
 
 interface hotArtistGroup {
   id: string;
@@ -87,6 +89,8 @@ export default function Home() {
     fetchData();
   }, [fetchData]);
 
+  const { rootRef, pullOffset, isPulling, isRefreshing, showRefreshIndicator } = usePullToRefresh(fetchData);
+
   const handleRouter = (url: string) => {
     router.push(url);
   };
@@ -106,7 +110,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col w-full justify-center">
+    <div ref={rootRef} className="flex flex-col w-full justify-center">
       <Topbar
         _leftImage={<DearwithLogo />}
         _rightImage={
@@ -114,6 +118,23 @@ export default function Home() {
         }
       />
 
+      {showRefreshIndicator && (
+        <div
+          className="flex justify-center items-center w-full py-[20px] bg-bg-1 shrink-0"
+          aria-live="polite"
+          aria-busy={isRefreshing}
+        >
+          <RefreshIcon isRefreshing={isRefreshing} />
+        </div>
+      )}
+
+      <div
+        className="min-h-0 flex-1"
+        style={{
+          transform: pullOffset > 0 ? `translateY(${pullOffset}px)` : undefined,
+          transition: isPulling ? "none" : "transform 0.25s ease-out",
+        }}
+      >
       {/* 캐러셀 */}
       {bannerImages.length > 0 && (
         <Carousel modalCarouselImageJson={{ images: bannerImages }} />
@@ -232,6 +253,7 @@ export default function Home() {
           _node="이벤트 등록"
           _onClick={() => handleRouter(`/event-register`)}
         />
+      </div>
       </div>
     </div>
   );
