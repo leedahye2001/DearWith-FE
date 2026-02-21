@@ -74,20 +74,19 @@ const EventRegisterContent = () => {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   const [title, setTitle] = useState("");
+  const [titleError, setTitleError] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [openTime, setOpenTime] = useState("");
   const [closeTime, setCloseTime] = useState("");
+  const [timeError, setTimeError] = useState("");
   const [xLink, setXLink] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [imageFiles, setImageFiles] = useState<File[]>([]); // 실제 업로드용 파일들
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]); // 미리보기용 URL
-
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [isOrganizer, setIsOrganizer] = useState(true);
   const [cafeName, setCafeName] = useState("");
-
   const [basicInput, setBasicInput] = useState("");
   const [firstInput, setFirstInput] = useState("");
 
@@ -99,7 +98,7 @@ const EventRegisterContent = () => {
   const getAllBenefits = (
     basicTags: string[],
     firstTags: string[],
-    startDate: string // YYYY-MM-DD
+    startDate: string
   ): Benefit[] => {
     const all: Benefit[] = [];
 
@@ -114,13 +113,13 @@ const EventRegisterContent = () => {
       all.push({
         name: tag,
         benefitType: "INCLUDED",
-        dayIndex: 1, // 기본특전은 항상 1
+        dayIndex: 1,
         displayOrder: i + 1,
         visibleFrom,
       })
     });
 
-    // 일별 선착순 특전 (LIMITED)
+    // 일별 선착순 특전
     firstTags.forEach((tag, i) => {
       const dayIndex = i + 1;
       if (dayIndex < 1) throw new Error("dayIndex must be >= 1");
@@ -141,7 +140,6 @@ const EventRegisterContent = () => {
     return all;
   };
 
-  // 공용 함수: 입력값을 해당 태그 배열에 추가
   const handleAddTag = (
     input: string,
     setInput: (v: string) => void,
@@ -159,15 +157,12 @@ const EventRegisterContent = () => {
 
   const handleDateInput =
     (setter: (v: string) => void) => (value: string) => {
-      // 숫자만 추출 후 최대 8자리(yyyyMMdd)까지 허용
       const digits = value.replace(/\D/g, "").slice(0, 8);
       let formatted = digits;
 
       if (digits.length > 4 && digits.length <= 6) {
-        // yyyy.mm
         formatted = `${digits.slice(0, 4)}.${digits.slice(4)}`;
       } else if (digits.length > 6) {
-        // yyyy.mm.dd
         formatted = `${digits.slice(0, 4)}.${digits.slice(4, 6)}.${digits.slice(
           6,
           8
@@ -177,21 +172,50 @@ const EventRegisterContent = () => {
       setter(formatted);
     };
 
+  const validateTime = (open: string, close: string) => {
+    if (!open || !close || open.length !== 5 || close.length !== 5) {
+      setTimeError("");
+      return;
+    }
+    const [openH, openM] = open.split(":").map(Number);
+    const [closeH, closeM] = close.split(":").map(Number);
+    const openMinutes = openH * 60 + openM;
+    const closeMinutes = closeH * 60 + closeM;
+    if (openMinutes >= closeMinutes) {
+      setTimeError("시작 시간을 다시 입력해주세요.");
+    } else {
+      setTimeError("");
+    }
+  };
+
   const handleTimeInput =
     (setter: (v: string) => void) => (value: string) => {
-      const digits = value.replace(/\D/g, "").slice(0, 4); // HHmm
+      const digits = value.replace(/\D/g, "").slice(0, 4);
       if (!digits) {
         setter("");
+        if (setter === setOpenTime) {
+          validateTime("", closeTime);
+        } else {
+          validateTime(openTime, "");
+        }
         return;
       }
       if (digits.length <= 2) {
         setter(digits);
+        setTimeError("");
         return;
       }
-      setter(`${digits.slice(0, 2)}:${digits.slice(2)}`); // HH.mm
+      const formatted = `${digits.slice(0, 2)}:${digits.slice(2)}`;
+      setter(formatted);
+
+      // 시간 검증
+      if (setter === setOpenTime) {
+        validateTime(formatted, closeTime);
+      } else {
+        validateTime(openTime, formatted);
+      }
     };
 
-  // 태그 삭제 함수
   const handleRemoveTag = (
     idx: number,
     tags: string[],
@@ -201,7 +225,6 @@ const EventRegisterContent = () => {
     setTags(updated);
   };
 
-  // 공용 함수: Enter 키로도 등록 가능
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     input: string,
@@ -210,7 +233,6 @@ const EventRegisterContent = () => {
     setTags: (v: string[]) => void
   ) => {
     if (e.key === "Enter") {
-      // 한글 IME 조합 중 엔터 입력은 무시 (중복/깨짐 방지)
       const isComposing =
         (e.nativeEvent as unknown as { isComposing?: boolean }).isComposing;
       if (isComposing) return;
@@ -219,12 +241,10 @@ const EventRegisterContent = () => {
     }
   };
 
-  // X handle 표시
   useEffect(() => {
     if (handle) console.log("인증된 핸들:", handle);
   }, [handle]);
 
-  // 수정 모드: 기존 이벤트 데이터 불러오기
   useEffect(() => {
     if (!editEventId) return;
 
@@ -301,14 +321,13 @@ const EventRegisterContent = () => {
           if (eventData.organizer.verified && eventData.organizer.xHandle) {
             setAuthData({
               result: "success",
-              ticket: "", // 수정 모드에서는 ticket이 없을 수 있음
+              ticket: "",
               handle: eventData.organizer.xHandle,
             });
             setVerified(true);
           }
         }
       } catch (error) {
-        console.error(error);
         const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
         const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "이벤트 정보 수정에 실패했습니다. 다시 시도해주세요.";
         openAlert(errorMessage);
@@ -324,7 +343,6 @@ const EventRegisterContent = () => {
     router.push(`https://${BASE_URL}/oauth2/x/authorize`);
   };
 
-  // 파일 선택 버튼 클릭 시 input 트리거
   const handleGalleryClick = () => {
     const totalImages = existingImages.length + imageFiles.length;
     if (totalImages >= 5) {
@@ -357,20 +375,16 @@ const EventRegisterContent = () => {
 
     const newPreviews = allowed.map((file) => URL.createObjectURL(file));
 
-    // File과 URL 둘 다 추가
     setImageFiles((prev) => [...prev, ...allowed]);
     setImagePreviews((prev) => [...prev, ...newPreviews]);
   };
 
   // 이미지 삭제
   const handleRemoveImage = (idx: number) => {
-    // 기존 이미지인지 새 이미지인지 확인
     if (idx < existingImages.length) {
-      // 기존 이미지 삭제
       setExistingImages((prev) => prev.filter((_, i) => i !== idx));
       setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
     } else {
-      // 새 이미지 삭제
       const newIdx = idx - existingImages.length;
       setImageFiles((prev) => prev.filter((_, i) => i !== newIdx));
       setImagePreviews((prev) => {
@@ -388,7 +402,7 @@ const EventRegisterContent = () => {
         "Content-Type": contentType || "application/octet-stream",
       },
       body: file,
-      credentials: "omit", // 중요: S3엔 쿠키 절대 안 보냄
+      credentials: "omit",
       mode: "cors",
     });
 
@@ -407,7 +421,7 @@ const EventRegisterContent = () => {
     for (let idx = 0; idx < images.length; idx++) {
       const file = images[idx];
 
-      // 1️⃣ presigned URL 발급
+      // presigned URL 발급
       const presignRes = await api.post("/api/uploads/presign", {
         filename: file.name,
         contentType: file.type || "application/octet-stream",
@@ -417,7 +431,7 @@ const EventRegisterContent = () => {
       const { url, key } = presignRes.data as { url: string; key: string };
 
       try {
-        // 2️⃣ S3에 PUT
+        // S3에 PUT
         await putToS3(url, file, file.type || "application/octet-stream");
 
         uploaded.push({
@@ -425,11 +439,10 @@ const EventRegisterContent = () => {
           url,
           displayOrder: startOrder + idx,
         });
-
-        console.log(`PUT 완료: ${file.name}`);
-      } catch (err) {
-        console.error(`❌ PUT 실패: ${file.name}`, err);
-        openAlert(`이미지 업로드 실패: ${file.name}`);
+      } catch (error) {
+        const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
+        const errorMessage = axiosError?.response?.data?.message || axiosError?.response?.data?.detail || "이벤트 업로드에 실패했습니다. 다시 시도해주세요.";
+        openAlert(errorMessage);
       }
     }
 
@@ -438,7 +451,7 @@ const EventRegisterContent = () => {
 
   // 아티스트 검색
   const handleArtistChange = (v: string) => {
-    setSelectedArtist(null); // 새로 입력 시 선택값 해제
+    setSelectedArtist(null);
     setInputArtist(v);
     if (!v.trim()) setArtistResults([]);
   };
@@ -484,14 +497,12 @@ const EventRegisterContent = () => {
 
   // 이벤트 등록/수정
   const handleSubmit = async () => {
-    // 수정 모드가 아닐 때만 ticket 체크 (수정 모드에서는 organizer 정보가 이미 있으므로 ticket이 없어도 됨)
     if (!editEventId && isVerified === true && !ticket) {
       return openAlert("X 인증이 필요합니다.");
     }
     if (!selectedArtist || !selectedPlace)
       return openAlert("아티스트와 장소를 선택해주세요.");
     if (isOrganizer === null) return openAlert("주최자 여부를 선택해주세요.");
-    // 주최자일 때는 X 계정 인증 필수
     if (isOrganizer === true && !isVerified) {
       return openAlert("주최자는 X 계정 인증이 필수입니다.");
     }
@@ -503,7 +514,6 @@ const EventRegisterContent = () => {
       const normalizeDate = (date: string) => date.replace(/\./g, "-");
       const normalizeTime = (time: string) => time.replace(/\./g, ":");
 
-      // 이미지 구성: 기존 이미지 + 새 이미지
       const imagePayload = [
         ...existingImages.map((img) => ({
           id: img.id,
@@ -538,12 +548,10 @@ const EventRegisterContent = () => {
       };
 
       if (editEventId) {
-        // 수정 모드
         await patchEvent(editEventId, body);
         openAlert("이벤트 수정이 완료되었습니다.");
         router.push(`/event-detail/${editEventId}`);
       } else {
-        // 등록 모드
         const res = await api.post("/api/events", {
           ...body,
           organizer: {
@@ -644,7 +652,13 @@ const EventRegisterContent = () => {
                   _value={handle || ""}
                   _state="textbox-basic"
                   _containerProps={{ className: "flex-1 min-w-0" }}
-                  _wrapperProps={{ className: "w-full" }}
+                  _wrapperProps={{
+                    className: "w-full",
+                    onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+                      e.preventDefault();
+                      handleXLogin();
+                    }
+                  }}
                   _leftNode={<span className="text-text-3 typo-body2">@</span>}
                   _bottomNode={
                     isVerified
@@ -689,14 +703,14 @@ const EventRegisterContent = () => {
                     ? "X 계정 링크를 다시 입력해주세요."
                     : ""
                 }
-                _rightNode={isValidXLink ? <Check /> : undefined}
+                _rightNode={isValidXLink ? <Check /> : ""}
               />
             </div>
           )}
         </div>
 
         <div className="flex flex-col justity-center items-start mb-[24px]">
-          <div className="flex justify-center items-center gap-[6px] mt-[36px] mb-[20px]">
+          <div className="flex justify-center items-center gap-[6px] mt-[36px]">
             <div className="flex justify-center items-center rounded-xl w-[16px] h-[16px] bg-primary text-text-1 typo-label3">
               2
             </div>
@@ -714,6 +728,11 @@ const EventRegisterContent = () => {
               _value={inputArtist}
               _state="textbox-basic"
               _onChange={handleArtistChange}
+              _rightNode={selectedArtist ? <Check /> : undefined}
+              _inputProps={{
+                placeholder: "아티스트 명을 입력해주세요.",
+                className: "placeholder:text-text-3 typo-body2",
+              }}
             />
             {artistResults.length > 0 && (
               <ul className="absolute left-0 top-full w-full border mt-1 rounded bg-white z-20 max-h-[240px] overflow-y-auto shadow-md">
@@ -754,10 +773,32 @@ const EventRegisterContent = () => {
           </div>
 
           <div className="mt-[16px] w-full">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+            <p className="text-text-5 typo-label2 mb-[6px]">
               이벤트 명
             </p>
-            <Input _value={title} _state="textbox-basic" _onChange={setTitle} />
+            <Input
+              _value={title}
+              _state="textbox-basic"
+              _onChange={(value: string) => {
+                // 국문, 영문, 숫자만 허용
+                const filtered = value.replace(/[^a-zA-Z0-9가-힣\s]/g, "");
+                setTitle(filtered);
+
+                // 검증: 필터링된 값이 원래 값과 다르면 잘못된 문자가 있었다는 의미
+                if (value !== filtered && filtered.length > 0) {
+                  setTitleError("국문, 영문, 숫자만 입력해주세요.");
+                } else if (filtered.length > 0 && /^[a-zA-Z0-9가-힣\s]+$/.test(filtered)) {
+                  setTitleError("");
+                } else {
+                  setTitleError("");
+                }
+              }}
+              _rightNode={title && !titleError ? <Check /> : undefined}
+              _bottomNode={titleError || undefined}
+              _inputProps={{
+                placeholder: "이벤트 명을 입력해주세요.",
+                className: "placeholder:text-text-3 typo-body2",
+              }} />
           </div>
 
           <div className="mt-4 w-full">
@@ -798,7 +839,7 @@ const EventRegisterContent = () => {
           </div>
 
           <div className="mt-4 w-full">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
+            <p className="text-text-5 typo-label2 mb-[6px]">
               이벤트 운영 시간
             </p>
             <div className="flex items-center gap-2 w-full">
@@ -832,15 +873,24 @@ const EventRegisterContent = () => {
                 _onChange={handleTimeInput(setCloseTime)}
               />
             </div>
+            {timeError && (
+              <p className="flex items-center typo-caption3 text-error pt-[4px]">
+                {timeError}
+              </p>
+            )}
           </div>
 
           {/* 장소 */}
           <div className="mt-4 w-full">
-            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">장소</p>
+            <p className="text-text-5 text-[14px] font-[600] mb-[6px]">이벤트 장소</p>
             <Input
               _value={inputRoadName}
               _state="textbox-basic"
               _onChange={handleRoadNameChange}
+              _inputProps={{
+                placeholder: "주소를 입력해주세요.",
+                className: "placeholder:text-text-3 typo-body2",
+              }}
             />
             {results.length > 0 && (
               <ul className="border mt-1 rounded bg-white">
@@ -860,13 +910,17 @@ const EventRegisterContent = () => {
           {/* 카페 명 */}
           <div className="mt-4 w-full">
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
-              카페 명
+              이벤트 장소 명
             </p>
             <Input
               _value={cafeName}
               _state="textbox-basic"
               _onChange={setCafeName}
-              _inputProps={{ disabled: !!selectedPlace }}
+              _inputProps={{
+                disabled: !!selectedPlace,
+                placeholder: "가게 명을 입력해주세요.",
+                className: "placeholder:text-text-3 typo-body2",
+              }}
             />
           </div>
 
@@ -875,9 +929,7 @@ const EventRegisterContent = () => {
             <p className="text-text-5 text-[14px] font-[600] mb-[6px]">
               이미지
             </p>
-            {/* padding 영역에 가려져도 스크롤 되도록 좌우 여백을 풀고 다시 채움 */}
             <div className="w-full overflow-x-auto scrollbar-hide touch-pan-x -mx-[24px] px-[24px]">
-              {/* 숨겨진 파일 input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -888,7 +940,6 @@ const EventRegisterContent = () => {
               />
 
               <div className="flex gap-[8px] min-w-max whitespace-nowrap pr-[4px]">
-                {/* 이미지 업로드 버튼 */}
                 <div
                   onClick={handleGalleryClick}
                   className="rounded-[4px] border-1 border-divider-1 flex flex-col justify-center items-center w-[60px] h-[60px] hover:cursor-pointer shrink-0"
@@ -899,7 +950,6 @@ const EventRegisterContent = () => {
                   </p>
                 </div>
 
-                {/* 이미지 슬롯 (5개 고정) */}
                 {Array.from({ length: 5 }).map((_, idx) => {
                   const image = imagePreviews[idx];
                   return (
@@ -1020,7 +1070,7 @@ const EventRegisterContent = () => {
           </div>
         </div>
 
-        <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[48px] mt-[120px]">
+        <div className="flex flex-col bg-secondary-300 w-full rounded-[8px] p-[16px] mb-[120px] mt-[10px]">
           <div className="flex w-full justify-start items-center gap-[6px] pb-[4px]">
             <div className="flex justify-center items-center rounded-xl w-[14px] h-[14px] bg-primary text-secondary-300 typo-label3">
               !
