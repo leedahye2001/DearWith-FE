@@ -1,9 +1,16 @@
-import { PRIVACY_URL } from "@/app/routePath";
 import { NextResponse } from "next/server";
 
+const PRIVACY_URL = process.env.PRIVACY_POLICY_URL;
+
 export async function GET() {
+  if (!PRIVACY_URL) {
+    return NextResponse.json(
+      { error: "Privacy policy URL not configured" },
+      { status: 500 }
+    );
+  }
   try {
-    const res = await fetch(`${PRIVACY_URL}`, {
+    const res = await fetch(PRIVACY_URL, {
       headers: { Accept: "text/html" },
       next: { revalidate: 3600 },
     });
